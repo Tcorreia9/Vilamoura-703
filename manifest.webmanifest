@@ -1,0 +1,16 @@
+{
+  "name": "Plano 70.3 Vilamoura",
+  "short_name": "Plano 70.3",
+  "description": "Plano de treino para o Ironman 70.3 Vilamoura",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f5f1",
+  "theme_color": "#0d6e6e",
+  "lang": "pt-PT",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

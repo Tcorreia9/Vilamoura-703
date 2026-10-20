@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Plano 70.3">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14171a" media="(prefers-color-scheme: dark)">
+<title>Plano 70.3 Vilamoura</title>
+<style>
+:root{
+  --bg:#f7f5f1; --bg-card:#ffffff; --bg-soft:#eef1f6; --text:#1c2126; --text-dim:#5a6472;
+  --border:#e1e5ea; --accent:#0d6e6e; --accent-soft:#e3f2f1; --accent2:#c1440e; --accent2-soft:#fbe9e0;
+  --swim:#0d6e6e; --bike:#c1440e; --run:#2050a0; --strength:#7a4fb5; --rest:#9aa3ad; --brick:#b8860b;
+  --swim-soft:#e3f2f1; --bike-soft:#fbe9e0; --run-soft:#e5edfb; --strength-soft:#f0e7fa; --brick-soft:#faf1dc;
+  --shadow: 0 1px 3px rgba(20,20,20,.08), 0 1px 2px rgba(20,20,20,.06);
+  --good:#1f8a4c; --warn:#b7791f; --bad:#c0392b; --sleep:#5a54c7;
+  --c-swim:#00918a; --c-bike:#c1440e; --c-run:#2557b5;
+  --z1:#b7d0f0; --z2:#86b0e6; --z3:#5489d6; --z4:#2f65b8; --z5:#1b3f7d;
+  --zt1:#06182d; --zt2:#06182d; --zt3:#06182d; --zt4:#ffffff; --zt5:#ffffff;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171a; --bg-card:#1c2024; --bg-soft:#20262b; --text:#e8e9ea; --text-dim:#9aa3ac;
+    --border:#2c3237; --accent:#3fbdb6; --accent-soft:#173634; --accent2:#e0824f; --accent2-soft:#3a2417;
+    --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
+    --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#2a2036; --brick-soft:#332a12;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+    --good:#4cc38a; --warn:#e0b24f; --bad:#ef6a5b; --sleep:#9c97f2;
+    --c-swim:#25a59d; --c-bike:#d9703a; --c-run:#5a8ae6;
+    --z1:#31507a; --z2:#3b639b; --z3:#4f86cf; --z4:#7aaaf0; --z5:#bcd6ff;
+    --zt1:#e3eeff; --zt2:#ffffff; --zt3:#0b1626; --zt4:#0b1626; --zt5:#0b1626;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171a; --bg-card:#1c2024; --bg-soft:#20262b; --text:#e8e9ea; --text-dim:#9aa3ac;
+  --border:#2c3237; --accent:#3fbdb6; --accent-soft:#173634; --accent2:#e0824f; --accent2-soft:#3a2417;
+  --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
+  --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#2a2036; --brick-soft:#332a12;
+  --good:#4cc38a; --warn:#e0b24f; --bad:#ef6a5b; --sleep:#9c97f2;
+    --c-swim:#25a59d; --c-bike:#d9703a; --c-run:#5a8ae6;
+    --z1:#31507a; --z2:#3b639b; --z3:#4f86cf; --z4:#7aaaf0; --z5:#bcd6ff;
+    --zt1:#e3eeff; --zt2:#ffffff; --zt3:#0b1626; --zt4:#0b1626; --zt5:#0b1626;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--bg); color:var(--text); font-family:var(--font); -webkit-font-smoothing:antialiased;}
+.wrap{max-width:920px; margin:0 auto; padding:20px 16px 60px;}
+h1,h2,h3{font-weight:700; letter-spacing:-0.01em;}
+h1{font-size:1.5rem; margin:0 0 4px;}
+h2{font-size:1.15rem; margin:0 0 10px;}
+h3{font-size:1rem; margin:0;}
+p{line-height:1.5; color:var(--text-dim); margin:6px 0;}
+.header{display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px;}
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+.badge{font-size:.72rem; font-weight:600; padding:4px 9px; border-radius:20px; background:var(--bg-soft); color:var(--text-dim); border:1px solid var(--border); white-space:nowrap;}
+.badge.accent{background:var(--accent-soft); color:var(--accent);}
+.badge.accent2{background:var(--accent2-soft); color:var(--accent2);}
+.card{background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:var(--shadow);}
+.tabs{display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; padding-bottom:2px;}
+.tab-btn{flex-shrink:0; padding:8px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-dim); font-size:.85rem; font-weight:600; cursor:pointer;}
+.tab-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+.view{display:none;}
+.view.active{display:block;}
+
+/* Timeline */
+.timeline{display:flex; overflow-x:auto; gap:3px; padding:4px 0 10px;}
+.tl-seg{flex-shrink:0; min-width:64px; border-radius:8px; padding:8px 6px; text-align:center; font-size:.68rem; font-weight:700; cursor:pointer; border:2px solid transparent;}
+.tl-seg .n{display:block; font-size:.62rem; font-weight:600; opacity:.75; margin-top:2px;}
+.tl-seg.current{border-color:var(--text);}
+.legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
+.legend span{display:inline-flex; align-items:center; gap:5px; font-size:.72rem; color:var(--text-dim);}
+.dot{width:9px; height:9px; border-radius:3px; display:inline-block;}
+
+/* Week nav */
+.weeknav{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;}
+.navbtn{border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:10px; width:38px; height:38px; font-size:1rem; cursor:pointer; flex-shrink:0;}
+.navbtn:active{background:var(--bg-soft);}
+.weektitle{flex:1; text-align:center;}
+.weektitle .wk{font-weight:700; font-size:1rem;}
+.weektitle .dates{font-size:.75rem; color:var(--text-dim);}
+select#weekSelect{width:100%; margin-top:8px; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); font-size:.85rem;}
+
+.weeksummary{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0;}
+.wsum{background:var(--bg-soft); border-radius:10px; padding:8px 4px; text-align:center;}
+.wsum .v{font-weight:700; font-size:1.05rem;}
+.wsum .l{font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+
+.daylist{display:flex; flex-direction:column; gap:8px;}
+.daycard{border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card);}
+.dayhead{display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; user-select:none;}
+.dayhead .stripe{width:5px; align-self:stretch; border-radius:3px; flex-shrink:0; min-height:34px;}
+.dayhead .info{flex:1; min-width:0;}
+.dayhead .dname{font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-dim);}
+.dayhead .title{font-weight:700; font-size:.95rem; margin-top:1px;}
+.dayhead .meta{font-size:.75rem; color:var(--text-dim); margin-top:1px;}
+.dayhead .chev{font-size:.8rem; color:var(--text-dim); transition:transform .15s;}
+.dayhead.open .chev{transform:rotate(90deg);}
+.checkbox{width:22px; height:22px; border-radius:6px; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem; color:#fff;}
+.checkbox.done{background:var(--accent); border-color:var(--accent);}
+.daybody{display:none; padding:0 14px 14px 29px; border-top:1px solid var(--border); margin-top:0;}
+.daybody.open{display:block;}
+.setrow{display:flex; gap:8px; padding:7px 0; border-bottom:1px dashed var(--border); font-size:.85rem;}
+.setrow:last-of-type{border-bottom:none;}
+.setrow b{min-width:108px; flex-shrink:0; font-weight:700;}
+.setrow span{color:var(--text-dim);}
+.notebox{background:var(--bg-soft); border-radius:8px; padding:9px 11px; margin-top:10px; font-size:.8rem; color:var(--text-dim); line-height:1.5;}
+.notebox b{color:var(--text);}
+.methodtag{display:inline-block; margin-top:8px; font-size:.68rem; font-weight:700; padding:3px 8px; border-radius:6px; background:var(--bg-soft); color:var(--text-dim);}
+textarea.mynote{width:100%; margin-top:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); color:var(--text); padding:8px; font-size:.8rem; font-family:var(--font); resize:vertical; min-height:44px;}
+
+.discBadge{font-size:.62rem; font-weight:700; padding:2px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:.03em;}
+
+/* methodology cards */
+.methodcard{border-left:4px solid var(--accent); padding-left:12px; margin-bottom:16px;}
+.methodcard h3{margin-bottom:4px;}
+.methodcard .who{font-size:.75rem; color:var(--text-dim); font-weight:600; margin-bottom:6px;}
+.methodcard ul{margin:6px 0 0; padding-left:18px; font-size:.85rem; color:var(--text-dim); line-height:1.6;}
+
+.stravabox{display:flex; gap:12px; align-items:center; background:var(--accent-soft); border-radius:12px; padding:14px; margin-bottom:14px;}
+.stravabox .txt{flex:1; font-size:.82rem; color:var(--text);}
+.stravabox b{display:block; margin-bottom:2px;}
+
+.fbcard{border-left:4px solid var(--text-dim); background:var(--bg-soft); border-radius:10px; padding:10px 12px; margin-bottom:8px;}
+.fbcard .area{font-weight:700; font-size:.66rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; display:flex; align-items:center; gap:5px; color:var(--text-dim);}
+.fbcard .txt{font-size:.85rem; line-height:1.5; color:var(--text);}
+.fbcard.risco{border-left-color:var(--accent2);}
+.fbcard.risco .area{color:var(--accent2);}
+.fbcard.atencao{border-left-color:var(--brick);}
+.fbcard.atencao .area{color:var(--brick);}
+.fbcard.ok{border-left-color:var(--accent);}
+.fbcard.ok .area{color:var(--accent);}
+.fbcard.info{border-left-color:var(--text-dim);}
+.fbtarget{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:10px 0;}
+.fbtarget .t{background:var(--bg-soft); border-radius:10px; padding:8px; text-align:center;}
+.fbtarget .t .lab{font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+.fbtarget .t .bar{height:5px; border-radius:3px; background:var(--border); margin:5px 0 3px; overflow:hidden;}
+.fbtarget .t .bar i{display:block; height:100%; border-radius:3px;}
+.fbtarget .t .num{font-size:.72rem; color:var(--text-dim);}
+
+footer{text-align:center; font-size:.72rem; color:var(--text-dim); margin-top:30px;}
+
+/* Dados Garmin */
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:14px;}
+.kpi{background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow:var(--shadow);}
+.kpi .l{font-size:.68rem; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:.04em;}
+.kpi .v{font-size:1.5rem; font-weight:800; margin-top:2px;}
+.kpi .s{font-size:.7rem; color:var(--text-dim);}
+.chart svg{width:100%; height:auto; display:block;}
+.chart .ax{fill:var(--text-dim); font-size:10px;}
+.imp{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+.imp label{display:inline-block; padding:8px 14px; border-radius:10px; background:var(--accent); color:#fff; font-size:.82rem; font-weight:600; cursor:pointer;}
+.imp input{display:none;}
+.dtable{width:100%; border-collapse:collapse; font-size:.78rem;}
+.dtable th,.dtable td{text-align:left; padding:6px 4px; border-bottom:1px solid var(--border); white-space:nowrap;}
+.dtable th{color:var(--text-dim); font-weight:600;}
+.tscroll{overflow-x:auto;}
+.dtable.wrap th,.dtable.wrap td{white-space:normal; vertical-align:top;}
+.dtable.zt td small,.dtable.zt td .u{display:block; font-size:.68rem; color:var(--text-dim); font-weight:400; margin-top:1px; line-height:1.35;}
+.dtable.zt th{font-size:.66rem;}
+.dtable.wrap.nw td{white-space:nowrap;}
+.dtable.wrap.nw td:first-child{white-space:normal; min-width:84px;}
+.dtable.wrap.nw tr.hd td{border-bottom:0;}
+.subtabs{display:flex; gap:8px; margin:0 0 12px; overflow-x:auto;}
+.subtab{flex:1 1 0; display:flex; align-items:center; justify-content:center; gap:7px; padding:9px 10px; border-radius:10px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-dim); font-size:.85rem; font-weight:600; cursor:pointer; min-width:0;}
+.subtab i{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+.subtab.active{background:var(--bg-soft); color:var(--text); border-color:var(--text-dim);}
+.sheet{display:none;} .sheet.active{display:block;}
+.mstats{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:14px;}
+@media(min-width:720px){ .mstats{grid-template-columns:repeat(4,minmax(0,1fr));} }
+.ms{background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:11px 13px; box-shadow:var(--shadow); min-width:0;}
+.ms .l{font-size:.64rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim);}
+.ms .v{font-size:1.3rem; font-weight:700; margin-top:3px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;}
+.ms .v .of{font-size:.8rem; font-weight:600; color:var(--text-dim);}
+.ms .s{font-size:.72rem; color:var(--text-dim); margin-top:2px; line-height:1.35; overflow-wrap:anywhere;}
+.ms .bar{height:5px; background:var(--bg-soft); border-radius:3px; margin-top:8px; overflow:hidden;}
+.ms .bar i{display:block; height:100%; border-radius:3px;}
+.dtable.wrap.nw tr.dd td{white-space:normal; padding-top:0; padding-bottom:9px; color:var(--text-dim); font-size:.74rem; line-height:1.45;}
+/* ---- Painel (Visão geral) ---- */
+.rings{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+.ringcard{background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:12px 6px; text-align:center; box-shadow:var(--shadow); min-width:0;}
+.ringcard .lab{font-size:.64rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim);}
+.ringcard svg{width:100%; max-width:150px; height:auto; display:block; margin:6px auto 4px;}
+.ringcard .rv{font-size:34px; font-weight:800; fill:var(--text); letter-spacing:-.02em;}
+.ringcard .ru{font-size:17px; font-weight:700; fill:var(--text-dim);}
+.ringcard .st{font-size:.78rem; font-weight:700; color:var(--text);}
+.ringcard .sub{font-size:.66rem; color:var(--text-dim); margin-top:2px; line-height:1.35;}
+.ic{font-size:.7rem;}
+.asof{font-size:.7rem; color:var(--text-dim); margin:6px 2px 14px;}
+.hitem{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px dashed var(--border);}
+.hitem:last-of-type{border-bottom:none;}
+.hitem .ht{min-width:0; font-size:.85rem;}
+.hitem .ht span{color:var(--text-dim);}
+.hs{font-size:.74rem; color:var(--text-dim); margin-top:2px;}
+.tmrw{font-size:.8rem; margin:10px 0 0;}
+.hrow{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+.btn{border:1px solid var(--border); background:var(--bg-soft); color:var(--text); border-radius:10px; padding:8px 12px; font-size:.78rem; font-weight:600; cursor:pointer; font-family:var(--font);}
+.btn:active{background:var(--border);}
+.weekstrip{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px;}
+.wchip{position:relative; border:1px solid var(--border); border-radius:10px; background:var(--bg-soft); padding:7px 2px 6px; text-align:center; cursor:pointer; color:var(--text); font-family:var(--font); min-width:0;}
+.wchip.today{border-color:var(--text); box-shadow:0 0 0 1px var(--text) inset;}
+.wchip .d{display:block; font-size:.6rem; font-weight:700; text-transform:uppercase; color:var(--text-dim);}
+.wchip .b{display:block; height:4px; border-radius:2px; margin:6px 8px 5px;}
+.wchip .m{display:block; font-size:.7rem; font-weight:700;}
+.wchip.done::after{content:"✓"; position:absolute; top:2px; right:4px; font-size:.65rem; color:var(--good); font-weight:800;}
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)); gap:10px; margin-bottom:14px;}
+.tile{background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow:var(--shadow); min-width:0;}
+.tile .l{font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dim);}
+.tile .v{font-size:1.7rem; font-weight:800; margin-top:2px; letter-spacing:-.02em;}
+.tile .v small{font-size:.8rem; font-weight:600; color:var(--text-dim); margin-left:3px;}
+.tile .dl{font-size:.7rem; color:var(--text-dim); margin-top:2px;}
+.tile .sp{position:relative; height:34px; margin-top:8px;}
+.tile .sp svg{width:100%; height:100%; display:block; overflow:visible;}
+.sp-old{stroke:var(--rest); stroke-width:2; opacity:.55; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke;}
+.sp-new{stroke:var(--accent); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke;}
+.sp-dot{position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 2px var(--bg-card);}
+.chartgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr)); gap:18px;}
+.chartgrid h3{font-size:.72rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px;}
+.fine{font-size:.74rem; color:var(--text-dim); line-height:1.5;}
+.sech{font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin:22px 2px 8px;}
+/* ---- Gráficos ---- */
+.cwrap{position:relative;}
+.cwrap svg{width:100%; height:auto; display:block; outline:none; touch-action:pan-y;}
+.cwrap svg:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px;}
+.cwrap .gl{stroke:var(--border); stroke-width:1;}
+.cwrap .rf{stroke:var(--text-dim); stroke-width:1; opacity:.6;}
+.cwrap .ax{fill:var(--text-dim); font-size:10px;}
+.cwrap .val{fill:var(--text); font-size:11px; font-weight:700;}
+.cwrap .ln{stroke-width:2; stroke-linejoin:round; stroke-linecap:round;}
+.cwrap .cross{stroke:var(--text-dim); stroke-width:1; opacity:.7;}
+.cwrap .hit{fill:transparent;}
+.cwrap .mk{transition:opacity .1s;}
+.cwrap .mk.hl{opacity:.75;}
+.cap{display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:6px; font-size:.7rem; color:var(--text-dim);}
+.cap span{display:inline-flex; align-items:center; gap:5px;}
+.ck{display:inline-block; flex:none;}
+.ck-bar{width:10px; height:10px; border-radius:3px;}
+.ck-line{width:14px; height:2px; border-radius:1px;}
+.ck-ref{width:14px; height:0; border-top:1px solid var(--text-dim); opacity:.7;}
+.empty{font-size:.8rem; color:var(--text-dim);}
+details.tv{margin-top:8px; font-size:.78rem;}
+details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
+.tt{position:fixed; z-index:50; pointer-events:none; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:7px 9px; box-shadow:0 4px 14px rgba(0,0,0,.2); font-size:.72rem; color:var(--text-dim); max-width:250px;}
+.ttl{display:flex; align-items:center; gap:6px; line-height:1.55;}
+.ttl b{color:var(--text); font-size:.82rem;}
+.ttl.s{font-weight:600; margin-bottom:2px;}
+.ttk{display:inline-block; width:10px; height:3px; border-radius:2px; flex:none;}
+/* ---- Zonas de FC (laboratório) ---- */
+.labtop{position:relative; height:32px; margin-top:8px;}
+.labtop span{position:absolute; bottom:0; transform:translateX(-50%); font-size:.66rem; font-weight:700; color:var(--text); white-space:nowrap; text-align:center; line-height:1.1;}
+.labtop span::after{content:""; display:block; width:1px; height:9px; background:var(--text); margin:2px auto 0;}
+.labtop span.r{transform:translateX(-100%); text-align:right;}
+.labtop span.r::after{margin:2px 0 0 auto;}
+.labbar{display:flex; gap:2px; height:38px;}
+.lz{display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.85rem; min-width:0;}
+.lz:first-child{border-radius:6px 0 0 6px;}
+.lz:last-child{border-radius:0 6px 6px 0;}
+.labrule{position:relative; height:16px; margin:3px 0 10px;}
+.labrule span{position:absolute; transform:translateX(-50%); font-size:.62rem; color:var(--text-dim);}
+.zdot{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px;}
+.zrow{margin:12px 0;}
+.zl{font-size:.8rem; font-weight:700; margin-bottom:4px;}
+.zl span{color:var(--text-dim); font-weight:500; margin-left:8px;}
+.zbar{display:flex; gap:2px; height:24px;}
+.zs{display:block; height:100%; min-width:2px;}
+.zs:first-child{border-radius:4px 0 0 4px;}
+.zs:last-child{border-radius:0 4px 4px 0;}
+#splash{position:fixed; inset:0; z-index:9999; background:var(--bg); animation:splashOut 0s 3s forwards;}
+@keyframes splashOut{to{visibility:hidden}}
+.tab-btn[data-lock]{opacity:.85}
+.lockcard p{margin:0 0 4px}
+.ulock{position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,.5);}
+.ulock[hidden]{display:none}
+.ulbox{width:100%; max-width:380px; background:var(--bg-card); color:var(--text); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,.35);}
+.ulbox h2{margin:0 0 6px; font-size:1.05rem}
+.ulbox p{margin:0 0 12px; font-size:.82rem; color:var(--text-dim); line-height:1.45}
+.ulbox input[type=password]{width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:16px; font-family:var(--font);}
+.ulbox input[type=password]:focus{outline:2px solid var(--accent); outline-offset:1px}
+.ulmsg{min-height:1.25em; margin:8px 0 0; font-size:.8rem; color:var(--bad)}
+.ulmsg.ok{color:var(--text-dim)}
+.ulrow{display:flex; gap:8px; justify-content:flex-end; margin-top:12px}
+.btn.pri{background:var(--accent); color:#fff; border-color:var(--accent)}
+.btn[disabled]{opacity:.6; cursor:default}
+.ghost{position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none}
+</style>
+</head>
+<body>
+<div id="splash" aria-hidden="true"></div>
+<div class="wrap">
+
+  <div class="header">
+    <div>
+      <h1>🏊🚴🏃 Plano — Ironman 70.3 Vilamoura</h1>
+      <p style="margin:0;">Objetivo: terminar entre <b style="color:var(--text)">5h00–6h00</b> · 3 de abril de 2027</p>
+      <div class="badge-row" id="countdownRow"></div>
+    </div>
+  </div>
+
+  <div class="stravabox">
+    <div class="txt"><b>Consulta</b>Atualizado a 20/10 19:15. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-view="overview">Visão geral</button>
+    <button class="tab-btn" data-view="calendar">Calendário</button>
+    <button class="tab-btn" data-view="mod" data-lock="1">🔒 Modalidades</button>
+    <button class="tab-btn" data-view="dados" data-lock="1">🔒 Dados &amp; evolução</button>
+    <button class="tab-btn" data-view="method" data-lock="1">🔒 Metodologia</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="view active" id="view-overview">
+    <div class="rings" id="rings"></div>
+    <p class="asof" id="asof"></p>
+
+    <div class="card" id="hojeCard"></div>
+
+    <div class="card">
+      <h2 id="weekHead">Esta semana</h2>
+      <div class="weekstrip" id="weekStrip"></div>
+      <div class="fbtarget" id="fbTarget"></div>
+    </div>
+
+    <div class="card lockcard">
+      <h2>🔒 Tendências e resumo</h2>
+      <p>As tendências de recuperação, sono e carga, o resumo do que os dados mudam no treino e as abas Modalidades, Dados &amp; evolução e Metodologia abrem com a palavra-passe.</p>
+      <div class="hrow"><button class="btn pri" id="unlockBtn" type="button">Desbloquear</button></div>
+    </div>
+
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="view" id="view-calendar">
+    <div class="card">
+      <h2>Macrociclo — 25 semanas</h2>
+      <p>Toca numa fase para ires diretamente à primeira semana dessa fase no calendário.</p>
+      <div class="timeline" id="timeline"></div>
+      <div class="legend" id="phaseLegend"></div>
+    </div>
+
+    <div class="card">
+      <div class="weeknav">
+        <button class="navbtn" id="prevWeek">‹</button>
+        <div class="weektitle">
+          <div class="wk" id="weekTitle">Semana 1</div>
+          <div class="dates" id="weekDates"></div>
+        </div>
+        <button class="navbtn" id="nextWeek">›</button>
+      </div>
+      <select id="weekSelect"></select>
+      <div class="weeksummary" id="weekSummary"></div>
+      <p id="weekFocusNote" style="margin-top:4px;"></p>
+    </div>
+
+    <div class="daylist" id="dayList"></div>
+  </div>
+
+  <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
+</div>
+
+<script>window.__SNAP={"rec":{"data":"2026-10-20","idx":96,"hrv":78,"fcr":45},"sleep":{"data":"2026-10-20","sono":6.72,"score":81},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5}],"asof":"2026-10-20"};</script>
+<script>
+(function(){
+/* ============ DATE / RACE CONSTANTS ============ */
+const PLAN_START = new Date(2026,9,12); // Monday 12 Oct 2026
+const ROME_DATE = new Date(2027,2,14);  // Sun 14 Mar 2027
+const VILA_DATE = new Date(2027,3,3);   // Sat 3 Apr 2027
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+
+function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function fmt(d){ return d.toLocaleDateString('pt-PT',{day:'2-digit',month:'short'}); }
+function fmtFull(d){ return d.toLocaleDateString('pt-PT',{weekday:'long',day:'2-digit',month:'long'}); }
+
+const DOW = ['mon','tue','wed','thu','fri','sat','sun'];
+const DOWLABEL = {mon:'Segunda',tue:'Terça',wed:'Quarta',thu:'Quinta',fri:'Sexta',sat:'Sábado',sun:'Domingo'};
+
+/* ============ PHASES ============ */
+const PHASES = [
+  {id:'recovery0', name:'Recuperação', range:[1,1], color:'var(--rest)', soft:'var(--bg-soft)',
+    desc:'Recuperação ativa pós‑Maratona de Lisboa antes de abrir o ciclo de 70.3.'},
+  {id:'base', name:'Base / Técnica', range:[2,7], color:'var(--swim)', soft:'var(--swim-soft)',
+    desc:'Fase de Técnica (Lorang): eficiência de nado, volume aeróbio fácil (Plews 80/20), hipertrofia de base e, a partir da semana 3, sweet spot à quinta na bike (ponto fraco).'},
+  {id:'build1', name:'Build 1 — Velocidade', range:[8,13], color:'var(--bike)', soft:'var(--bike-soft)',
+    desc:'Fase de Velocidade/VO2max: intervalos mais duros em corrida/bike, limiar controlado em natação.'},
+  {id:'build2', name:'Build 2 — Específico', range:[14,19], color:'var(--run)', soft:'var(--run-soft)',
+    desc:'Fase de Força‑resistência: longos a crescer (durabilidade p/ Roma), bricks a ritmo de prova.'},
+  {id:'rometaper', name:'Taper Roma', range:[20,21], color:'var(--strength)', soft:'var(--strength-soft)',
+    desc:'Reduz corrida progressivamente; mantém qualidade curta em bike/natação.'},
+  {id:'romerace', name:'Semana Roma', range:[22,22], color:'var(--brick)', soft:'var(--brick-soft)',
+    desc:'Maratona de Roma (dom.) corrida a esforço claramente controlado — longo apoiado, não uma corrida a sério.'},
+  {id:'postrome', name:'Recuperação Roma', range:[23,23], color:'var(--rest)', soft:'var(--bg-soft)',
+    desc:'Recuperação real: sem corrida de qualidade, foco em soltar e retomar natação/bike fácil.'},
+  {id:'peak703', name:'Pico 70.3', range:[24,24], color:'var(--bike)', soft:'var(--bike-soft)',
+    desc:'Fase de Economização (Lorang): bricks a ritmo de prova, natação tipo águas‑abertas, começo do taper.'},
+  {id:'finaltaper', name:'Taper Final', range:[25,25], color:'var(--strength)', soft:'var(--strength-soft)',
+    desc:'Última redução de volume. Sábado 3 de abril — dia da prova.'},
+];
+function phaseOf(w){ return PHASES.find(p=>w>=p.range[0]&&w<=p.range[1]); }
+
+/* ============ WEEK TABLE ============ */
+// swim: array of days with quality swim this week (subset of mon/wed/fri)
+// deload: reduced-volume week; swimFocus: 3-swim week
+const WEEKTABLE = [
+ {n:1, swim:['wed','fri'], longRun:40, longBike:60, deload:true, focus:'Recuperação pós-maratona: terça bike fácil, quinta corrida muito fácil, sábado descanso total, domingo bike longo fácil.'},
+ {n:2, swim:['mon','wed','fri'], longRun:65, longBike:85, focus:'Reabertura do volume aeróbio + primeiras sessões técnicas de nado. Terça: teste de FTP (base para todas as zonas de potência do plano), com a corrida passada para quinta para chegares fresco ao teste. "Semana sim" — 3ª natação substitui o descanso de sexta.'},
+ {n:3, swim:['mon','wed'], longRun:70, longBike:100, focus:'Continuação da base aeróbia; foco em drills de nado. Quinta: entra o sweet spot na bike (ponto fraco).'},
+ {n:4, swim:['mon','wed','fri'], longRun:80, longBike:115, race:'supersprint', focus:'Triatlo Super Sprint no Campus, Quinta do Lago (domingo 8 nov) — ensaio geral, não prova a sério. Sábado fica leve para chegar fresco. Quinta: sweet spot curto na bike.'},
+ {n:5, swim:['mon','wed','fri'], longRun:55, longBike:85, swimFocus:true, focus:'Semana de foco em natação (Lance Watson) — 3 sessões, corrida/bike reduzidos.'},
+ {n:6, swim:['mon','wed','fri'], longRun:90, longBike:130, focus:'Pico de volume da base antes da descarga. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso. Quinta: sweet spot 3x15\' na bike.'},
+ {n:7, swim:['mon','wed'], longRun:60, longBike:80, deload:true, focus:'Descarga — fecha o bloco Base/Técnica. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
+ {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, focus:'Abre Build 1 — entram intervalos de VO2max/limiar controlado. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:9, swim:['mon','wed'], longRun:95, longBike:130, focus:'Progressão de intensidade controlada.'},
+ {n:10, swim:['mon','wed','fri'], longRun:100, longBike:145, focus:'Semana mais exigente do bloco antes do período natalício. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:11, swim:['mon','wed'], longRun:65, longBike:90, deload:true, focus:'Semana de Natal — volume reduzido por opção de vida, não por plano.'},
+ {n:12, swim:['mon','wed','fri'], longRun:100, longBike:150, focus:'Retoma de intensidade pós-festas. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:13, swim:['mon','wed'], longRun:70, longBike:100, deload:true, focus:'Descarga — fecha Build 1, transição para o bloco específico. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
+ {n:14, swim:['mon','wed','fri'], longRun:115, longBike:165, focus:'Abre Build 2 — foco em durabilidade (Roma) e potência de 70.3. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:15, swim:['mon','wed'], longRun:130, longBike:190, focus:'Longos a crescer — volume mais alto do ciclo começa aqui.'},
+ {n:16, swim:['mon','wed','fri'], longRun:100, longBike:140, swimFocus:true, focus:'2ª semana de foco em natação (a 1ª foi a semana 5) — bike/corrida reduzidos para compensar.'},
+ {n:17, swim:['mon','wed'], longRun:140, longBike:180, brickRun:60, focus:'Primeiro brick grande — bike+corrida ≈ 4h ao domingo.'},
+ {n:18, swim:['mon','wed','fri'], longRun:150, longBike:210, brickRun:75, focus:'Pico de volume absoluto do plano — brick de domingo ≈ 4h45. "Semana sim" (3ª natação) antes de aliviar para Roma.'},
+ {n:19, swim:['mon','wed'], longRun:100, longBike:140, deload:true, focus:'Descarga — fecha Build 2 e inicia o taper de Roma. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
+ {n:20, swim:['mon','wed'], longRun:85, longBike:100, focus:'Taper Roma (1/2) — corrida reduz, bike/natação mantêm qualidade curta.'},
+ {n:21, swim:['wed','fri'], longRun:55, longBike:65, focus:'Taper Roma (2/2) — última semana antes da maratona.'},
+ {n:22, swim:['wed'], longRun:0, longBike:45, race:'rome', focus:'Semana da Maratona de Roma (domingo) — esforço claramente controlado.'},
+ {n:23, swim:['wed'], longRun:0, longBike:45, deload:true, focus:'Recuperação real pós-Roma — zero corrida de qualidade.'},
+ {n:24, swim:['mon','wed'], longRun:50, longBike:90, brickRun:30, focus:'Último bloco específico, já em taper: brick curto e vivo a ritmo de prova ao domingo (bike 90\' + corrida 30\', 6 dias antes da prova). O volume cai face aos blocos anteriores porque vens de Roma há 2 semanas — apertar agora só traz fadiga. A 3.ª natação é a de águas abertas de sábado; sexta é descanso.'},
+ {n:25, swim:['wed'], longRun:0, longBike:40, race:'vila', focus:'Taper final — sábado 3 de abril é o dia da prova.'},
+];
+
+function weekDates(n){ const start=addDays(PLAN_START,(n-1)*7); return {start, end:addDays(start,6)}; }
+
+/* ============ WORKOUT GENERATORS ============ */
+function mins(m){ return m+"'"; }
+
+// Potência — FTP medido no teste MyWhoosh de 20/10/2026 (20' a ~158W → 95% ≈ 151W). Atualizar só este valor após cada novo teste: todos os watts do plano recalculam.
+const FTP = 151;
+// Semanas com teste/reteste de FTP à terça (dia mais fresco); a corrida da semana passa para quinta. 2 = teste inicial; 7, 13, 19 = fim de Base, Build 1 e Build 2 (semanas de descarga).
+const TEST_WEEKS = [2,7,13,19];
+function W(lo,hi){ return Math.round(FTP*lo)+'–'+Math.round(FTP*hi)+'W'; }
+
+// Ritmos de corrida calibrados com os dados do Garmin (out 2026): maratona de Lisboa 3:13:00 (4:33/km, FC 169), meia de Castro Marim 1:33:14 (4:25/km, FC 176), melhor meia 1:28:07 (4:10/km, 2025),
+// corridas fáceis de Set–Out a 5:32–5:56/km com FC 146–152 (a 5:00–5:20/km a FC média foi 159–167). Forma atual ≈ 3:13 maratona / ~1:33 meia. Recalibrar após qualquer prova/teste novo.
+const PACE = {rec:'5:45–6:15/km', easy:'5:25–5:50/km', long:'5:20–5:45/km', mod:'4:50–5:05/km', mp:'4:30–4:45/km', thr:'4:15–4:25/km', vo2:'4:05–4:12/km', str:'4:00–4:10/km', rome:'5:15–5:30/km'};
+
+function swimEasyWorkout(short){
+  if(short) return {title:'Técnica curta + soltar', duration:35, intensity:'Z1',
+    sets:[['Aquec.','200 fácil'],['Drills','8x50 alternando catch-up e sculling, 15" desc.'],['Principal','4x100 fácil contínuo, foco em rotação e respiração, 20" desc.'],['Retorno','150 fácil']],
+    note:'Natação de frequência, fácil de propósito: só uma natação por semana é de qualidade (a de quarta). Estas servem para técnica e para manter o contacto com a água sem acrescentar fadiga (Plews 80/20, Watson).', tag:'Técnica · Watson'};
+  return {title:'Aeróbio + técnica', duration:45, intensity:'Z1–Z2 (conversa fácil)',
+    sets:[['Aquec.','300 fácil + 4x50 drills (catch-up / mãos altas)'],['Principal','5x200 aeróbio contínuo a ritmo confortável (claramente mais lento que o ritmo de limiar/prova), 20" desc.'],['Técnica','4x50 pull com boia, foco na pega, 15" desc.'],['Retorno','150 fácil']],
+    note:'Natação aeróbia, fácil de propósito: só uma natação por semana é de qualidade (a de quarta). Esta constrói volume de nado sem competir com as sessões duras de corrida e bike (Plews 80/20).', tag:'Aeróbio · Plews 80/20'};
+}
+
+function swimWorkout(phase, wk, slot){
+  if((phase.id==='build1'||phase.id==='build2'||phase.id==='peak703') && (slot==='easy'||slot==='short')) return swimEasyWorkout(slot==='short');
+  if(phase.id==='recovery0') return {title:'Natação de recuperação', duration:35, intensity:'Z1 fácil',
+    sets:[['Aquecimento','300 liv. fácil + 4x50 técnica (mãos altas)'],['Principal','8x50 fácil, foco em soltar ombro/anca, 15\" desc.'],['Retorno','200 costas muito fácil']],
+    note:'Não é sessão de qualidade — o objetivo é reabituar o corpo à água sem impacto.', tag:'Recuperação'};
+  if(phase.id==='base'){
+    if(wk<=3) return {title:'Respiração & conforto na água', duration:32, intensity:'Z1 — sem pressão nenhuma',
+      sets:[['Aquec.','200m muito fácil, para sempre que precisares'],
+            ['Respiração','8x25m expiração completa debaixo de água (bolhas contínuas todo o comprimento), 25\" desc.'],
+            ['Bilateral','6x25m respiração bilateral a cada 3 braçadas, técnica > velocidade, 25\" desc.'],
+            ['Continuidade','4x50m fácil, pode parar a meio se precisares, foco em manter-te relaxado'],
+            ['Retorno','150m muito fácil']],
+      note:'Zero foco em metragem ou ritmo esta fase — o único objetivo é saíres da água mais confortável do que entraste. É absolutamente normal precisar de parar; a respiração vem antes de tudo.', tag:'Respiração · Lorang'};
+    if(wk<=5) return {title: wk%2? 'Técnica — catch & respiração':'Técnica — continuidade curta', duration:42, intensity:'Z1–Z2',
+      sets: wk%2? [['Aquec.','250m fácil + 6x25 respiração bilateral'],['Drills','6x50 catch-up, foco em expirar por completo antes de virar a cabeça, 25\" desc.'],['Principal','4x100 fácil-moderado, pode fracionar em 2x50 se precisares, 30\" desc.'],['Retorno','150 fácil']]
+                : [['Aquec.','250m fácil + 6x25 bilateral'],['Drills','8x25 sculling lento, foco em sentir a água, 15\" desc.'],['Principal','3x150 fácil contínuo, prioridade é não parar por falta de ar, não por velocidade, 30\" desc.'],['Retorno','150 fácil']],
+      note:'Começa a entrar mais metragem, mas continua a ser normal fracionar séries — a continuidade só se pede quando a respiração já estiver confortável, não antes.', tag:'Técnica · Lorang'};
+    return {title: wk%2? 'Técnica — catch & rotação':'Técnica — pull & drag', duration:48, intensity:'Z1–Z2',
+      sets: wk%2? [['Aquec.','350 liv. progressivo'],['Drills','6x50 catch-up + 6x50 fingertip drag, 15\" desc.'],['Principal','5x150 aeróbio fácil, foco em rotação do tronco e respiração bilateral, 20\" desc.'],['Retorno','200 fácil']]
+                : [['Aquec.','350 liv. progressivo'],['Drills','8x50 pull boia (sem paddle) foco em pega, 15\" desc.'],['Principal','4x200 aeróbio contínuo, últimos 50m de cada a acelerar ligeiro, 25\" desc.'],['Retorno','150 fácil']],
+      note:'Já com respiração mais confortável, o foco sobe para eficiência do gesto — ainda sem perseguir velocidade.', tag:'Técnica · Lorang'};
+  }
+  if(phase.id==='build1') return {title:'Limiar controlado', duration:45, intensity:'Z3 controlado (RPE 6–7/10)',
+    sets:[['Aquec.','400 fácil + 4x50 build'],['Séries','8x100 a ritmo de limiar controlado, 15\" desc.'],['Foco','Mantém a braçada — não deixes a técnica degradar sob fadiga'],['Retorno','200 fácil']],
+    note:'Esforço controlado, não máximo — princípio do limiar "sem esgotar" do método norueguês. É a única natação de qualidade da semana: as outras são fáceis (Plews 80/20).', tag:'Limiar · Bu'};
+  if(phase.id==='build2'||phase.id==='peak703') return {title:'Ritmo de prova (piscina)', duration:55, intensity:'Ritmo alvo 70.3',
+    sets:[['Aquec.','300 fácil + 4x50 build'],['Principal','2x600 contínuo a ritmo alvo de prova, 45\" desc.'],['Arranque','4x50 forte a simular saída em massa (últimas semanas)'],['Retorno','150 fácil']],
+    note:'Sessão de piscina — sensação de ritmo sustentável ~1900m. A prática de sighting e águas abertas propriamente ditas fica reservada para o fim de semana (ver sessão extra de sábado nestas semanas), já que não tens acesso a águas abertas durante a semana. É a única natação de qualidade da semana: as outras são fáceis (Plews 80/20).', tag:'Específico prova · Watson'};
+  if(phase.id==='rometaper') return {title:'Manutenção curta', duration:35, intensity:'Z1–Z2',
+    sets:[['Aquec.','200 fácil'],['Principal','6x100 fácil/moderado alternado, 15\" desc.'],['Retorno','150 fácil']],
+    note:'Manter a sensação de água sem acrescentar fadiga antes de Roma.', tag:'Taper'};
+  if(phase.id==='romerace'||phase.id==='postrome') return {title:'Soltar / técnica muito fácil', duration:30, intensity:'Z1',
+    sets:[['Sessão única','600–800m contínuo muito fácil, sem relógio, foco em respiração']],
+    note:'Recuperação ativa — nada de séries.', tag:'Recuperação'};
+  return {title:'Afinação final', duration:30, intensity:'Z1 + toques de ritmo',
+    sets:[['Aquec.','200 fácil'],['Toques','4x50 a ritmo de prova, 30\" desc.'],['Retorno','150 fácil']],
+    note:'Última semana — manter a sensação, zero fadiga acrescentada.', tag:'Taper'};
+}
+
+function runQualityWorkout(phase, wk){
+  const dl = !!(WEEKTABLE[wk-1] && WEEKTABLE[wk-1].deload);
+  if(phase.id==='postrome') return {title:'Trote de recuperação pós-Roma', duration:20, intensity:'Z1 muito fácil (mais lento que 5:45/km)',
+    sets:[['Sessão única','20\' muito fácil em terreno plano, sem strides nem ritmo — se as pernas estiverem pesadas, troca por uma caminhada de 30\'']],
+    note:'Segundo dia depois da maratona: serve só para soltar. Se houver dor muscular marcada ou qualquer dor articular, cancela e faz só a caminhada. Zero qualidade esta semana.', tag:'Recuperação'};
+  if(phase.id==='recovery0') return {title:'Corrida muito fácil', duration:30, intensity:'Z1 (mais lento que 5:20/km)',
+    sets:[['Sessão única','30\' contínuo muito fácil, terreno plano']], note:'Só para manter o hábito — zero qualidade esta semana.', tag:'Recuperação'};
+  if(phase.id==='base') return {title:'Fartlek aeróbio + strides', duration:45, intensity:'Z2 ('+PACE.easy+') + strides',
+    sets:[['Aquec.','10\' Z2 ('+PACE.easy+')'],['Principal','20\' fartlek livre: alterna 2\' moderado ('+PACE.mod+') / 2\' fácil ('+PACE.easy+')'],['Finisher','6x20" strides soltos (~'+PACE.str+'), recup. total'],['Retorno','5\' fácil']],
+    note:'Ainda sem trabalho duro estruturado — a fase de Técnica pede eficiência, não velocidade.', tag:'Base · Lorang'};
+  if(phase.id==='build1' && dl) return wk%2
+    ? {title:'Intervalos VO2max — descarga', duration:60, intensity:'5x800m rápido',
+       sets:[['Aquec.','15\' Z2 + 4 strides'],['Séries','5x800m a ~'+PACE.vo2+' (800 m em ~3:16–3:22), 2\' trote recup.'],['Retorno','15\' Z1']],
+       note:'Semana de descarga: mantém-se a intensidade e cortam-se as repetições (5 em vez de 8) — é assim que se alivia sem perder o estímulo (Plews).', tag:'Velocidade · Lorang'}
+    : {title:'Ritmo limiar — descarga', duration:60, intensity:'2x15\' limiar',
+       sets:[['Aquec.','15\' Z2'],['Séries','2x15\' a ritmo de limiar ('+PACE.thr+', RPE 6–7/10, FC ~170–175), 3\' trote entre'],['Retorno','15\' Z1']],
+       note:'Semana de descarga: mesma intensidade, menos repetições (2 em vez de 3).', tag:'Velocidade · Lorang'};
+  if(phase.id==='build1') return {title: wk%2? 'Intervalos VO2max':'Ritmo limiar', duration:80, intensity: wk%2? '8x800m rápido':'3x15\' limiar',
+    sets: wk%2? [['Aquec.','15\' Z2 + 4 strides'],['Séries','8x800m a ~'+PACE.vo2+' (800 m em ~3:16–3:22), 2\' trote recup.'],['Retorno','15\' Z1']]
+              : [['Aquec.','15\' Z2'],['Séries','3x15\' a ritmo de limiar ('+PACE.thr+', RPE 6–7/10, FC ~170–175), 3\' trote entre'],['Retorno','15\' Z1']],
+    note:'Fase de Velocidade/VO2max (Lorang) — aqui entra o trabalho duro real, sempre com dia fácil a seguir.'+(wk%2?' Se o horário da pista obrigar, podes fazer a força de manhã e esta série à tarde — um intervalo de 6h+ entre as duas é suficiente para não comprometer a qualidade do treino; só evita fazê-las seguidas sem descanso, porque aí as pernas chegam pesadas à pista. Mantém a força mais leve nesse dia (sem ires ao falhanço) para garantir pernas frescas para os 800m.':''), tag:'Velocidade · Lorang'};
+  if(phase.id==='build2') return {title:'Blocos a ritmo de 70.3 / maratona', duration: dl?70:100, intensity:'Segmentos a ritmo alvo',
+    sets:[['Aquec.','15\' Z2'],['Principal',(dl?3:5)+'x12\' a ritmo alvo de maratona relaxado (~'+PACE.mp+'), 2\' trote entre'],['Retorno','15\' Z1']],
+    note:'Duplo propósito: durabilidade para Roma e economia de corrida para o 70.3 — sempre controlado, nunca all-out.'+(dl?' Semana de descarga: 3 blocos em vez de 5, mesmo ritmo.':''), tag:'Força-resistência · Lorang'};
+  if(phase.id==='rometaper') return {title:'Afinação pré-Roma', duration:40, intensity:'Toques de ritmo',
+    sets:[['Aquec.','10\' Z2'],['Séries','4x5\' a ritmo de maratona relaxado ('+PACE.mp+'), 2\' fácil entre'],['Retorno','5\' fácil']],
+    note:'Mantém a perna viva sem acrescentar fadiga.', tag:'Taper'};
+  if(phase.id==='peak703') return {title:'Sharpening — corrida curta e viva', duration:35, intensity:'Toques a ritmo 70.3',
+    sets:[['Aquec.','10\' Z2'],['Séries','5x3\' a ritmo alvo de 70.3 ('+PACE.mp+'), 90" trote entre'],['Retorno','5\' fácil']],
+    note:'Fase de Economização — qualidade curta, sem volume extra.', tag:'Economização · Lorang'};
+  return {title:'Shakeout', duration:20, intensity:'Z1 + 3 strides',
+    sets:[['Sessão única','15\' Z1 muito fácil + 3x15\" strides soltos']], note:'Semana de prova.', tag:'Taper final'};
+}
+
+function longRunWorkout(phase, wk, durMin){
+  if(durMin===0) return {title:'Descanso de corrida', duration:0, intensity:'—', sets:[['Nota','Sem sessão de corrida esta semana — foco noutras disciplinas ou repouso total.']], note:'', tag:''};
+  let intensity='Z2 fácil ('+PACE.long+')';
+  let extra=[];
+  if(phase.id==='build2'){ intensity='Z2 + segmentos a ritmo de maratona relaxado'; extra=[['Dentro do longo','Últimos 20–30\' a ritmo de maratona relaxado ('+PACE.mp+', não all-out) nas semanas de maior volume']]; }
+  if(phase.id==='peak703'){ intensity='Z2 + toques a ritmo 70.3'; extra=[['Dentro do longo','2x10\' a ritmo alvo de 70.3 ('+PACE.mp+') embutidos no longo']]; }
+  return {title:'Longo de sábado', duration:durMin, intensity,
+    sets:[['Sessão','Contínuo em Z2 ('+PACE.long+'), conversação confortável — manda a FC (abaixo de ~158 bpm), não o relógio'], ...extra, ['Nutrição','Testa géis/hidratos como vais usar na prova a partir dos 60\'']],
+    note:'80% do teu volume deve sentir-se fácil (Plews) — se estás a lutar para manter o ritmo Z2, abranda mais.', tag:'Longo · Plews 80/20'};
+}
+
+function bikeQualityWorkout(phase, wk){
+  const dl = !!(WEEKTABLE[wk-1] && WEEKTABLE[wk-1].deload);
+  if(phase.id==='postrome') return {title:'Pedalada solta pós-Roma', duration:40, intensity:'Z1 (<'+Math.round(FTP*0.55)+'W)',
+    sets:[['Sessão única','40\' no rolo ou em estrada plana, cadência 90+ rpm, abaixo de '+Math.round(FTP*0.55)+'W, sem esforço']],
+    note:'Quarto dia depois da maratona: circulação sem impacto. Sem blocos nem intensidade.', tag:'Recuperação'};
+  if(phase.id==='recovery0') return {title:'Rolo muito fácil', duration:40, intensity:'Z1 (<'+Math.round(FTP*0.55)+'W)', sets:[['Sessão única','40\' cadência alta (90–95rpm), esforço mínimo (abaixo de '+Math.round(FTP*0.55)+'W)']], note:'Soltar as pernas.', tag:'Recuperação'};
+  if(phase.id==='base' && [3,4,6].includes(wk)){
+    // Intensidade na bike a partir da semana 3 (FTP 151W medido a 20/10): o ponto fraco é a bike, não a corrida. Semana 2 já passou/está feita — não mexer.
+    const ss = W(0.88,0.94), z2 = W(0.56,0.75);
+    const why = 'A bike é o teu ponto fraco (FTP 151W, com uma corrida já muito forte) e é aqui que o trabalho de intensidade dá mais retorno por hora (Lorang — atacar o ponto fraco individual). O resto da semana continua fácil (80/20, Plews) e o longo de domingo fica em Z2 para a durabilidade. Pedala a 85–95rpm nas séries (não a ~70). Se na manhã desta sessão a FC repouso estiver 8+ bpm acima do normal (ou 5+ bpm acima há duas manhãs seguidas) ou o HRV fora de "Balanced", faz 60\' de Z2 e deixa a sessão para outro dia.';
+    if(wk===3) return {title:'Sweet spot — introdução', duration:75, intensity:'2x12\' @ '+ss,
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','2x12\' sweet spot ('+ss+'), 5\' Z2 entre'],['Z2 extra','20\' Z2 ('+z2+')'],['Retorno','10\' Z1']],
+      note:why, tag:'Sweet spot · Lorang'};
+    if(wk===4) return {title:'Sweet spot — curto (super sprint no domingo)', duration:70, intensity:'2x10\' @ '+ss,
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','2x10\' sweet spot ('+ss+'), 5\' Z2 entre'],['Z2 extra','20\' Z2 ('+z2+')'],['Retorno','10\' Z1']],
+      note:'Fica 3 dias antes do super sprint: não ultrapasses o prescrito. '+why, tag:'Sweet spot · Lorang'};
+    if(wk===6) return {title:'Sweet spot — 3x15\'', duration:80, intensity:'3x15\' @ '+ss,
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','3x15\' sweet spot ('+ss+'), 5\' Z2 entre'],['Retorno','10\' Z1']],
+      note:why, tag:'Sweet spot · Lorang'};
+  }
+  if(phase.id==='base') return {title:'Endurance + técnica de pedalada', duration:60, intensity:'Z2',
+    sets:[['Aquec.','10\' Z1'],['Principal','40\' Z2 ('+W(0.56,0.75)+') com 5x2\' a cadência alta (100+rpm) intercalados'],['Retorno','10\' Z1']],
+    note:'Fase de Técnica — eficiência de pedalada antes de meter potência.', tag:'Base · Lorang'};
+  if(phase.id==='build1' && dl) return {title:'Sweet spot — descarga', duration:65, intensity:'2x15\' @ '+W(0.88,0.94),
+    sets:[['Aquec.','15\' Z2'],['Séries','2x15\' sweet spot ('+W(0.88,0.94)+'), 5\' Z2 entre'],['Retorno','15\' Z1']],
+    note:'Semana de descarga: mesma intensidade, menos repetições (2 em vez de 4).', tag:'Velocidade · Lorang'};
+  if(phase.id==='build1') return {title: wk%2?'Sweet spot':'VO2max bike', duration: wk%2?95:80, intensity: wk%2?'4x12\' @ 88–94% FTP':'6x4\' quase máximo',
+    sets: wk%2? [['Aquec.','15\' Z2'],['Séries','4x12\' sweet spot ('+W(0.88,0.94)+'), 5\' Z2 entre'],['Retorno','15\' Z1']]
+              : [['Aquec.','15\' Z2 + 3 arrancos'],['Séries','6x4\' quase máximo ('+W(1.06,1.20)+', RPE 8/10), 4\' Z1 entre'],['Retorno','15\' Z1']],
+    note:'Fase de Velocidade/VO2max — aqui sobe a intensidade real do ciclo.', tag:'Velocidade · Lorang'};
+  if(phase.id==='build2'||phase.id==='peak703'){
+    const reps = (phase.id==='peak703'||dl) ? 2 : 4; // taper e descarga: menos repetições, mesma intensidade
+    const dur = 15 + reps*20 + (reps-1)*5 + 10;
+    return {title:'Blocos a potência/ritmo de 70.3', duration:dur, intensity:reps+'x20\' a ritmo alvo de prova',
+      sets:[['Aquec.','15\' Z2'],['Principal',reps+'x20\' a esforço/potência alvo de 70.3 ('+W(0.75,0.82)+' com o FTP atual, RPE 6–7/10), 5\' Z2 entre'],['Retorno','10\' Z1']],
+      note:'Ensina o corpo ao esforço exato que vais segurar durante ~3h de bike no dia da prova.'+(reps===2?' Semana de descarga/taper: 2 blocos em vez de 4, mesma intensidade.':''), tag:'Específico prova · Blummenfelt/Bu'};
+  }
+  if(phase.id==='rometaper') return {title:'Manutenção curta', duration:45, intensity:'Z2 + 2x8\' limiar',
+    sets:[['Aquec.','12\' Z2'],['Séries','2x8\' limiar controlado ('+W(0.95,1.05)+'), 4\' Z1 entre'],['Retorno','10\' Z1']], note:'Mantém estímulo, reduz volume total.', tag:'Taper'};
+  return {title:'Ativação leve', duration:30, intensity:'Z1–Z2 + toques', sets:[['Sessão','20\' Z2 + 4x1\' a ritmo de prova, cadência alta']], note:'Semana de prova — só ativar.', tag:'Taper final'};
+}
+
+function longBikeWorkout(phase, wk, durMin, isBrick){
+  if(durMin===0) return {title:'Descanso de bike', duration:0, intensity:'—', sets:[['Nota','Sem bike longo esta semana.']], note:'', tag:''};
+  let intensity='Z2 fácil';
+  let extra=[];
+  if(phase.id==='build2') extra=[['Dentro do rolo','2x15\' a ritmo/potência de 70.3 ('+W(0.75,0.82)+') embutidos, resto Z2']];
+  if(phase.id==='peak703') extra=[['Dentro do rolo','2x15\' a ritmo de prova ('+W(0.75,0.82)+'), resto Z2 — é o ensaio final, sem acrescentar volume']];
+  let title = isBrick? 'Bike longo (parte 1 do brick)':'Longo de domingo';
+  let sets=[['Sessão','Contínuo em Z2 ('+W(0.56,0.75)+'), conversação confortável'], ...extra, ['Nutrição','Pratica a estratégia de géis/hidratos de bike da prova']];
+  if(isBrick) sets.push(['Últimos 20\'','Baixa ligeiramente a cadência/potência — prepara as pernas para saltar para a corrida logo a seguir']);
+  return {title, duration:durMin, intensity, sets, note: isBrick? 'Parte 1 de um brick — a corrida vem logo a seguir, sem grande pausa.':'80% fácil (Plews) — se a conversa fica difícil, abranda.', tag: isBrick?'Longo (brick) · Watson':'Longo · Plews 80/20'};
+}
+
+function ftpTestWorkout(wk){
+  const retest = !!wk && wk!==2;
+  return {title: retest ? 'Reteste de FTP — MyWhoosh (20min Test)' : 'Teste de FTP — MyWhoosh (20min Test)', duration:75, intensity:'Teste máximo controlado',
+    sets:[
+      ['Aquec.','20\' rampa progressiva, 45% → 65% FTP (atual/estimada)'],
+      ['Primers','3x1\' a 81% / 95% / 103% FTP, com 1\' a 50% FTP entre cada — ERG mode ligado, servem para ativar fibras rápidas, não para gastar pernas'],
+      ['Bloco livre','5\' free ride, ritmo confortável'],
+      ['Bloco fácil','10\' a 60% FTP'],
+      ['TESTE — 20\'','Free ride — esforço máximo que consigas MANTER constante do início ao fim, sem quebrar. Distribui o esforço, não dispares nos primeiros 5\''],
+      ['Retorno','10\' free ride bem fácil']
+    ],
+    note:'Workout "MyWhoosh FTP Test" na app — usa-o diretamente (ERG mode trata da precisão dos primers e a atividade sincroniza automaticamente para o Garmin). FTP ≈ 95% da potência média dos 20\' de teste — mesmo princípio do protocolo clássico Hunter Allen/Coggan, só com um aquecimento mais longo e primers calibrados. Mete uma FTP estimada na app antes de começar (os % dos primers dependem dela). Faz no rolo, sem interrupções — é o número que vai dar sentido real a todos os %FTP já referidos no plano (sweet spot, VO2max, blocos a ritmo de prova). '+(retest ? 'Reteste de fim de bloco: compara com o FTP atual do plano ('+FTP+'W) e diz ao Claude o resultado — se mudar, atualiza-se o valor e todos os watts do bloco seguinte recalculam. Se de manhã a FC de repouso estiver alta ou o HRV fora de "Balanced", adia 2–3 dias em vez de testar cansado.' : 'Resultado (20/10/2026): 20\' a ~158W → FTP ≈ 151W; as zonas de potência do plano já usam este valor.'), tag: retest ? 'Reteste · fim de bloco' : 'Teste · baseline'};
+}
+
+function brickRunWorkout(durMin){
+  return {title:'Corrida off-bike (brick)', duration:durMin, intensity:'Ritmo alvo 70.3 — aceita pernas pesadas no início',
+    sets:[['Transição','T2 simulada — muda sapatilhas em menos de 2\' após o bike'],
+          ['Corrida', durMin+'\' a ritmo alvo de 70.3 ('+PACE.mp+'), começando uns 10–15"/km mais lento; os primeiros 5–10\' vão parecer mais duros do que deviam — é normal, as pernas assentam'],
+          ['Nutrição','Pratica a estratégia de géis/hidratação de corrida da prova']],
+    note:'Ratio bike:corrida ≈ 2:1 a 3:1 (Lance Watson) — ensina as pernas a correr fresco depois de esforço prolongado de bike. É a sessão mais específica do plano para o dia da prova.', tag:'Brick · Watson'};
+}
+
+function strengthWorkout(phase, wk, which){
+  // which: 'A' (Tue, lower/posterior) or 'B' (Thu, upper/core/shoulder)
+  let block='hipertrofia';
+  if(phase.id==='build1') block='força';
+  if(phase.id==='build2') block='potência/manutenção';
+  if(['rometaper','romerace','postrome','peak703','finaltaper'].includes(phase.id)) block='manutenção mínima';
+
+  const sets = {
+    hipertrofia:{
+      A:[['Agach. goblet (KB24)','4x10'],['Peso morto romeno (DB20 x2)','4x10'],['Afundo búlgaro (DB15 x2)','3x10/perna'],['Prancha + anti-rotação','3x40\"']],
+      B:[['Remo unilateral (DB20)','4x10/lado'],['Press militar (DB15 x2)','3x10'],['Face pull / rotação externa (banda ou KB leve)','3x15'],['Dead bug','3x12/lado']]
+    },
+    força:{
+      A:[['Agach. goblet pesado (KB24)','5x6'],['Peso morto romeno (DB20 x2)','4x6'],['Step-up carregado (DB15 x2)','4x8/perna'],['Prancha lateral','3x35\"/lado']],
+      B:[['Remo unilateral pesado (DB20)','4x8/lado'],['Press militar (DB15 x2)','4x8'],['KB swing','4x15'],['Anti-rotação (Pallof c/ banda)','3x12/lado']]
+    },
+    'potência/manutenção':{
+      A:[['Agach. salto (peso corporal)','3x6'],['Peso morto romeno (DB15 x2)','3x8'],['Afundo caminhada (DB15 x2)','3x10/perna'],['Prancha','2x40\"']],
+      B:[['Remo unilateral (DB15)','3x10/lado'],['Press militar (DB12)','3x10'],['KB swing','3x15'],['Dead bug','2x10/lado']]
+    },
+    'manutenção mínima':{
+      A:[['Agach. goblet leve (KB16)','2x10'],['Prancha','2x30\"']],
+      B:[['Press militar leve (DB12)','2x10'],['Face pull/rotação externa','2x12']]
+    }
+  };
+  const label = block==='manutenção mínima' ? 'Manutenção — 15\'' : (which==='A'?'Força A — pernas/posterior':'Força B — tronco/ombro');
+  const dur = block==='manutenção mínima' ? 15 : (block==='potência/manutenção'?20:25);
+  let noteA = 'Cadeia posterior forte = melhor economia de corrida e proteção do joelho no ciclo de alto volume.';
+  if(which==='A' && phase.id==='build1' && wk%2) noteA += ' Por causa do horário da pista, podes fazer esta sessão de manhã e a série de corrida à tarde — com 6h+ de intervalo entre as duas não há problema; só não as faças seguidas sem descanso.';
+  return {title: label, duration:dur, intensity: block,
+    sets: sets[block][which], note: which==='B' ? 'Ombro/core reforçam a posição de nado e aero na bike — objetivo é reduzir lesão, não hipertrofia máxima aqui.' : noteA,
+    tag:'Hipertrofia/força', isStrength:true};
+}
+
+function restDayObj(){ return {title:'Descanso', duration:0, intensity:'—', sets:[['Recomendação','Dia totalmente livre — sono, mobilidade ligeira se quiseres, sem treino estruturado.']], note:'', tag:'', rest:true}; }
+
+// Semanas em que a adaptação específica a águas abertas (sighting, saída em massa, água fria/agitada) só é possível ao fim de semana.
+const OPEN_WATER_WEEKS = [14,15,16,17,18,24];
+function openWaterWorkout(){
+  return {title:'Águas abertas', duration:40, intensity:'Ritmo alvo 70.3', disc:'swim',
+    sets:[['Antes de entrar','Aquece 5\' em terra (mobilidade de ombro) — a água fria/agitada não perdoa um ombro frio'],
+          ['Sighting','8–10x levanta a cabeça a cada 6–8 braçadas para encontrar uma referência, sem perder o ritmo'],
+          ['Contínuo','20–25\' a ritmo sustentável de prova, o mais parecido possível com o contexto de Vilamoura (fato se o usares na prova)'],
+          ['Saída em massa','4x30\" forte a simular arranque em grupo, com recuperação a nadar fácil']],
+    note:'Sessão de fim de semana, extra às de piscina (só é possível fazer isto ao fim de semana). Prioriza-a sempre que tiveres acesso a águas abertas; se a semana vier pesada, faz esta em vez da natação de piscina mais fácil (segunda ou sexta) em vez de somares as duas. Se não tiveres acesso, fica só a piscina.', tag:'Águas abertas · Watson'};
+}
+
+/* ============ BUILD FULL WEEK ============ */
+function buildDayRaw(weekNum, dowKey){
+  const row = WEEKTABLE[weekNum-1];
+  const phase = phaseOf(weekNum);
+  const swimDays = row.swim;
+
+  if(weekNum===1){
+    // Semana 1 (logo a seguir à Maratona de Lisboa) — estrutura à parte, pedida à mão: pernas frescas para bike, não para corrida.
+    // NOTA: esta semana INVERTE os dias habituais (terça=bike em vez de corrida, quinta=corrida em vez de bike) — por isso o disc é marcado à mão, nunca pelo dia da semana.
+    if(dowKey==='tue'){ const b = bikeQualityWorkout(phase, weekNum); b.disc='bike'; return combine([b], 'tue'); }
+    if(dowKey==='thu'){ const r = runQualityWorkout(phase, weekNum); r.disc='run'; return combine([r], 'thu'); }
+    if(dowKey==='sat'){ const rd = restDayObj(); rd.disc='rest'; return combine([rd], 'sat'); }
+  }
+
+  if(TEST_WEEKS.includes(weekNum) && dowKey==='tue'){
+    // Teste de FTP passado para terça (pedido do Tiago): sem corrida de qualidade nem força de pernas antes, para um número fiável.
+    const f = ftpTestWorkout(weekNum); f.disc='bike';
+    f.note = (weekNum===2
+      ? 'Passado para terça (troca com a corrida, que fica à quinta): assim o teste vem sem corrida de qualidade nem força de pernas nos dias anteriores, com as pernas o mais frescas possível. '
+      : 'Reteste de fim de bloco, à terça (o dia mais fresco da semana) e numa semana de descarga: sem corrida de qualidade nem força de pernas nos dias anteriores. A corrida desta semana passa para quinta. ') + f.note;
+    return combine([f], 'tue');
+  }
+  if(TEST_WEEKS.includes(weekNum) && dowKey==='thu'){
+    // Corrida (+ força A na semana 2) passa para quinta (o FTP ocupou a terça). Semanas de descarga: sem força.
+    const r = runQualityWorkout(phase, weekNum); r.disc='run';
+    if(weekNum!==2) return combine([r], 'thu');
+    const st = strengthWorkout(phase, weekNum, 'A');
+    st.note += ' Esta semana a corrida e a força A ficam à quinta (o teste de FTP passou para terça): faz a força depois da corrida e mais leve (sem falhanço), porque o longo de sábado vem dois dias depois.';
+    return combine([r, st], 'thu');
+  }
+
+  if(dowKey==='wed'){
+    const s = swimWorkout(phase, weekNum); s.disc='swim';
+    return combine([s], 'wed');
+  }
+  if(dowKey==='mon' || dowKey==='fri'){
+    const isSwimDay = swimDays.includes(dowKey);
+    const slot = dowKey==='mon' ? 'easy' : 'short'; // Build 1/2: só a natação de quarta é de qualidade; segunda = aeróbia, sexta = técnica curta
+    if(isSwimDay){ const s=swimWorkout(phase, weekNum, slot); s.disc='swim'; return combine([s], dowKey); }
+    const rd = restDayObj(); rd.disc='rest';
+    return combine([rd], dowKey);
+  }
+  if(dowKey==='tue'){
+    const r = runQualityWorkout(phase, weekNum); r.disc='run';
+    if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([r], 'tue');
+    const st = strengthWorkout(phase, weekNum, 'A');
+    const hardTrackInterval = phase.id==='build1' && (weekNum%2===1); // mesma condição do runQualityWorkout que gera "Intervalos VO2max" (8x800m)
+    st.note += hardTrackInterval
+      ? ' Podes inverter a ordem — força de manhã, série de pista à tarde (por causa do horário) — sem problema: um intervalo de 6h+ entre as duas é suficiente para recuperar. Só mantém esta sessão mais leve/técnica (sem ires ao falhanço) para não levares pernas cansadas para o intervalo de VO2max.'
+      : ' Também podes inverter a ordem — força de manhã, corrida à tarde — sem problema; esta sessão de corrida é mais tolerante a alguma fadiga residual do que um dia de intervalos verdadeiros.';
+    return combine([r, st], 'tue');
+  }
+  if(dowKey==='thu'){
+    const b = bikeQualityWorkout(phase, weekNum); b.disc='bike';
+    if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([b], 'thu');
+    const st = strengthWorkout(phase, weekNum, 'B');
+    return combine([b, st], 'thu');
+  }
+  if(dowKey==='sat'){
+    if(row.race==='supersprint'){
+      return combine([{title:'Véspera — pernas leves', duration:20, intensity:'Muito fácil', sets:[['Sessão','15–20\' jog muito leve ou só mobilidade/ativação'],['Material','Prepara equipamento (fato, bike, sapatilhas, dorsal) com calma, não deixes para a manhã']], note:'É um super sprint — curto e sem grande desgaste, mas vale a pena chegar fresco para rentabilizar a experiência de transições e logística.', tag:'Pré-prova', disc:'run'}], 'sat');
+    }
+    if(row.race==='rome'){
+      return combine([{title:'🏁 Véspera da Maratona de Roma', duration:0, intensity:'Descanso pré-prova', sets:[['Nota','Sábado de repouso — a maratona é no DOMINGO. Só mobilidade leve e preparar material.']], note:'', tag:'Prova', disc:'rest'}], 'sat');
+    }
+    if(row.race==='vila'){
+      return combine([{title:'🏁 DIA DA PROVA — Ironman 70.3 Vilamoura', duration:0, intensity:'Vai correr bem', sets:[
+        ['Natação','1.9km — controla o início, não sigas o sprint de ninguém nos primeiros 300m'],
+        ['T1','Respira, veste com calma — perder 30\" aqui vale a pena se ganhares clareza'],
+        ['Bike','90km — esforço controlado (~'+W(0.75,0.82)+' com o FTP atual; ajusta ao FTP medido nos retestes), guarda pernas para os últimos 20km'],
+        ['T2','Muda de calçado, ajusta boné/óculos'],
+        ['Corrida','21.1km — alvo '+PACE.mp+'; começa mais lento do que "parece certo" (primeiros 3 km a ~4:45–4:50); se a FC passar dos ~170 nos primeiros 5 km, abranda. A maioria das quebras no 70.3 acontecem no km 12–16 por saída demasiado rápida'],
+        ['Objetivo de tempo','5h00–6h00 total — gere o esforço para lá chegar inteiro, não para bater recorde pessoal']
+      ], note:'É o teu primeiro 70.3 — terminar forte vale mais do que qualquer minuto poupado no início.', tag:'Dia da prova', disc:'brick'}], 'sat');
+    }
+    const lr = longRunWorkout(phase, weekNum, row.longRun); lr.disc='run';
+    if(OPEN_WATER_WEEKS.includes(weekNum)){
+      return combine([openWaterWorkout(), lr], 'sat');
+    }
+    return combine([lr], 'sat');
+  }
+  if(dowKey==='sun'){
+    if(row.race==='supersprint'){
+      return combine([{title:'🏁 Triatlo Super Sprint — Campus, Quinta do Lago', duration:50, intensity:'Prova — esforço livre, sem pressão de resultado', sets:[
+        ['Natação','distância curta (tipicamente ~400–750m) — usa para testar a saída e a respiração em ambiente de prova real, sem pânico'],
+        ['T1','pratica uma transição rápida — é tão treino como o resto'],
+        ['Bike','~10–20km — podes ir com esforço mais forte que o habitual, é curto'],
+        ['T2','transição rápida outra vez'],
+        ['Corrida','~2.5–5km — deixa as pernas falarem, serve de referência de ritmo'],
+        ['Objetivo','Não é a prova a sério (essa é o Vilamoura) — usa isto para testar material, nutrição pré-prova e nervos de competição em ambiente real']
+      ], note:'Excelente ensaio geral a 5 meses do Vilamoura — zero pressão de resultado, mas trata a logística (material, chegada, aquecimento) como se fosse a sério. É o primeiro teste real de transições.', tag:'Prova de preparação', disc:'brick'}], 'sun');
+    }
+    if(row.race==='rome'){
+      return combine([{title:'🏁 Maratona de Roma — corrida relaxada', duration:0, intensity:'Esforço controlado, não a sério', sets:[
+        ['Ritmo','Corre a '+PACE.rome+' (≈3h42–3h52 no total; o teu ritmo de maratona é 4:33) e FC média abaixo de ~158 — pensa "longo confortável", não PB'],
+        ['Mentalidade','Este não é um objetivo de tempo — é um longo espetacular com apoio e ambiente de prova, 3 semanas antes do 70.3'],
+        ['Nutrição','Aproveita para testar géis/hidratação em contexto de prova real, sem pressão de ritmo'],
+        ['Proteção','Se sentires qualquer sinal de sobrecarga, abranda ou caminha — o Vilamoura é a prioridade deste ciclo']
+      ], note:'Correr Roma "a sério" comprometeria o bloco final de 70.3 — a decisão consciente é sacrificar tempo em Roma para chegar fresco a Vilamoura.', tag:'Prova · gerida', disc:'run'}], 'sun');
+    }
+    if(row.race==='vila'){ const rd=restDayObj(); rd.disc='rest'; return combine([rd],'sun'); }
+    if(row.brickRun){
+      const bikeItem = longBikeWorkout(phase, weekNum, row.longBike, true); bikeItem.disc='bike';
+      const runItem = brickRunWorkout(row.brickRun); runItem.disc='brick';
+      return combine([bikeItem, runItem], 'sun');
+    }
+    const lb = longBikeWorkout(phase, weekNum, row.longBike, false); lb.disc='bike';
+    return combine([lb], 'sun');
+  }
+}
+
+function combine(items, dowKey){
+  const totalDur = items.reduce((a,b)=>a+(b.duration||0),0);
+  return {dow:dowKey, items, totalDur};
+}
+
+/* ============ ROTAÇÃO DE SAPATILHAS ============ */
+const SHOES = {
+  vomero:{name:'Vomero Plus', why:'fácil puro / muito lento'},
+  nova:{name:'Novablast 5', why:'dia a dia, ritmo moderado — nicho entre Zoomfly e Vomero'},
+  evosl:{name:'Evo SL', why:'séries de pista — substitui o Novablast nas séries'},
+  streak:{name:'Streakfly 1', why:'séries de pista, junto com Evo SL — a esgotar'},
+  alpha:{name:'Alphafly 3', why:'séries de pista, junto com Evo SL — a esgotar (evita em longos, dor no arco)'},
+  zoom:{name:'Zoomfly 6', why:'tempo/séries contínuas, ritmo de maratona/70.3, longos com ritmo, Roma, bricks'},
+  vaporfly:{name:'Vaporfly 4', why:'só provas ≤21km a partir de agora'},
+  race:{name:'Par de prova (a comprar)', why:'On Cloudboom Strike 2 — reservado para 70.3 e maratonas, quando comprado com boa promoção'}
+};
+// Séries de pista rodam entre Evo SL, Streakfly e Alphafly para lhes dar uso até saírem de rotação.
+function trackShoeKey(wk){ const r = wk % 3; return r===1 ? 'evosl' : (r===2 ? 'streak' : 'alpha'); }
+
+function shoeFor(it, k, wk){
+  if(it.isStrength || it.rest) return null;
+  const ph = phaseOf(wk).id, t = it.title||'';
+  if(t.indexOf('Corrida off-bike')===0) return wk===24 ? {key:'race', why:'ensaio geral com o par de prova + T2 simulada — não uses este par noutros treinos'} : {key:'zoom', why:'ritmo alvo 70.3 off-bike'};
+  if(t.indexOf('DIA DA PROVA')>=0) return {key:'race', why:'só o par de prova, já testado em pelo menos um longo ou brick'};
+  if(k==='sun' && t.indexOf('Maratona de Roma')>=0) return {key:'zoom', why:'corrida relaxada — poupa o par de prova (42km, mas não corrida a sério)'};
+  if(k==='sun' && t.indexOf('Super Sprint')>=0) return {key:'vaporfly', why:'prova ≤21km — entra na regra do Vaporfly 4'};
+  if(k==='sat' && t==='Véspera — pernas leves') return {key:'vomero'};
+  if(k==='sat' && t==='Longo de sábado'){
+    if(ph==='build2'||ph==='peak703') return {key:'zoom', why:'longo com segmentos a ritmo de maratona/70.3; se o fizeres todo em Z2, usa o Novablast 5'};
+    return {key:'nova', why:'longo fácil em Z2'};
+  }
+  if(wk===1 && k==='thu') return {key:'vomero'};
+  if(wk===1 && k==='tue') return null; /* semana 1: terça é bike */
+  if(TEST_WEEKS.indexOf(wk)>=0 && k==='tue') return null; /* semana de (re)teste de FTP: terça é bike */
+  if(TEST_WEEKS.indexOf(wk)>=0 && k==='thu') k = 'tue'; /* a corrida passou para quinta: mesmo par que teria à terça */
+  if(k==='tue'){
+    if(ph==='base') return {key:'nova', why:'fartlek aeróbio + strides'};
+    if(ph==='build1'){
+      if(wk%2) return {key:trackShoeKey(wk), why:'intervalos VO2max em pista (8x800m)'};
+      return {key:'zoom', why:'ritmo de limiar contínuo (3x15\')'};
+    }
+    if(['build2','rometaper','peak703'].indexOf(ph)>=0) return {key:'zoom'};
+    return {key:'vomero', why:'shakeout / recuperação'};
+  }
+  return null;
+}
+function buildDay(weekNum, dowKey){
+  const d = buildDayRaw(weekNum, dowKey);
+  d.items.forEach(it=>{
+    const sh = shoeFor(it, dowKey, weekNum); if(sh){ it.shoe = {name:SHOES[sh.key].name, why: sh.why || SHOES[sh.key].why, key:sh.key}; }
+    if(it.disc==='swim'){ it.note = (it.note? it.note+' ' : '') + 'Se tiveres aula com o treinador nesta sessão, segue sempre a indicação dele em vez do treino aqui prescrito.'; }
+  });
+  return d;
+}
+
+/* discipline detection for coloring */
+function disciplineOf(item, dowKey){
+  if(item.rest) return 'rest';
+  if(item.isStrength) return 'strength';
+  if(item.disc) return item.disc; // explicit tag set in buildDayRaw — always trust this over the day-of-week guess below
+  if(item.tag && item.tag.includes('Prova')) return 'brick';
+  if(dowKey==='wed'||((dowKey==='mon'||dowKey==='fri'))) return 'swim';
+  if(dowKey==='tue') return 'run';
+  if(dowKey==='thu') return 'bike';
+  if(item.tag && item.tag.startsWith('Brick')) return 'brick';
+  if(dowKey==='sat') return 'run';
+  if(dowKey==='sun') return 'bike';
+  return 'rest';
+}
+const DISC_LABEL = {swim:'Natação', bike:'Bike', run:'Corrida', strength:'Força', rest:'Descanso', brick:'Brick/Prova'};
+
+/* ============ STATE ============ */
+let currentWeek = 1;
+{
+  const diffDays = Math.round((TODAY - PLAN_START)/86400000);
+  if(diffDays>=0){ currentWeek = Math.min(25, Math.max(1, Math.floor(diffDays/7)+1)); }
+}
+let openDay = null;
+
+function loadDone(){ try{ return JSON.parse(localStorage.getItem('plan70_done')||'{}'); }catch(e){ return {}; } }
+function saveDone(obj){ try{ localStorage.setItem('plan70_done', JSON.stringify(obj)); }catch(e){} }
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem('plan70_notes')||'{}'); }catch(e){ return {}; } }
+function saveNotes(obj){ try{ localStorage.setItem('plan70_notes', JSON.stringify(obj)); }catch(e){} }
+
+/* ============ RENDER: TIMELINE (overview) ============ */
+function renderTimeline(){
+  const tl = document.getElementById('timeline');
+  tl.innerHTML='';
+  PHASES.forEach(p=>{
+    const seg = document.createElement('div');
+    seg.className='tl-seg'+(currentWeek>=p.range[0]&&currentWeek<=p.range[1]?' current':'');
+    seg.style.background = p.soft;
+    seg.style.color = p.color;
+    const span = p.range[1]-p.range[0]+1;
+    seg.style.minWidth = (span*22)+'px';
+    seg.innerHTML = p.name+'<span class="n">S'+p.range[0]+(p.range[1]!==p.range[0]?'–'+p.range[1]:'')+'</span>';
+    seg.onclick=()=>{ currentWeek=p.range[0]; switchView('calendar'); renderCalendar(); };
+    tl.appendChild(seg);
+  });
+  const legend = document.getElementById('phaseLegend');
+  legend.innerHTML = PHASES.map(p=>'<span><span class="dot" style="background:'+p.color+'"></span>'+p.name+'</span>').join('');
+
+  const list = document.getElementById('phaseSummaryList');
+  if(list) list.innerHTML = PHASES.map(p=>{
+    return '<div style="padding:10px 0; border-bottom:1px solid var(--border);"><h3 style="color:'+p.color+'">'+p.name+' <span style="color:var(--text-dim); font-weight:500; font-size:.78rem;">· semana '+p.range[0]+(p.range[1]!==p.range[0]?'–'+p.range[1]:'')+'</span></h3><p style="margin-top:4px;">'+p.desc+'</p></div>';
+  }).join('');
+
+  // countdown badges
+  const days703 = Math.round((VILA_DATE-TODAY)/86400000);
+  const daysRome = Math.round((ROME_DATE-TODAY)/86400000);
+  document.getElementById('countdownRow').innerHTML =
+    '<span class="badge accent2">🏁 Vilamoura '+(days703>0?'em '+days703+' dias':days703===0?'é hoje':'já passou')+'</span>'+
+    '<span class="badge accent">🏃 Roma '+(daysRome>0?'em '+daysRome+' dias':daysRome===0?'é hoje':'já passou')+'</span>'+
+    '<span class="badge">Semana atual: '+currentWeek+'/25</span>';
+}
+
+/* ============ RENDER: CALENDAR ============ */
+function populateWeekSelect(){
+  const sel = document.getElementById('weekSelect');
+  sel.innerHTML = WEEKTABLE.map(row=>{
+    const d = weekDates(row.n);
+    const p = phaseOf(row.n);
+    return '<option value="'+row.n+'">Semana '+row.n+' · '+fmt(d.start)+'–'+fmt(d.end)+' · '+p.name+'</option>';
+  }).join('');
+  sel.onchange = ()=>{ currentWeek=parseInt(sel.value); renderCalendar(); };
+}
+
+function shoeLine(day){
+  const names=[]; day.items.forEach(it=>{ if(it.shoe && names.indexOf(it.shoe.name)<0) names.push(it.shoe.name); });
+  return names.length? '👟 '+names.join(' / ') : '';
+}
+function renderCalendar(){
+  const row = WEEKTABLE[currentWeek-1];
+  const phase = phaseOf(currentWeek);
+  const d = weekDates(currentWeek);
+  document.getElementById('weekTitle').textContent = 'Semana '+currentWeek+' — '+phase.name;
+  document.getElementById('weekDates').textContent = fmt(d.start)+' – '+fmt(d.end)+(row.deload?' · Descarga':'')+(row.swimFocus?' · Foco natação':'');
+  document.getElementById('weekSelect').value = currentWeek;
+  document.getElementById('weekFocusNote').textContent = row.focus;
+  document.querySelectorAll('#timeline .tl-seg').forEach((s,i)=>{ const p=PHASES[i]; s.classList.toggle('current', !!p && currentWeek>=p.range[0] && currentWeek<=p.range[1]); });
+
+  // summary
+  let hSwim=0,hBike=0,hRun=0,hStr=0;
+  DOW.forEach(k=>{
+    const day = buildDay(currentWeek,k);
+    day.items.forEach(it=>{
+      const disc = disciplineOf(it,k);
+      if(disc==='swim') hSwim+=it.duration;
+      else if(disc==='bike') hBike+=it.duration;
+      else if(disc==='run') hRun+=it.duration;
+      else if(disc==='strength') hStr+=it.duration;
+      else if(disc==='brick'){ hRun+=it.duration; }
+    });
+  });
+  const totalH = ((hSwim+hBike+hRun+hStr)/60).toFixed(1);
+  document.getElementById('weekSummary').innerHTML =
+    '<div class="wsum"><div class="v">'+totalH+'h</div><div class="l">Total</div></div>'+
+    '<div class="wsum"><div class="v" style="color:var(--swim)">'+Math.round(hSwim)+'\'</div><div class="l">Natação</div></div>'+
+    '<div class="wsum"><div class="v" style="color:var(--bike)">'+Math.round(hBike)+'\'</div><div class="l">Bike</div></div>'+
+    '<div class="wsum"><div class="v" style="color:var(--run)">'+Math.round(hRun)+'\'</div><div class="l">Corrida</div></div>';
+
+  const done = loadDone();
+  const notes = loadNotes();
+  const dayList = document.getElementById('dayList');
+  dayList.innerHTML='';
+  DOW.forEach((k,idx)=>{
+    const dateObj = addDays(d.start, idx);
+    const day = buildDay(currentWeek,k);
+    const card = document.createElement('div');
+    card.className='daycard';
+    let bodyHtml='';
+    let headTitleParts=[];
+    day.items.forEach((it,i)=>{
+      const disc = disciplineOf(it,k);
+      headTitleParts.push(it.title+(it.duration?' · '+it.duration+'\'':''));
+      if(it.duration===0 && !it.rest && !it.sets.some(s=>s[0]!=='Nota')){ /* zero-duration marker like race/rest placeholders still show sets */ }
+      bodyHtml += '<div style="margin-top:'+(i>0?'14px':'0')+';">';
+      bodyHtml += '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span class="discBadge" style="background:var(--'+disc+'-soft, var(--bg-soft)); color:var(--'+disc+')">'+DISC_LABEL[disc]+'</span>'+(it.duration?'<span style="font-size:.75rem; color:var(--text-dim);">'+it.duration+' min · '+it.intensity+'</span>':'');
+      bodyHtml += '</div>';
+      if(it.shoe) bodyHtml += '<div class="setrow"><b>👟 Sapatilhas</b><span><span style="color:var(--text); font-weight:700;">'+it.shoe.name+'</span> — '+it.shoe.why+'</span></div>';
+      it.sets.forEach(s=>{ bodyHtml += '<div class="setrow"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'; });
+      if(it.note) bodyHtml += '<div class="notebox"><b>Porquê: </b>'+it.note+'</div>';
+      if(it.tag) bodyHtml += '<span class="methodtag">'+it.tag+'</span>';
+      bodyHtml += '</div>';
+    });
+    const dayKey = currentWeek+'-'+k;
+    bodyHtml += '<textarea class="mynote" placeholder="Notas / resultado real deste treino..." data-key="'+dayKey+'">'+(notes[dayKey]||'')+'</textarea>';
+
+    const mainDisc = disciplineOf(day.items[0], k);
+    const stripeColor = 'var(--'+mainDisc+')';
+    const isDone = !!done[dayKey];
+    const isOpenNow = openDay===dayKey;
+
+    card.innerHTML =
+      '<div class="dayhead'+(isOpenNow?' open':'')+'" data-key="'+dayKey+'">'+
+        '<div class="stripe" style="background:'+stripeColor+'"></div>'+
+        '<div class="checkbox'+(isDone?' done':'')+'" data-check="'+dayKey+'">'+(isDone?'✓':'')+'</div>'+
+        '<div class="info"><div class="dname">'+DOWLABEL[k]+' · '+fmt(dateObj)+'</div><div class="title">'+headTitleParts.join(' + ')+'</div><div class="meta">'+(day.totalDur? day.totalDur+' min total':'')+(shoeLine(day)? (day.totalDur?' · ':'')+shoeLine(day):'')+'</div></div>'+
+        '<div class="chev">▸</div>'+
+      '</div>'+
+      '<div class="daybody'+(isOpenNow?' open':'')+'">'+bodyHtml+'</div>';
+    dayList.appendChild(card);
+  });
+
+  // wire interactions
+  dayList.querySelectorAll('.dayhead').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      if(e.target.closest('.checkbox')) return;
+      const key = el.getAttribute('data-key');
+      openDay = (openDay===key) ? null : key;
+      renderCalendar();
+    });
+  });
+  dayList.querySelectorAll('.checkbox').forEach(el=>{
+    el.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const key = el.getAttribute('data-check');
+      const d2 = loadDone();
+      d2[key] = !d2[key];
+      saveDone(d2);
+      renderCalendar();
+    });
+  });
+  dayList.querySelectorAll('.mynote').forEach(el=>{
+    el.addEventListener('blur',()=>{
+      const key = el.getAttribute('data-key');
+      const n2 = loadNotes();
+      n2[key] = el.value;
+      saveNotes(n2);
+    });
+    el.addEventListener('click', e=>e.stopPropagation());
+  });
+}
+
+/* ============ NAV / TABS ============ */
+function switchView(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+name));
+  try{ const ab=document.querySelector('.tab-btn.active'); if(ab&&ab.scrollIntoView) ab.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){}
+  if(name==='overview'){ try{ renderAll(); }catch(e){ console.error(e); } }
+}
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.lock){ if(window.openUnlock) window.openUnlock(); return; } switchView(b.dataset.view); }));
+const MODS_KEYS=['run','bike','swim'];
+function switchMod(name){
+  document.querySelectorAll('.subtab').forEach(b=>{ const on=b.dataset.mod===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); });
+  document.querySelectorAll('.sheet').forEach(x=>x.classList.toggle('active',x.id==='sheet-'+name));
+  try{ localStorage.setItem('mod',name); }catch(e){}
+}
+document.querySelectorAll('.subtab').forEach(b=>b.addEventListener('click',()=>switchMod(b.dataset.mod)));
+try{ const sm=localStorage.getItem('mod'); if(sm&&MODS_KEYS.includes(sm)) switchMod(sm); }catch(e){}
+document.getElementById('prevWeek').onclick=()=>{ if(currentWeek>1){ currentWeek--; openDay=null; renderCalendar(); } };
+document.getElementById('nextWeek').onclick=()=>{ if(currentWeek<25){ currentWeek++; openDay=null; renderCalendar(); } };
+
+/* ============ DADOS GARMIN (db) ============ */
+const DG={act:{},hea:{},db:null};
+const num=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
+/* ============ GRÁFICOS (motor próprio: barras, linhas, empilhado, anéis) ============ */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad2=n=>String(n).padStart(2,'0');
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function isoDate(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+function shortDate(ds){ return ds.slice(8,10)+'/'+ds.slice(5,7); }
+function longDate(ds){ return new Date(ds+'T12:00:00').toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short'}); }
+function dayRange(a,b){ const out=[]; const d=new Date(a+'T12:00:00'), e=new Date(b+'T12:00:00'); while(d<=e){ out.push(isoDate(d)); d.setDate(d.getDate()+1); } return out; }
+function sdOf(arr){ const v=arr.filter(x=>x!=null&&!isNaN(x)); if(v.length<3) return null; const m=v.reduce((s,x)=>s+x,0)/v.length; return Math.sqrt(v.reduce((s,x)=>s+(x-m)*(x-m),0)/(v.length-1)); }
+function hm(h){ const m=Math.round(h*60); return Math.floor(m/60)+'h'+pad2(m%60); }
+const nf=(v,d)=>Number(v).toFixed(d||0).replace('.',',');
+
+function ringSVG(frac,color,center,aria){
+  const c=2*Math.PI*50, f=clamp(frac,0,1);
+  return '<svg viewBox="0 0 120 120" role="img" aria-label="'+esc(aria)+'"><circle cx="60" cy="60" r="50" fill="none" stroke="'+color+'" stroke-opacity=".17" stroke-width="11"/>'+
+    (f>0.004?'<circle cx="60" cy="60" r="50" fill="none" stroke="'+color+'" stroke-width="11" stroke-linecap="round" stroke-dasharray="'+(c*f).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 60 60)"/>':'')+
+    '<text x="60" y="61" text-anchor="middle" dominant-baseline="central" class="rv">'+center+'</text></svg>';
+}
+function weekKey(ds){const d=new Date(ds+'T12:00:00');const wd=(d.getDay()+6)%7;d.setDate(d.getDate()-wd);return d.toISOString().slice(0,10);}
+function avgOf(arr){ const a=arr.filter(v=>v!=null && !isNaN(v)); return a.length? a.reduce((s,v)=>s+v,0)/a.length : null; }
+function daysAgo(ds){ return Math.round((TODAY - new Date(ds+'T00:00:00'))/86400000); }
+function paceToSec(p){ if(!p) return null; const m=p.match(/^(\d+):(\d+)/); return m? (+m[1]*60+ +m[2]) : null; }
+function isSwimAct(a){ return /swim/i.test(a.tipo); }
+function isBikeAct(a){ return /cycl|ride|bik/i.test(a.tipo); }
+function isRunAct(a){ return /running|jog/i.test(a.tipo); }
+
+function weekTargetMinutes(wk){
+  if(wk<1||wk>25) return null;
+  let t={swim:0,bike:0,run:0};
+  DOW.forEach(k=>{
+    const day = buildDay(wk,k);
+    day.items.forEach(it=>{
+      const disc = disciplineOf(it,k);
+      if(disc==='swim') t.swim+=it.duration||0;
+      else if(disc==='bike') t.bike+=it.duration||0;
+      else if(disc==='run') t.run+=it.duration||0;
+      else if(disc==='brick') t.run+=it.duration||0;
+    });
+  });
+  return t;
+}
+
+/* ============ ÍNDICE DE RECUPERAÇÃO (composto próprio) ============ */
+/* 50% HRV noturno + 25% FC de repouso + 25% sono (horas e score), cada um face à média dos 30 dias anteriores do próprio Tiago. Não é o índice da Garmin nem o da Whoop. */
+function recState(i){
+  return i>=67?{k:'good',lab:'Alta',ic:'▲',css:'var(--good)'}:i>=34?{k:'warn',lab:'Moderada',ic:'◆',css:'var(--warn)'}:{k:'bad',lab:'Baixa',ic:'▼',css:'var(--bad)'};
+}
+/* ============ SEMANA DO PLANO vs. FEITO ============ */
+function planPos(offset){
+  const diff=Math.round((TODAY-PLAN_START)/86400000)+offset;
+  if(diff<0||diff>=175) return null;
+  return {wk:Math.floor(diff/7)+1, k:DOW[diff%7], diff};
+}
+function weekProgress(){
+  const diff=Math.round((TODAY-PLAN_START)/86400000); if(diff<0) return null;
+  const wk=clamp(Math.floor(diff/7)+1,1,25), target=weekTargetMinutes(wk), wkStart=addDays(PLAN_START,(wk-1)*7), s0=isoDate(wkStart), s1=isoDate(addDays(wkStart,6));
+  const actual={swim:0,bike:0,run:0};
+  Object.values(DG.act).forEach(a=>{ if(a.data<s0||a.data>s1) return; const m=a.min||0; if(isSwimAct(a)) actual.swim+=m; else if(isBikeAct(a)) actual.bike+=m; else if(isRunAct(a)) actual.run+=m; });
+  return {wk,wkStart,target,actual,totT:target.swim+target.bike+target.run,totA:actual.swim+actual.bike+actual.run,phase:phaseOf(wk)};
+}
+function renderFeedbackTarget(){
+  const box=document.getElementById('fbTarget'); if(!box) return;
+  const wp=weekProgress(); if(!wp){ box.innerHTML=''; return; }
+  box.innerHTML='<div style="grid-column:1/-1; font-size:.75rem; color:var(--text-dim); margin-bottom:2px;">Semana '+wp.wk+' do plano · alvo vs. feito (desde '+fmt(wp.wkStart)+')</div>'+
+    [['swim','Natação','--swim'],['bike','Bike','--bike'],['run','Corrida','--run']].map(([key,label,cssvar])=>{
+      const tgt=wp.target[key]||0, act=Math.round(wp.actual[key]), pct=tgt?Math.min(100,Math.round(act/tgt*100)):0;
+      return '<div class="t"><div class="lab">'+label+'</div><div class="bar"><i style="width:'+pct+'%; background:var('+cssvar+')"></i></div><div class="num">'+act+'\' / '+tgt+'\'</div></div>';
+    }).join('');
+  const hd=document.getElementById('weekHead'); if(hd) hd.textContent='Esta semana · semana '+wp.wk+' — '+wp.phase.name;
+}
+
+/* ============ VISÃO GERAL ============ */
+function ringCard(label,svg,st,sub){ return '<div class="ringcard"><div class="lab">'+label+'</div>'+svg+'<div class="st">'+st+'</div><div class="sub">'+sub+'</div></div>'; }
+function renderRings(V,R){
+  const el=document.getElementById('rings'), cards=[], lastR=R.length?R[R.length-1]:null, lastV=V.length?V[V.length-1]:null;
+  if(lastR){ const st=recState(lastR.r.idx);
+    cards.push(ringCard('Recuperação',ringSVG(lastR.r.idx/100,st.css,lastR.r.idx+'<tspan class="ru">%</tspan>','Recuperação '+lastR.r.idx+' por cento, '+st.lab),
+      '<span class="ic" style="color:'+st.css+'">'+st.ic+'</span> '+st.lab,'HRV '+lastR.h.hrv+' ms · FC '+lastR.h.fcr+' bpm'+(daysAgo(lastR.data)>0?'<br>dados de '+shortDate(lastR.data):'')));
+  } else cards.push(ringCard('Recuperação',ringSVG(0,'var(--rest)','—','Recuperação sem dados'),'Sem dados','Importa HRV e FC de repouso'));
+  if(lastV){ const h=lastV.sono, m=Math.round(h*60), st=h>=7.5?['▲','Boa','var(--good)']:h>=6.5?['◆','Razoável','var(--warn)']:['▼','Curta','var(--bad)'];
+    cards.push(ringCard('Sono',ringSVG(h/8,'var(--sleep)',Math.floor(m/60)+'<tspan class="ru">h</tspan>'+pad2(m%60),'Sono '+hm(h)),
+      '<span class="ic" style="color:'+st[2]+'">'+st[0]+'</span> '+st[1],(lastV.score!=null?'score '+lastV.score+' · ':'')+'alvo 8 h'+(daysAgo(lastV.data)>0?'<br>dados de '+shortDate(lastV.data):'')));
+  } else cards.push(ringCard('Sono',ringSVG(0,'var(--rest)','—','Sono sem dados'),'Sem dados','Importa o CSV de saúde'));
+  const wp=weekProgress();
+  if(wp&&wp.totT>0){ const pct=Math.round(wp.totA/wp.totT*100);
+    cards.push(ringCard('Semana',ringSVG(wp.totA/wp.totT,'var(--accent)',pct+'<tspan class="ru">%</tspan>','Semana '+wp.wk+', '+pct+' por cento do alvo feito'),'Semana '+wp.wk+' · '+wp.phase.name,Math.round(wp.totA)+'\' de '+wp.totT+'\' planeados'));
+  } else cards.push(ringCard('Semana',ringSVG(0,'var(--rest)','—','Semana do plano'),'Plano por começar','arranca a '+fmt(PLAN_START)));
+  el.innerHTML=cards.join('');
+  const asof=document.getElementById('asof'), last=[lastV&&lastV.data].concat(Object.values(DG.act).map(a=>a.data)).filter(Boolean).sort().pop();
+  if(asof) asof.textContent=last?'Dados Garmin até '+shortDate(last)+'. Índice de recuperação = composto próprio (ver abaixo).':'Sem dados Garmin ainda — importa na aba «Dados & evolução».';
+}
+function openInCalendar(wk,k){
+  currentWeek=wk; openDay=wk+'-'+k; renderCalendar(); switchView('calendar');
+  setTimeout(()=>{ const h=document.querySelector('.dayhead.open'); if(h&&h.scrollIntoView) h.scrollIntoView({block:'center'}); },30);
+}
+function renderHoje(R){
+  const el=document.getElementById('hojeCard'), p=planPos(0);
+  if(!p){ const diff=Math.round((TODAY-PLAN_START)/86400000);
+    el.innerHTML='<h2>Hoje</h2><p>'+(diff<0?'O plano começa em <b style="color:var(--text)">'+(-diff)+' dia'+(-diff===1?'':'s')+'</b> ('+fmtFull(PLAN_START)+').':'Plano concluído — boa prova!')+'</p>'; return; }
+  const day=buildDay(p.wk,p.k), key=p.wk+'-'+p.k, done=!!loadDone()[key], rec=R.length?R[R.length-1]:null, phase=phaseOf(p.wk);
+  const items=day.items.map(it=>{ const disc=disciplineOf(it,p.k);
+    return '<div class="hitem"><span class="discBadge" style="background:var(--'+disc+'-soft, var(--bg-soft)); color:var(--'+disc+')">'+DISC_LABEL[disc]+'</span><div class="ht"><b>'+it.title+'</b>'+(it.duration?'<span> · '+it.duration+' min · '+(it.intensity||'')+'</span>':'')+(it.shoe?'<div class="hs">👟 '+it.shoe.name+'</div>':'')+'</div></div>'; }).join('');
+  let adv=''; if(rec&&daysAgo(rec.data)<=1&&!day.items.every(it=>it.rest)){ const st=recState(rec.r.idx);
+    adv='<div class="notebox"><b><span style="color:'+st.css+'">'+st.ic+'</span> '+st.lab+' ('+rec.r.idx+'%).</b> '+(st.k==='good'?'Faz a sessão como está no plano.':st.k==='warn'?'Faz o plano, mas se for sessão de qualidade e as pernas não responderem ao aquecimento, corta uma repetição.':'Troca o treino duro por um fácil (regra do Plews) e vê se a tendência melhora nos próximos 2–3 dias.')+'</div>'; }
+  const todayAct=Object.values(DG.act).filter(a=>a.data===isoDate(TODAY)&&(isSwimAct(a)||isBikeAct(a)||isRunAct(a)));
+  const gm=todayAct.length?'<p class="tmrw">Já no Garmin hoje: <b style="color:var(--text)">'+todayAct.map(a=>(isSwimAct(a)?'🏊':isBikeAct(a)?'🚴':'🏃')+' '+Math.round(a.min||0)+' min').join(' · ')+'</b></p>':'';
+  const t=planPos(1); let tm=''; if(t){ const td=buildDay(t.wk,t.k); tm='<p class="tmrw">Amanhã · '+DOWLABEL[t.k]+': <b style="color:var(--text)">'+td.items.map(i=>i.title).join(' + ')+'</b>'+(td.totalDur?' · '+td.totalDur+' min':'')+'</p>'; }
+  el.innerHTML='<h2>Hoje · '+DOWLABEL[p.k]+' '+fmt(TODAY)+'</h2><p style="margin:0 0 4px;">Semana '+p.wk+' — '+phase.name+(done?' · <b style="color:var(--good)">✓ feito</b>':'')+'</p>'+items+adv+gm+tm+
+    '<div class="hrow"><button class="btn" id="hojeOpen">Ver detalhe no calendário</button><button class="btn" id="hojeDone">'+(done?'Desmarcar como feito':'Marcar como feito ✓')+'</button></div>';
+  document.getElementById('hojeOpen').onclick=()=>openInCalendar(p.wk,p.k);
+  document.getElementById('hojeDone').onclick=()=>{ const d=loadDone(); d[key]=!d[key]; saveDone(d); renderCalendar(); renderAll(); };
+}
+function renderWeekStrip(){
+  const el=document.getElementById('weekStrip'), p=planPos(0);
+  if(!p){ el.innerHTML=''; return; }
+  const done=loadDone();
+  el.innerHTML=DOW.map(k=>{ const day=buildDay(p.wk,k), disc=disciplineOf(day.items[0],k), key=p.wk+'-'+k;
+    return '<button class="wchip'+(k===p.k?' today':'')+(done[key]?' done':'')+'" data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:var(--'+disc+')"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
+  el.querySelectorAll('.wchip').forEach(b=>b.addEventListener('click',()=>openInCalendar(+b.dataset.wk,b.dataset.k)));
+}
+/* ============ MODO PÚBLICO: só Calendário + anéis/hoje/semana ============ */
+const SNAP=window.__SNAP||{};
+(SNAP.acts||[]).forEach((a,i)=>{ DG.act['s'+i]=a; });
+function renderAll(){
+  const V=SNAP.sleep?[SNAP.sleep]:[], R=SNAP.rec?[{data:SNAP.rec.data,r:{idx:SNAP.rec.idx},h:{hrv:SNAP.rec.hrv,fcr:SNAP.rec.fcr}}]:[];
+  [()=>renderRings(V,R),()=>renderHoje(R),renderWeekStrip,renderFeedbackTarget].forEach(f=>{ try{ f(); }catch(e){ console.error(e); } });
+  const asof=document.getElementById('asof'); if(asof) asof.textContent=SNAP.asof?'Dados Garmin até '+shortDate(SNAP.asof)+'.':'Sem dados Garmin nesta versão.';
+}
+populateWeekSelect();
+renderTimeline();
+renderCalendar();
+renderAll();
+
+})();
+</script>
+<div class="ulock" id="ulock" hidden role="dialog" aria-modal="true" aria-labelledby="ulT">
+  <form class="ulbox" id="ulForm" autocomplete="on">
+    <h2 id="ulT">🔒 Desbloquear</h2>
+    <p>Tendências, Modalidades, Dados &amp; evolução e Metodologia. Depois de desbloqueado, este dispositivo lembra-se.</p>
+    <input class="ghost" type="text" name="username" autocomplete="username" value="plano703" tabindex="-1" aria-hidden="true">
+    <input type="password" id="ulPass" name="password" autocomplete="current-password" placeholder="Palavra-passe" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="ulmsg" id="ulMsg" role="alert"></div>
+    <div class="ulrow"><button type="button" class="btn" id="ulCancel">Cancelar</button><button type="submit" class="btn pri" id="ulGo">Desbloquear</button></div>
+  </form>
+</div>
+<script>(function () {
+  'use strict';
+  var $ = function (i) { return document.getElementById(i); };
+  var DBN = 'plano703', ST = 'k';
+  function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function idb() { return new Promise(function (res, rej) { var r = indexedDB.open(DBN, 1); r.onupgradeneeded = function () { r.result.createObjectStore(ST); }; r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+  function idbOp(mode, fn) { return idb().then(function (d) { return new Promise(function (res, rej) { var t = d.transaction(ST, mode), q = fn(t.objectStore(ST)); t.oncomplete = function () { d.close(); res(q && q.result); }; t.onerror = t.onabort = function () { d.close(); rej(t.error); }; }); }); }
+  function hideSplash() { var s = $('splash'); if (s) s.remove(); }
+
+  async function loadApp(priv) {
+    var r = await fetch('payload.bin', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('payload');
+    var buf = new Uint8Array(await r.arrayBuffer());
+    if (buf[0] !== 1) throw new Error('fmt');
+    var kl = (buf[1] << 8) | buf[2], k = buf.subarray(3, 3 + kl), iv = buf.subarray(3 + kl, 15 + kl), ct = buf.subarray(15 + kl);
+    var raw = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, priv, k);
+    var aes = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+    var gz = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aes, ct);
+    var html = await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    document.open(); document.write(html); document.close();
+  }
+  async function privFromPass(pass) {
+    var kr = await fetch('keys.json', { cache: 'no-cache' });
+    if (!kr.ok) throw new Error('nokeys');
+    var keys = await kr.json();
+    var base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass.normalize('NFKC')), 'PBKDF2', false, ['deriveKey']);
+    var aes = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(keys.wrap.salt), iterations: keys.wrap.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    var pk8 = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(keys.wrap.iv) }, aes, b64(keys.wrap.ct));
+    return crypto.subtle.importKey('pkcs8', pk8, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['decrypt']);
+  }
+
+  function msg(t, ok) { var m = $('ulMsg'); if (m) { m.textContent = t || ''; m.className = 'ulmsg' + (ok ? ' ok' : ''); } }
+  window.openUnlock = function () { var m = $('ulock'); if (!m) return; m.hidden = false; msg(''); setTimeout(function () { var p = $('ulPass'); if (p) p.focus(); }, 30); };
+  function closeUnlock() { var m = $('ulock'); if (m) m.hidden = true; }
+
+  async function onSubmit(ev) {
+    ev.preventDefault();
+    var pass = $('ulPass').value, btn = $('ulGo');
+    if (!pass) { msg('Escreve a palavra-passe.'); return; }
+    btn.disabled = true; msg('A desbloquear…', true);
+    var priv;
+    try { priv = await privFromPass(pass); }
+    catch (e) {
+      btn.disabled = false;
+      if (e && e.message === 'nokeys') msg('O desbloqueio ainda não está configurado neste site.');
+      else if (e && e.name === 'OperationError') msg('Palavra-passe errada.');
+      else msg('Não foi possível verificar agora. Tenta outra vez.');
+      return;
+    }
+    try { await idbOp('readwrite', function (s) { return s.put(priv, 'priv'); }); } catch (e) { /* sem persistência: pede de novo da próxima vez */ }
+    try { await loadApp(priv); }
+    catch (e) { btn.disabled = false; msg('Palavra-passe certa, mas não consegui abrir os dados cifrados. Tenta outra vez com rede.'); }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var f = $('ulForm'); if (f) f.addEventListener('submit', onSubmit);
+    var c = $('ulCancel'); if (c) c.addEventListener('click', closeUnlock);
+    var b = $('unlockBtn'); if (b) b.addEventListener('click', window.openUnlock);
+    var m = $('ulock'); if (m) m.addEventListener('click', function (e) { if (e.target === m) closeUnlock(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeUnlock(); });
+  });
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+
+  (async function () {
+    try {
+      var priv = await idbOp('readonly', function (s) { return s.get('priv'); });
+      if (priv) { await loadApp(priv); return; }
+    } catch (e) {
+      if (e && e.name === 'OperationError') { try { await idbOp('readwrite', function (s) { return s.delete('priv'); }); } catch (_) {} }
+    }
+    hideSplash();
+  })();
+})();
+</script>
+</body>
+</html>

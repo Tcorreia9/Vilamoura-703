@@ -1281,16 +1281,31 @@ renderAll();
   function idbOp(mode, fn) { return idb().then(function (d) { return new Promise(function (res, rej) { var t = d.transaction(ST, mode), q = fn(t.objectStore(ST)); t.oncomplete = function () { d.close(); res(q && q.result); }; t.onerror = t.onabort = function () { d.close(); rej(t.error); }; }); }); }
   function hideSplash() { var s = $('splash'); if (s) s.remove(); }
 
-  async function loadApp(priv) {
-    var r = await fetch('payload.bin', { cache: 'no-cache' });
-    if (!r.ok) throw new Error('payload');
-    var buf = new Uint8Array(await r.arrayBuffer());
+  /* abre um pacote cifrado (payload.bin ou dados.bin): RSA-OAEP -> AES-GCM -> gzip -> texto */
+  async function openBin(buf, priv) {
     if (buf[0] !== 1) throw new Error('fmt');
     var kl = (buf[1] << 8) | buf[2], k = buf.subarray(3, 3 + kl), iv = buf.subarray(3 + kl, 15 + kl), ct = buf.subarray(15 + kl);
     var raw = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, priv, k);
     var aes = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
     var gz = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aes, ct);
-    var html = await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    return new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  }
+  /* dados do Garmin publicados pela recolha automática (garmin_dados). Qualquer falha = usa só os dados embebidos. */
+  async function liveData(priv) {
+    try {
+      var r = await fetch('dados.bin', { cache: 'no-cache' });
+      if (!r.ok) return null;
+      var o = JSON.parse(await openBin(new Uint8Array(await r.arrayBuffer()), priv));
+      if (!o || o.v !== 1) return null;
+      return JSON.stringify(o).replace(/</g, '\\u003c').split(String.fromCharCode(0x2028)).join('\\u2028').split(String.fromCharCode(0x2029)).join('\\u2029');
+    } catch (e) { return null; }
+  }
+  async function loadApp(priv) {
+    var r = await fetch('payload.bin', { cache: 'no-cache' });
+    if (!r.ok) throw new Error('payload');
+    var pair = await Promise.all([openBin(new Uint8Array(await r.arrayBuffer()), priv), liveData(priv)]);
+    var html = pair[0], live = pair[1], anchor = '<script>window.__PWA=';
+    if (live && html.indexOf(anchor) >= 0) html = html.replace(anchor, function () { return '<script>window.__LIVE=' + live + ';<' + '/script>' + anchor; });
     document.open(); document.write(html); document.close();
   }
   async function privFromPass(pass) {

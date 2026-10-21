@@ -94,6 +94,8 @@ select#weekSelect{width:100%; margin-top:8px; padding:8px; border-radius:8px; bo
 .daylist{display:flex; flex-direction:column; gap:8px;}
 .daycard{border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-card);}
 .dayhead{display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; user-select:none;}
+.disclegend{display:flex; flex-wrap:wrap; gap:6px 14px; margin:0 2px 10px; font-size:.72rem; color:var(--text-dim);}
+.disclegend span{display:inline-flex; align-items:center; gap:5px;}
 .dayhead .stripe{width:5px; align-self:stretch; border-radius:3px; flex-shrink:0; min-height:34px;}
 .dayhead .info{flex:1; min-width:0;}
 .dayhead .dname{font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-dim);}
@@ -302,7 +304,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:56. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:58. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -357,6 +359,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
       <p id="weekFocusNote" style="margin-top:4px;"></p>
     </div>
 
+    <div class="disclegend" id="discLegend"></div>
     <div class="daylist" id="dayList"></div>
   </div>
 
@@ -922,6 +925,10 @@ function disciplineOf(item, dowKey){
   return 'rest';
 }
 const DISC_LABEL = {swim:'Natação', bike:'Bike', run:'Corrida', strength:'Força', rest:'Descanso', brick:'Brick/Prova'};
+/* Cores do separador do dia: uma cor por tipo de treino (na ordem em que aparecem); com 2+ treinos o separador reparte-se em partes iguais. */
+function discList(day,k){ const out=[]; day.items.forEach(it=>{ const d=disciplineOf(it,k); if(out.indexOf(d)<0) out.push(d); }); return out; }
+function discBar(day,k,dir){ const L=discList(day,k), n=L.length; if(n<2) return 'var(--'+(L[0]||'rest')+')';
+  return 'linear-gradient('+dir+','+L.map((d,i)=>'var(--'+d+') '+(i*100/n)+'%, var(--'+d+') '+((i+1)*100/n)+'%').join(',')+')'; }
 
 /* ============ STATE ============ */
 let currentWeek = 1;
@@ -1013,6 +1020,7 @@ function renderCalendar(){
     '<div class="wsum"><div class="v" style="color:var(--bike)">'+Math.round(hBike)+'\'</div><div class="l">Bike</div></div>'+
     '<div class="wsum"><div class="v" style="color:var(--run)">'+Math.round(hRun)+'\'</div><div class="l">Corrida</div></div>';
 
+  document.getElementById('discLegend').innerHTML = ['swim','bike','run','strength','brick'].map(x=>'<span><span class="dot" style="background:var(--'+x+')"></span>'+DISC_LABEL[x]+'</span>').join('')+'<span>Dois treinos no dia: o separador mostra as duas cores</span>';
   const done = loadDone();
   const notes = loadNotes();
   const dayList = document.getElementById('dayList');
@@ -1040,14 +1048,14 @@ function renderCalendar(){
     const dayKey = currentWeek+'-'+k;
     bodyHtml += '<textarea class="mynote" placeholder="Notas / resultado real deste treino..." data-key="'+dayKey+'">'+(notes[dayKey]||'')+'</textarea>';
 
-    const mainDisc = disciplineOf(day.items[0], k);
-    const stripeColor = 'var(--'+mainDisc+')';
+    const stripeColor = discBar(day, k, 'to bottom');
+    const stripeTitle = discList(day, k).map(x=>DISC_LABEL[x]).join(' + ');
     const isDone = !!done[dayKey];
     const isOpenNow = openDay===dayKey;
 
     card.innerHTML =
       '<div class="dayhead'+(isOpenNow?' open':'')+'" data-key="'+dayKey+'">'+
-        '<div class="stripe" style="background:'+stripeColor+'"></div>'+
+        '<div class="stripe" style="background:'+stripeColor+'" title="'+stripeTitle+'"></div>'+
         '<div class="checkbox'+(isDone?' done':'')+'" data-check="'+dayKey+'">'+(isDone?'✓':'')+'</div>'+
         '<div class="info"><div class="dname">'+DOWLABEL[k]+' · '+fmt(dateObj)+'</div><div class="title">'+headTitleParts.join(' + ')+'</div><div class="meta">'+(day.totalDur? day.totalDur+' min total':'')+(shoeLine(day)? (day.totalDur?' · ':'')+shoeLine(day):'')+'</div></div>'+
         '<div class="chev">▸</div>'+
@@ -1225,7 +1233,7 @@ function renderWeekStrip(){
   if(!p){ el.innerHTML=''; return; }
   const done=loadDone();
   el.innerHTML=DOW.map(k=>{ const day=buildDay(p.wk,k), disc=disciplineOf(day.items[0],k), key=p.wk+'-'+k;
-    return '<button class="wchip'+(k===p.k?' today':'')+(done[key]?' done':'')+'" data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:var(--'+disc+')"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
+    return '<button class="wchip'+(k===p.k?' today':'')+(done[key]?' done':'')+'" data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:'+discBar(day,k,'to right')+'"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
   el.querySelectorAll('.wchip').forEach(b=>b.addEventListener('click',()=>openInCalendar(+b.dataset.wk,b.dataset.k)));
 }
 /* ============ MODO PÚBLICO: só Calendário + anéis/hoje/semana ============ */

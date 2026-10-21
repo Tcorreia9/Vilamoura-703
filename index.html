@@ -304,7 +304,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Atualizado a 21/10 14:36. Dados Garmin até 21/10 (recolhidos a 21/10 às 14:26). 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 21/10 às 14:26. Dados Garmin até 21/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -1117,7 +1117,7 @@ document.getElementById('nextWeek').onclick=()=>{ if(currentWeek<25){ currentWee
 /* ============ DADOS GARMIN (db) ============ */
 const DG={act:{},hea:{},meta:{},db:null};
 const num=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
-/* Hora (Lisboa) a que a recolha automática foi buscar os dados ao Garmin: «21/10 às 14:26 · há 3 h» */
+/* Hora (Lisboa) da última corrida da recolha automática (repositório garmin_dados, estado.json): «21/10 às 14:26 · há 3 h» */
 function garminStamp(iso){
   const d=iso?new Date(iso):null; if(!d||isNaN(d)) return '';
   const p=Object.fromEntries(new Intl.DateTimeFormat('pt-PT',{timeZone:'Europe/Lisbon',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d).map(x=>[x.type,x.value]));
@@ -1215,7 +1215,7 @@ function renderRings(V,R){
   el.innerHTML=cards.join('');
   const asof=document.getElementById('asof'), last=[lastV&&lastV.data].concat(Object.values(DG.act).map(a=>a.data)).filter(Boolean).sort().pop();
   const gs=garminStamp(DG.meta.garmin&&DG.meta.garmin.atualizado_em);
-  if(asof) asof.textContent=last?'Dados Garmin até '+shortDate(last)+(gs?' · recolhidos do Garmin a '+gs:'')+'. Índice de recuperação = composto próprio (ver abaixo).':'Sem dados Garmin ainda — importa na aba «Dados & evolução».';
+  if(asof) asof.textContent=last?'Dados Garmin até '+shortDate(last)+(gs?' · última recolha automática a '+gs:'')+'. Índice de recuperação = composto próprio (ver abaixo).':'Sem dados Garmin ainda — importa na aba «Dados & evolução».';
 }
 function openInCalendar(wk,k){
   currentWeek=wk; openDay=wk+'-'+k; renderCalendar(); switchView('calendar');
@@ -1253,7 +1253,7 @@ function renderAll(){
   const V=SNAP.sleep?[SNAP.sleep]:[], R=SNAP.rec?[{data:SNAP.rec.data,r:{idx:SNAP.rec.idx},h:{hrv:SNAP.rec.hrv,fcr:SNAP.rec.fcr}}]:[];
   [()=>renderRings(V,R),()=>renderHoje(R),renderWeekStrip,renderFeedbackTarget].forEach(f=>{ try{ f(); }catch(e){ console.error(e); } });
   const gs=garminStamp(SNAP.garminAt);
-  const asof=document.getElementById('asof'); if(asof) asof.textContent=SNAP.asof?'Dados Garmin até '+shortDate(SNAP.asof)+(gs?' · recolhidos do Garmin a '+gs:'')+'.':'Sem dados Garmin nesta versão.';
+  const asof=document.getElementById('asof'); if(asof) asof.textContent=SNAP.asof?'Dados Garmin até '+shortDate(SNAP.asof)+(gs?' · última recolha automática a '+gs:'')+'.':'Sem dados Garmin nesta versão.';
 }
 populateWeekSelect();
 renderTimeline();

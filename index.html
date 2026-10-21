@@ -766,8 +766,9 @@ function buildDayRaw(weekNum, dowKey){
     const r = runQualityWorkout(phase, weekNum); r.disc='run';
     if(weekNum!==2) return combine([r], 'thu');
     const st = strengthWorkout(phase, weekNum, 'A');
-    st.note += ' Esta semana a corrida e a força A ficam à quinta (o teste de FTP passou para terça): faz a força depois da corrida e mais leve (sem falhanço), porque o longo de sábado vem dois dias depois.';
-    return combine([r, st], 'thu');
+    st.note += ' Esta semana a corrida e a força A ficam à quinta (o teste de FTP passou para terça). Ficou assim: força de manhã e corrida à tarde, com 6h+ de intervalo — chega para recuperar. Faz a força mais leve (sem falhanço), porque o longo de sábado vem dois dias depois, e entre as duas sessões come hidratos e proteína.';
+    r.note = (r.note ? r.note + ' ' : '') + 'À tarde, depois da força da manhã: o fartlek é aeróbio e tolera alguma fadiga nas pernas. Se sentires peso do romeno e dos afundos, faz os «moderados» no limite lento (5:05/km) e reduz para 4 strides.';
+    return combine([st, r], 'thu');
   }
 
   if(dowKey==='wed'){

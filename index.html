@@ -302,7 +302,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:48. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:56. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -634,6 +634,21 @@ const LONGQ = {3:[2,15,.76,.85,'tempo'], 6:[3,15,.76,.85,'tempo'],
   14:[2,20,.75,.82,'ritmo de prova'], 15:[3,20,.75,.82,'ritmo de prova'], 16:[2,20,.75,.82,'ritmo de prova'], 17:[2,20,.75,.82,'ritmo de prova'], 18:[3,20,.75,.82,'ritmo de prova'],
   24:[2,15,.75,.82,'ritmo de prova']};
 
+// Posição aero com as extensões de clip-on (curtas): exposição progressiva nas sessões de bloco; a potência na posição aero costuma ser 3–8 % menor no início e recupera com o treino.
+function addAero(it, wk, kind){
+  const ph = phaseOf(wk).id, t = it.title||''; let txt=null;
+  if(kind==='thu'){
+    if(/^Sweet spot/.test(t) && ph==='base') txt='Faz 1 dos blocos (ou 10\') nas extensões, cotovelos apoiados e pescoço relaxado. Nas primeiras semanas a potência na posição aero costuma ser 3–8 % menor do que nas mãos — é normal e recupera com o treino; se a potência cair mais ou a FC subir muito, volta às mãos.';
+    else if(/^Limiar bike/.test(t)) txt='Os últimos 2 dos 3 blocos nas extensões. Os 5\' de pausa fazem-se nas mãos.';
+    else if(/^Blocos/.test(t)) txt='Todos os blocos nas extensões — é a posição que vais ter durante ~3h30 na prova. Se o pescoço ou a zona lombar protestarem, faz pausas nas mãos e regista onde dói.';
+  } else if(kind==='sun' && LONGQ[wk]){
+    if(ph==='base') txt='Em troço plano e livre (sem grupo nem trânsito), faz 1 dos blocos nas extensões; no rolo, sem restrições.';
+    else if(ph==='build1') txt='Os blocos de sweet spot nas extensões, em troço plano e livre (sem grupo nem trânsito).';
+    else txt='Todos os blocos de ritmo de prova nas extensões — ensaia a posição, a nutrição e a postura da prova de uma só vez.';
+  }
+  if(txt) it.sets.push(['Posição aero', txt]);
+}
+
 function longBikeWorkout(phase, wk, durMin, isBrick){
   if(durMin===0) return {title:'Descanso de bike', duration:0, intensity:'—', sets:[['Nota','Sem bike longo esta semana.']], note:'', tag:''};
   let intensity='Z2 fácil';
@@ -779,7 +794,7 @@ function buildDayRaw(weekNum, dowKey){
     return combine([r, st], 'tue');
   }
   if(dowKey==='thu'){
-    const b = bikeQualityWorkout(phase, weekNum); b.disc='bike';
+    const b = bikeQualityWorkout(phase, weekNum); b.disc='bike'; addAero(b, weekNum, 'thu');
     if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([b], 'thu');
     const st = strengthWorkout(phase, weekNum, 'B');
     return combine([b, st], 'thu');
@@ -795,7 +810,7 @@ function buildDayRaw(weekNum, dowKey){
       return combine([{title:'🏁 DIA DA PROVA — Ironman 70.3 Vilamoura', duration:0, intensity:'Vai correr bem', sets:[
         ['Natação','1.9km — controla o início, não sigas o sprint de ninguém nos primeiros 300m'],
         ['T1','Respira, veste com calma — perder 30\" aqui vale a pena se ganhares clareza'],
-        ['Bike','90km (≈ 1 090 m de ganho) — esforço controlado, NP ~'+W(0.75,0.82,FTP_GOAL)+' com FTP '+FTP_GOAL+' W (ajusta ao FTP medido nos retestes). Sobe as 4 rampas principais (km 30–32, 42–43, 63–64, 75–76) a ≤ 100% do FTP e recupera nas descidas; guarda pernas para os últimos 20km'],
+        ['Bike','90km (≈ 1 090 m de ganho) — esforço controlado, NP ~'+W(0.75,0.82,FTP_GOAL)+' com FTP '+FTP_GOAL+' W (ajusta ao FTP medido nos retestes). Nas extensões nas zonas planas e nas descidas; nas mãos nas rampas (≥ 4–5 %) e nas curvas. Sobe as 4 rampas principais (km 30–32, 42–43, 63–64, 75–76) a ≤ 100% do FTP e recupera nas descidas; guarda pernas para os últimos 20km'],
         ['T2','Muda de calçado, ajusta boné/óculos'],
         ['Corrida','21.1km — alvo '+PACE.mp+'; começa mais lento do que "parece certo" (primeiros 3 km a ~4:45–4:50); se a FC passar dos ~170 nos primeiros 5 km, abranda. A maioria das quebras no 70.3 acontecem no km 12–16 por saída demasiado rápida'],
         ['Objetivo de tempo','5h00–6h00 total — gere o esforço para lá chegar inteiro, não para bater recorde pessoal']
@@ -828,11 +843,11 @@ function buildDayRaw(weekNum, dowKey){
     }
     if(row.race==='vila'){ const rd=restDayObj(); rd.disc='rest'; return combine([rd],'sun'); }
     if(row.brickRun){
-      const bikeItem = longBikeWorkout(phase, weekNum, row.longBike, true); bikeItem.disc='bike';
+      const bikeItem = longBikeWorkout(phase, weekNum, row.longBike, true); bikeItem.disc='bike'; addAero(bikeItem, weekNum, 'sun');
       const runItem = brickRunWorkout(row.brickRun); runItem.disc='brick';
       return combine([bikeItem, runItem], 'sun');
     }
-    const lb = longBikeWorkout(phase, weekNum, row.longBike, false); lb.disc='bike';
+    const lb = longBikeWorkout(phase, weekNum, row.longBike, false); lb.disc='bike'; addAero(lb, weekNum, 'sun');
     return combine([lb], 'sun');
   }
 }

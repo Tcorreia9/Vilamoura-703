@@ -16,8 +16,8 @@
 :root{
   --bg:#f7f5f1; --bg-card:#ffffff; --bg-soft:#eef1f6; --text:#1c2126; --text-dim:#5a6472;
   --border:#e1e5ea; --accent:#0d6e6e; --accent-soft:#e3f2f1; --accent2:#c1440e; --accent2-soft:#fbe9e0;
-  --swim:#0d6e6e; --bike:#c1440e; --run:#2050a0; --strength:#7a4fb5; --rest:#9aa3ad; --brick:#b8860b;
-  --swim-soft:#e3f2f1; --bike-soft:#fbe9e0; --run-soft:#e5edfb; --strength-soft:#f0e7fa; --brick-soft:#faf1dc;
+  --swim:#0d6e6e; --bike:#c1440e; --run:#2050a0; --strength:#d4163c; --taper:#7a4fb5; --rest:#9aa3ad; --brick:#b8860b;
+  --swim-soft:#e3f2f1; --bike-soft:#fbe9e0; --run-soft:#e5edfb; --strength-soft:#fde7ec; --taper-soft:#f0e7fa; --brick-soft:#faf1dc;
   --shadow: 0 1px 3px rgba(20,20,20,.08), 0 1px 2px rgba(20,20,20,.06);
   --good:#1f8a4c; --warn:#b7791f; --bad:#c0392b; --sleep:#5a54c7;
   --c-swim:#00918a; --c-bike:#c1440e; --c-run:#2557b5;
@@ -29,8 +29,8 @@
   :root:not([data-theme="light"]){
     --bg:#14171a; --bg-card:#1c2024; --bg-soft:#20262b; --text:#e8e9ea; --text-dim:#9aa3ac;
     --border:#2c3237; --accent:#3fbdb6; --accent-soft:#173634; --accent2:#e0824f; --accent2-soft:#3a2417;
-    --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
-    --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#2a2036; --brick-soft:#332a12;
+    --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#f0607a; --taper:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
+    --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#3a1820; --taper-soft:#2a2036; --brick-soft:#332a12;
     --shadow: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
     --good:#4cc38a; --warn:#e0b24f; --bad:#ef6a5b; --sleep:#9c97f2;
     --c-swim:#25a59d; --c-bike:#d9703a; --c-run:#5a8ae6;
@@ -41,8 +41,8 @@
 :root[data-theme="dark"]{
   --bg:#14171a; --bg-card:#1c2024; --bg-soft:#20262b; --text:#e8e9ea; --text-dim:#9aa3ac;
   --border:#2c3237; --accent:#3fbdb6; --accent-soft:#173634; --accent2:#e0824f; --accent2-soft:#3a2417;
-  --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
-  --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#2a2036; --brick-soft:#332a12;
+  --swim:#3fbdb6; --bike:#e0824f; --run:#6f9ce8; --strength:#f0607a; --taper:#b18fe8; --rest:#6b7480; --brick:#e0b24f;
+  --swim-soft:#173634; --bike-soft:#3a2417; --run-soft:#1a2436; --strength-soft:#3a1820; --taper-soft:#2a2036; --brick-soft:#332a12;
   --good:#4cc38a; --warn:#e0b24f; --bad:#ef6a5b; --sleep:#9c97f2;
     --c-swim:#25a59d; --c-bike:#d9703a; --c-run:#5a8ae6;
     --z1:#31507a; --z2:#3b639b; --z3:#4f86cf; --z4:#7aaaf0; --z5:#bcd6ff;
@@ -86,7 +86,7 @@ p{line-height:1.5; color:var(--text-dim); margin:6px 0;}
 .weektitle .dates{font-size:.75rem; color:var(--text-dim);}
 select#weekSelect{width:100%; margin-top:8px; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); font-size:.85rem;}
 
-.weeksummary{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0;}
+.weeksummary{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:12px 0;}
 .wsum{background:var(--bg-soft); border-radius:10px; padding:8px 4px; text-align:center;}
 .wsum .v{font-weight:700; font-size:1.05rem;}
 .wsum .l{font-size:.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
@@ -304,7 +304,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:58. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Atualizado a 21/10 12:00. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -392,7 +392,7 @@ const PHASES = [
     desc:'Fase de Velocidade/VO2max: intervalos mais duros em corrida/bike (VO2max e limiar na quinta, sweet spot no longo de domingo), limiar controlado em natação.'},
   {id:'build2', name:'Build 2 — Específico', range:[14,19], color:'var(--run)', soft:'var(--run-soft)',
     desc:'Fase de Força‑resistência: longos a crescer (durabilidade p/ Roma), subidas de prova e blocos a ritmo de 70.3 na bike, bricks a ritmo de prova.'},
-  {id:'rometaper', name:'Taper Roma', range:[20,21], color:'var(--strength)', soft:'var(--strength-soft)',
+  {id:'rometaper', name:'Taper Roma', range:[20,21], color:'var(--taper)', soft:'var(--taper-soft)',
     desc:'Reduz corrida progressivamente; mantém qualidade curta em bike/natação.'},
   {id:'romerace', name:'Semana Roma', range:[22,22], color:'var(--brick)', soft:'var(--brick-soft)',
     desc:'Maratona de Roma (dom.) corrida a esforço claramente controlado — longo apoiado, não uma corrida a sério.'},
@@ -400,7 +400,7 @@ const PHASES = [
     desc:'Recuperação real: sem corrida de qualidade, foco em soltar e retomar natação/bike fácil.'},
   {id:'peak703', name:'Pico 70.3', range:[24,24], color:'var(--bike)', soft:'var(--bike-soft)',
     desc:'Fase de Economização (Lorang): bricks a ritmo de prova, natação tipo águas‑abertas, começo do taper.'},
-  {id:'finaltaper', name:'Taper Final', range:[25,25], color:'var(--strength)', soft:'var(--strength-soft)',
+  {id:'finaltaper', name:'Taper Final', range:[25,25], color:'var(--taper)', soft:'var(--taper-soft)',
     desc:'Última redução de volume. Sábado 3 de abril — dia da prova.'},
 ];
 function phaseOf(w){ return PHASES.find(p=>w>=p.range[0]&&w<=p.range[1]); }
@@ -1018,7 +1018,8 @@ function renderCalendar(){
     '<div class="wsum"><div class="v">'+totalH+'h</div><div class="l">Total</div></div>'+
     '<div class="wsum"><div class="v" style="color:var(--swim)">'+Math.round(hSwim)+'\'</div><div class="l">Natação</div></div>'+
     '<div class="wsum"><div class="v" style="color:var(--bike)">'+Math.round(hBike)+'\'</div><div class="l">Bike</div></div>'+
-    '<div class="wsum"><div class="v" style="color:var(--run)">'+Math.round(hRun)+'\'</div><div class="l">Corrida</div></div>';
+    '<div class="wsum"><div class="v" style="color:var(--run)">'+Math.round(hRun)+'\'</div><div class="l">Corrida</div></div>'+
+    '<div class="wsum"><div class="v" style="color:var(--strength)">'+Math.round(hStr)+'\'</div><div class="l">Força</div></div>';
 
   document.getElementById('discLegend').innerHTML = ['swim','bike','run','strength','brick'].map(x=>'<span><span class="dot" style="background:var(--'+x+')"></span>'+DISC_LABEL[x]+'</span>').join('')+'<span>Dois treinos no dia: o separador mostra as duas cores</span>';
   const done = loadDone();

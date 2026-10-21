@@ -302,7 +302,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Atualizado a 20/10 19:26. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Atualizado a 21/10 11:48. Dados Garmin até 20/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -384,11 +384,11 @@ const PHASES = [
   {id:'recovery0', name:'Recuperação', range:[1,1], color:'var(--rest)', soft:'var(--bg-soft)',
     desc:'Recuperação ativa pós‑Maratona de Lisboa antes de abrir o ciclo de 70.3.'},
   {id:'base', name:'Base / Técnica', range:[2,7], color:'var(--swim)', soft:'var(--swim-soft)',
-    desc:'Fase de Técnica (Lorang): eficiência de nado, volume aeróbio fácil (Plews 80/20), hipertrofia de base e, a partir da semana 3, sweet spot à quinta na bike (ponto fraco).'},
+    desc:'Fase de Técnica (Lorang): eficiência de nado, volume aeróbio fácil (Plews 80/20), hipertrofia de base e, a partir da semana 3, a bike passa a 3 sessões por semana (pedalada fácil à segunda, sweet spot à quinta, longo de domingo com blocos de tempo) — é o ponto fraco e a meta é um FTP de 200 W.'},
   {id:'build1', name:'Build 1 — Velocidade', range:[8,13], color:'var(--bike)', soft:'var(--bike-soft)',
-    desc:'Fase de Velocidade/VO2max: intervalos mais duros em corrida/bike, limiar controlado em natação.'},
+    desc:'Fase de Velocidade/VO2max: intervalos mais duros em corrida/bike (VO2max e limiar na quinta, sweet spot no longo de domingo), limiar controlado em natação.'},
   {id:'build2', name:'Build 2 — Específico', range:[14,19], color:'var(--run)', soft:'var(--run-soft)',
-    desc:'Fase de Força‑resistência: longos a crescer (durabilidade p/ Roma), bricks a ritmo de prova.'},
+    desc:'Fase de Força‑resistência: longos a crescer (durabilidade p/ Roma), subidas de prova e blocos a ritmo de 70.3 na bike, bricks a ritmo de prova.'},
   {id:'rometaper', name:'Taper Roma', range:[20,21], color:'var(--strength)', soft:'var(--strength-soft)',
     desc:'Reduz corrida progressivamente; mantém qualidade curta em bike/natação.'},
   {id:'romerace', name:'Semana Roma', range:[22,22], color:'var(--brick)', soft:'var(--brick-soft)',
@@ -408,18 +408,18 @@ function phaseOf(w){ return PHASES.find(p=>w>=p.range[0]&&w<=p.range[1]); }
 const WEEKTABLE = [
  {n:1, swim:['wed','fri'], longRun:40, longBike:60, deload:true, focus:'Recuperação pós-maratona: terça bike fácil, quinta corrida muito fácil, sábado descanso total, domingo bike longo fácil.'},
  {n:2, swim:['mon','wed','fri'], longRun:65, longBike:85, focus:'Reabertura do volume aeróbio + primeiras sessões técnicas de nado. Terça: teste de FTP (base para todas as zonas de potência do plano), com a corrida passada para quinta para chegares fresco ao teste. "Semana sim" — 3ª natação substitui o descanso de sexta.'},
- {n:3, swim:['mon','wed'], longRun:70, longBike:100, focus:'Continuação da base aeróbia; foco em drills de nado. Quinta: entra o sweet spot na bike (ponto fraco).'},
- {n:4, swim:['mon','wed','fri'], longRun:80, longBike:115, race:'supersprint', focus:'Triatlo Super Sprint no Campus, Quinta do Lago (domingo 8 nov) — ensaio geral, não prova a sério. Sábado fica leve para chegar fresco. Quinta: sweet spot curto na bike.'},
+ {n:3, swim:['mon','wed'], longRun:70, longBike:100, focus:'Continuação da base aeróbia; foco em drills de nado. A bike passa a 3 sessões por semana (o FTP tem de chegar aos 200 W até Vilamoura): segunda pedalada de rolo fácil em dupla com a natação, quinta sweet spot 2x15\' e domingo com 2x15\' de tempo no longo.'},
+ {n:4, swim:['mon','wed','fri'], longRun:80, longBike:115, race:'supersprint', focus:'Triatlo Super Sprint no Campus, Quinta do Lago (domingo 8 nov) — ensaio geral, não prova a sério. Sábado fica leve para chegar fresco. Segunda: pedalada de rolo fácil; quinta: sweet spot curto na bike.'},
  {n:5, swim:['mon','wed','fri'], longRun:55, longBike:85, swimFocus:true, focus:'Semana de foco em natação (Lance Watson) — 3 sessões, corrida/bike reduzidos.'},
- {n:6, swim:['mon','wed','fri'], longRun:90, longBike:130, focus:'Pico de volume da base antes da descarga. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso. Quinta: sweet spot 3x15\' na bike.'},
+ {n:6, swim:['mon','wed','fri'], longRun:90, longBike:130, focus:'Pico de volume da base antes da descarga. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso. Quinta: sweet spot 3x20\' na bike; domingo: longo com 3x15\' de tempo.'},
  {n:7, swim:['mon','wed'], longRun:60, longBike:80, deload:true, focus:'Descarga — fecha o bloco Base/Técnica. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
- {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, focus:'Abre Build 1 — entram intervalos de VO2max/limiar controlado. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, focus:'Abre Build 1 — entram intervalos de VO2max/limiar controlado. Bike: quinta VO2max 5x4\' e domingo com 2x15\' de sweet spot, já com o FTP-alvo do bloco (165 W, a confirmar no reteste da semana 7). "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:9, swim:['mon','wed'], longRun:95, longBike:130, focus:'Progressão de intensidade controlada.'},
  {n:10, swim:['mon','wed','fri'], longRun:100, longBike:145, focus:'Semana mais exigente do bloco antes do período natalício. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:11, swim:['mon','wed'], longRun:65, longBike:90, deload:true, focus:'Semana de Natal — volume reduzido por opção de vida, não por plano.'},
  {n:12, swim:['mon','wed','fri'], longRun:100, longBike:150, focus:'Retoma de intensidade pós-festas. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:13, swim:['mon','wed'], longRun:70, longBike:100, deload:true, focus:'Descarga — fecha Build 1, transição para o bloco específico. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
- {n:14, swim:['mon','wed','fri'], longRun:115, longBike:165, focus:'Abre Build 2 — foco em durabilidade (Roma) e potência de 70.3. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:14, swim:['mon','wed','fri'], longRun:115, longBike:165, focus:'Abre Build 2 — foco em durabilidade (Roma) e potência de 70.3. Bike: entram as subidas de prova à quinta (as rampas de 1,3–1,8 km do percurso) e blocos a ritmo de prova no longo de domingo, com o FTP-alvo de 180 W. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:15, swim:['mon','wed'], longRun:130, longBike:190, focus:'Longos a crescer — volume mais alto do ciclo começa aqui.'},
  {n:16, swim:['mon','wed','fri'], longRun:100, longBike:140, swimFocus:true, focus:'2ª semana de foco em natação (a 1ª foi a semana 5) — bike/corrida reduzidos para compensar.'},
  {n:17, swim:['mon','wed'], longRun:140, longBike:180, brickRun:60, focus:'Primeiro brick grande — bike+corrida ≈ 4h ao domingo.'},
@@ -440,9 +440,21 @@ function mins(m){ return m+"'"; }
 
 // Potência — FTP medido no teste MyWhoosh de 20/10/2026 (20' a ~158W → 95% ≈ 151W). Atualizar só este valor após cada novo teste: todos os watts do plano recalculam.
 const FTP = 151;
+// Escada de FTP (meta: ≥ 200 W no dia da prova). O plano NÃO conta com o FTP atual: cada bloco prescreve watts pelo FTP-alvo desse bloco (alvo), e passa a usar o valor medido (meas) assim que o reteste do fim do bloco anterior estiver feito.
+// Após cada reteste: preencher meas do bloco seguinte e, se ficar abaixo do alvo, rever os alvos seguintes. Todos os watts das semanas futuras recalculam.
+const FTP_GOAL = 200;
+const FTP_BLOCKS = [
+  {from:2,  target:151, meas:151},   // Base — medido no teste de 20/10/2026 (20' a ~158 W)
+  {from:8,  target:165, meas:null},  // Build 1 — confirmar no reteste da semana 7
+  {from:14, target:180, meas:null},  // Build 2 — confirmar no reteste da semana 13
+  {from:20, target:195, meas:null},  // Taper Roma e recuperação — confirmar no reteste da semana 19
+  {from:24, target:200, meas:null}   // Pico e prova — meta: 200 W no Vilamoura
+];
+function ftpWk(wk){ let b=FTP_BLOCKS[0]; FTP_BLOCKS.forEach(x=>{ if(wk>=x.from) b=x; }); return b.meas!=null ? b.meas : b.target; }
 // Semanas com teste/reteste de FTP à terça (dia mais fresco); a corrida da semana passa para quinta. 2 = teste inicial; 7, 13, 19 = fim de Base, Build 1 e Build 2 (semanas de descarga).
 const TEST_WEEKS = [2,7,13,19];
-function W(lo,hi){ return Math.round(FTP*lo)+'–'+Math.round(FTP*hi)+'W'; }
+// W(lo,hi): watts da faixa lo–hi (fração do FTP). Sem 3.º argumento usa o FTP medido; com semana (wk) usa o FTP desse bloco; com número ≥ 50 usa esse FTP.
+function W(lo,hi,wk){ const f = wk==null ? FTP : (wk>=50 ? wk : ftpWk(wk)); return Math.round(f*lo)+'–'+Math.round(f*hi)+'W'; }
 
 // Ritmos de corrida calibrados com os dados do Garmin (out 2026): maratona de Lisboa 3:13:00 (4:33/km, FC 169), meia de Castro Marim 1:33:14 (4:25/km, FC 176), melhor meia 1:28:07 (4:10/km, 2025),
 // corridas fáceis de Set–Out a 5:32–5:56/km com FC 146–152 (a 5:00–5:20/km a FC média foi 159–167). Forma atual ≈ 3:13 maratona / ~1:33 meia. Recalibrar após qualquer prova/teste novo.
@@ -543,56 +555,100 @@ function longRunWorkout(phase, wk, durMin){
 
 function bikeQualityWorkout(phase, wk){
   const dl = !!(WEEKTABLE[wk-1] && WEEKTABLE[wk-1].deload);
-  if(phase.id==='postrome') return {title:'Pedalada solta pós-Roma', duration:40, intensity:'Z1 (<'+Math.round(FTP*0.55)+'W)',
-    sets:[['Sessão única','40\' no rolo ou em estrada plana, cadência 90+ rpm, abaixo de '+Math.round(FTP*0.55)+'W, sem esforço']],
+  const F = ftpWk(wk), w = (a,b)=>W(a,b,wk), fz = Math.round(F*0.55);
+  const tot = (reps,len,rec,warm,cool)=> warm + reps*len + (reps-1)*rec + cool;
+  const goal = ' Meta do plano: FTP de '+FTP_GOAL+' W no Vilamoura — esta sessão e o longo de domingo com blocos são os dois estímulos-chave da bike; a pedalada de segunda é só volume fácil.';
+  if(phase.id==='postrome') return {title:'Pedalada solta pós-Roma', duration:40, intensity:'Z1 (<'+fz+'W)',
+    sets:[['Sessão única','40\' no rolo ou em estrada plana, cadência 90+ rpm, abaixo de '+fz+'W, sem esforço']],
     note:'Quarto dia depois da maratona: circulação sem impacto. Sem blocos nem intensidade.', tag:'Recuperação'};
-  if(phase.id==='recovery0') return {title:'Rolo muito fácil', duration:40, intensity:'Z1 (<'+Math.round(FTP*0.55)+'W)', sets:[['Sessão única','40\' cadência alta (90–95rpm), esforço mínimo (abaixo de '+Math.round(FTP*0.55)+'W)']], note:'Soltar as pernas.', tag:'Recuperação'};
+  if(phase.id==='recovery0') return {title:'Rolo muito fácil', duration:40, intensity:'Z1 (<'+fz+'W)', sets:[['Sessão única','40\' cadência alta (90–95rpm), esforço mínimo (abaixo de '+fz+'W)']], note:'Soltar as pernas.', tag:'Recuperação'};
   if(phase.id==='base' && [3,4,6].includes(wk)){
     // Intensidade na bike a partir da semana 3 (FTP 151W medido a 20/10): o ponto fraco é a bike, não a corrida. Semana 2 já passou/está feita — não mexer.
-    const ss = W(0.88,0.94), z2 = W(0.56,0.75);
-    const why = 'A bike é o teu ponto fraco (FTP 151W, com uma corrida já muito forte) e é aqui que o trabalho de intensidade dá mais retorno por hora (Lorang — atacar o ponto fraco individual). O resto da semana continua fácil (80/20, Plews) e o longo de domingo fica em Z2 para a durabilidade. Pedala a 85–95rpm nas séries (não a ~70). Se na manhã desta sessão a FC repouso estiver 8+ bpm acima do normal (ou 5+ bpm acima há duas manhãs seguidas) ou o HRV fora de "Balanced", faz 60\' de Z2 e deixa a sessão para outro dia.';
-    if(wk===3) return {title:'Sweet spot — introdução', duration:75, intensity:'2x12\' @ '+ss,
-      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','2x12\' sweet spot ('+ss+'), 5\' Z2 entre'],['Z2 extra','20\' Z2 ('+z2+')'],['Retorno','10\' Z1']],
+    const ss = w(0.88,0.94), z2 = w(0.56,0.75);
+    const why = 'A bike é o teu ponto fraco (FTP 151W, com uma corrida já muito forte) e é aqui que o trabalho de intensidade dá mais retorno por hora (Lorang — atacar o ponto fraco individual). O resto da semana continua fácil (80/20, Plews). Pedala a 85–95rpm nas séries (não a ~70). Se na manhã desta sessão a FC repouso estiver 8+ bpm acima do normal (ou 5+ bpm acima há duas manhãs seguidas) ou o HRV fora de "Balanced", faz 60\' de Z2 e deixa a sessão para outro dia.'+goal;
+    if(wk===3) return {title:'Sweet spot — 2x15\'', duration:75, intensity:'2x15\' @ '+ss,
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','2x15\' sweet spot ('+ss+'), 5\' Z2 entre'],['Z2 extra','15\' Z2 ('+z2+')'],['Retorno','10\' Z1']],
       note:why, tag:'Sweet spot · Lorang'};
     if(wk===4) return {title:'Sweet spot — curto (super sprint no domingo)', duration:70, intensity:'2x10\' @ '+ss,
       sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','2x10\' sweet spot ('+ss+'), 5\' Z2 entre'],['Z2 extra','20\' Z2 ('+z2+')'],['Retorno','10\' Z1']],
       note:'Fica 3 dias antes do super sprint: não ultrapasses o prescrito. '+why, tag:'Sweet spot · Lorang'};
-    if(wk===6) return {title:'Sweet spot — 3x15\'', duration:80, intensity:'3x15\' @ '+ss,
-      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','3x15\' sweet spot ('+ss+'), 5\' Z2 entre'],['Retorno','10\' Z1']],
-      note:why, tag:'Sweet spot · Lorang'};
+    if(wk===6) return {title:'Sweet spot — 3x20\'', duration:tot(3,20,5,15,10), intensity:'3x20\' @ '+ss,
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','3x20\' sweet spot ('+ss+'), 5\' Z2 entre'],['Retorno','10\' Z1']],
+      note:'Pico de volume da Base: 60\' de sweet spot acumulados. '+why, tag:'Sweet spot · Lorang'};
   }
   if(phase.id==='base') return {title:'Endurance + técnica de pedalada', duration:60, intensity:'Z2',
-    sets:[['Aquec.','10\' Z1'],['Principal','40\' Z2 ('+W(0.56,0.75)+') com 5x2\' a cadência alta (100+rpm) intercalados'],['Retorno','10\' Z1']],
+    sets:[['Aquec.','10\' Z1'],['Principal','40\' Z2 ('+w(0.56,0.75)+') com 5x2\' a cadência alta (100+rpm) intercalados'],['Retorno','10\' Z1']],
     note:'Fase de Técnica — eficiência de pedalada antes de meter potência.', tag:'Base · Lorang'};
-  if(phase.id==='build1' && dl) return {title:'Sweet spot — descarga', duration:65, intensity:'2x15\' @ '+W(0.88,0.94),
-    sets:[['Aquec.','15\' Z2'],['Séries','2x15\' sweet spot ('+W(0.88,0.94)+'), 5\' Z2 entre'],['Retorno','15\' Z1']],
+  if(phase.id==='build1' && dl) return {title:'Sweet spot — descarga', duration:65, intensity:'2x15\' @ '+w(0.88,0.94),
+    sets:[['Aquec.','15\' Z2'],['Séries','2x15\' sweet spot ('+w(0.88,0.94)+'), 5\' Z2 entre'],['Retorno','15\' Z1']],
     note:'Semana de descarga: mesma intensidade, menos repetições (2 em vez de 4).', tag:'Velocidade · Lorang'};
-  if(phase.id==='build1') return {title: wk%2?'Sweet spot':'VO2max bike', duration: wk%2?95:80, intensity: wk%2?'4x12\' @ 88–94% FTP':'6x4\' quase máximo',
-    sets: wk%2? [['Aquec.','15\' Z2'],['Séries','4x12\' sweet spot ('+W(0.88,0.94)+'), 5\' Z2 entre'],['Retorno','15\' Z1']]
-              : [['Aquec.','15\' Z2 + 3 arrancos'],['Séries','6x4\' quase máximo ('+W(1.06,1.20)+', RPE 8/10), 4\' Z1 entre'],['Retorno','15\' Z1']],
-    note:'Fase de Velocidade/VO2max — aqui sobe a intensidade real do ciclo.', tag:'Velocidade · Lorang'};
-  if(phase.id==='build2'||phase.id==='peak703'){
-    const reps = (phase.id==='peak703'||dl) ? 2 : 4; // taper e descarga: menos repetições, mesma intensidade
-    const dur = 15 + reps*20 + (reps-1)*5 + 10;
-    return {title:'Blocos a potência/ritmo de 70.3', duration:dur, intensity:reps+'x20\' a ritmo alvo de prova',
-      sets:[['Aquec.','15\' Z2'],['Principal',reps+'x20\' a esforço/potência alvo de 70.3 ('+W(0.75,0.82)+' com o FTP atual, RPE 6–7/10), 5\' Z2 entre'],['Retorno','10\' Z1']],
-      note:'Ensina o corpo ao esforço exato que vais segurar durante ~3h de bike no dia da prova.'+(reps===2?' Semana de descarga/taper: 2 blocos em vez de 4, mesma intensidade.':''), tag:'Específico prova · Blummenfelt/Bu'};
+  if(phase.id==='build1'){
+    if(wk%2===0){
+      // semanas pares: VO2max na bike (5x4' → 6x4' → 5x5')
+      const c = wk===8 ? {reps:5,len:4,rec:4,lo:1.06,hi:1.15} : wk===10 ? {reps:6,len:4,rec:4,lo:1.06,hi:1.20} : {reps:5,len:5,rec:5,lo:1.05,hi:1.12};
+      const pct = Math.round(c.lo*100)+'–'+Math.round(c.hi*100)+'% FTP';
+      return {title:'VO2max bike — '+c.reps+'x'+c.len+'\'', duration:tot(c.reps,c.len,c.rec,15,15), intensity:c.reps+'x'+c.len+'\' @ '+pct,
+        sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries',c.reps+'x'+c.len+'\' quase máximo ('+w(c.lo,c.hi)+', RPE 8/10), '+c.rec+'\' Z1 entre'],['Retorno','15\' Z1']],
+        note:'Fase de Velocidade/VO2max — sobe o teto aeróbio que depois sustenta o limiar e o ritmo de prova. É a sessão mais dura da bike no bloco (o domingo trabalha o sweet spot). Os watts seguem o FTP-alvo do bloco ('+F+' W): se o reteste da semana 7 ficar abaixo, usa a sensação (RPE 8) e ajusta-se o valor.'+goal, tag:'Velocidade · Lorang'};
+    }
+    // semanas ímpares (não descarga): limiar controlado
+    return {title:'Limiar bike — 3x12\'', duration:tot(3,12,5,15,15), intensity:'3x12\' @ '+w(0.95,1.00),
+      sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries','3x12\' a limiar controlado ('+w(0.95,1.00)+', 95–100% do FTP, RPE 7/10), 5\' Z2 entre'],['Retorno','15\' Z1']],
+      note:'Limiar controlado (princípio do método norueguês: chegar lá sem esgotar). Cadência 85–95 rpm. Os watts seguem o FTP-alvo do bloco ('+F+' W); se não os segurares até ao fim do 3.º bloco, baixa 5 W em vez de acabar degradado.'+goal, tag:'Limiar · Bu'};
+  }
+  if(phase.id==='build2'){
+    if([14,16,18].includes(wk)){
+      const reps = wk===16 ? 3 : 4, rng = wk===18 ? w(0.95,1.02) : w(0.92,1.00);
+      return {title:'Subidas de prova — '+reps+'x6\'', duration:tot(reps,6,4,15,10), intensity:reps+'x6\' sentado @ '+rng,
+        sets:[['Aquec.','15\' Z2 + 3 arrancos de 10"'],['Séries',reps+'x6\' sentado a '+rng+', cadência 65–80 rpm, 4\' Z1 entre — simulam as rampas de 1,3–1,8 km a 5–6 % do percurso'],['Retorno','10\' Z1']],
+        note:'O percurso de Vilamoura tem ≈ 1 090 m de ganho: quatro rampas principais (km 30,5–32,3 a 6,3 %; km 42–43,3 a 5,8 %; km 63–64 a 6,6 %; km 75–76 a 4,8 %) e muitas ondulações. Treina-se a força-resistência que as sustenta: sentado, cadência baixa, sem "arrancar" a rampa. Na prova, sobe a ≤ 100% do FTP e recupera nas descidas — as subidas de ~6 min fazem-se a ~'+w(0.92,1.00)+', acima da média de prova. Se tiveres acesso a uma subida real de 5–6 %, usa-a; no rolo, põe declive 5–6 % (MyWhoosh) ou resistência equivalente.'+goal, tag:'Específico prova · Subidas'};
+    }
+    const lo = wk===15 ? 0.82 : 0.85, hi = wk===15 ? 0.88 : 0.90;
+    return {title:'Blocos acima do ritmo de prova — 3x20\'', duration:tot(3,20,5,15,10), intensity:'3x20\' @ '+w(lo,hi),
+      sets:[['Aquec.','15\' Z2'],['Principal','3x20\' a '+w(lo,hi)+' ('+Math.round(lo*100)+'–'+Math.round(hi*100)+'% do FTP, RPE 6–7/10), 5\' Z2 entre'],['Retorno','10\' Z1']],
+      note:'Treinar 5–10 % acima do esforço de prova ('+w(0.75,0.82)+') deixa margem no dia: ensina o corpo a segurar ~3h30 de bike sem quebrar. Cadência 80–90 rpm, hidratos 60–80 g/h.'+goal, tag:'Específico prova · Blummenfelt/Bu'};
+  }
+  if(phase.id==='peak703'){
+    const reps = 2; // taper: menos repetições, mesma intensidade
+    return {title:'Blocos a potência/ritmo de 70.3', duration:tot(reps,20,5,15,10), intensity:reps+'x20\' a ritmo alvo de prova',
+      sets:[['Aquec.','15\' Z2'],['Principal',reps+'x20\' a esforço/potência alvo de 70.3 ('+w(0.75,0.82)+' com FTP '+F+' W, RPE 6–7/10), 5\' Z2 entre'],['Retorno','10\' Z1']],
+      note:'Ensina o corpo ao esforço exato que vais segurar durante ~3h30 de bike no dia da prova. Taper: 2 blocos em vez de 4, mesma intensidade.', tag:'Específico prova · Blummenfelt/Bu'};
   }
   if(phase.id==='rometaper') return {title:'Manutenção curta', duration:45, intensity:'Z2 + 2x8\' limiar',
-    sets:[['Aquec.','12\' Z2'],['Séries','2x8\' limiar controlado ('+W(0.95,1.05)+'), 4\' Z1 entre'],['Retorno','10\' Z1']], note:'Mantém estímulo, reduz volume total.', tag:'Taper'};
+    sets:[['Aquec.','12\' Z2'],['Séries','2x8\' limiar controlado ('+w(0.95,1.05)+'), 4\' Z1 entre'],['Retorno','10\' Z1']], note:'Mantém estímulo, reduz volume total.', tag:'Taper'};
   return {title:'Ativação leve', duration:30, intensity:'Z1–Z2 + toques', sets:[['Sessão','20\' Z2 + 4x1\' a ritmo de prova, cadência alta']], note:'Semana de prova — só ativar.', tag:'Taper final'};
 }
+
+// Pedalada de segunda (3.ª sessão de bike): volume aeróbio fácil, em dupla com a natação. Só semanas 3–19, sem descarga/teste.
+function spinWorkout(phase, wk){
+  const d = (wk===5||wk===16) ? 40 : (phase.id==='base' ? 45 : phase.id==='build1' ? 50 : 55);
+  const F = ftpWk(wk), z = W(0.56,0.70,wk);
+  return {title:'Pedalada de rolo — fácil + cadência', duration:d, intensity:'Z1–Z2 (<'+Math.round(F*0.70)+'W)', disc:'bike',
+    sets:[['Aquec.','5\' Z1'],['Principal',(d-10)+'\' Z2 baixo ('+z+') com 6x1\' a 100–110 rpm (sem subir a potência), 2\' fácil entre'],['Retorno','5\' Z1']],
+    note:'3.ª sessão de bike da semana: volume aeróbio barato — recupera as pernas do fim de semana, acumula tempo a pedalar sem fadiga e treina a cadência. É a prioridade mais baixa do plano: se o sono ou o HRV estiverem em baixo, ou a semana apertar, é a primeira a cortar (antes de qualquer sessão-chave). Faz-se no rolo, de manhã ou à noite, em dupla com a natação.', tag:'Volume aeróbio · bike'};
+}
+
+// Blocos dentro do longo de domingo: semana → [repetições, minutos, fração mín., fração máx., descrição]
+const LONGQ = {3:[2,15,.76,.85,'tempo'], 6:[3,15,.76,.85,'tempo'],
+  8:[2,15,.88,.94,'sweet spot'], 9:[3,15,.88,.94,'sweet spot'], 10:[2,25,.88,.94,'sweet spot'], 12:[2,25,.88,.94,'sweet spot'],
+  14:[2,20,.75,.82,'ritmo de prova'], 15:[3,20,.75,.82,'ritmo de prova'], 16:[2,20,.75,.82,'ritmo de prova'], 17:[2,20,.75,.82,'ritmo de prova'], 18:[3,20,.75,.82,'ritmo de prova'],
+  24:[2,15,.75,.82,'ritmo de prova']};
 
 function longBikeWorkout(phase, wk, durMin, isBrick){
   if(durMin===0) return {title:'Descanso de bike', duration:0, intensity:'—', sets:[['Nota','Sem bike longo esta semana.']], note:'', tag:''};
   let intensity='Z2 fácil';
   let extra=[];
-  if(phase.id==='build2') extra=[['Dentro do rolo','2x15\' a ritmo/potência de 70.3 ('+W(0.75,0.82)+') embutidos, resto Z2']];
-  if(phase.id==='peak703') extra=[['Dentro do rolo','2x15\' a ritmo de prova ('+W(0.75,0.82)+'), resto Z2 — é o ensaio final, sem acrescentar volume']];
+  const q = LONGQ[wk];
+  if(q){
+    const rng = W(q[2],q[3],wk), what = q[0]+'x'+q[1]+'\' '+q[4];
+    intensity = 'Z2 + '+what;
+    extra=[['Dentro do rolo', q[0]+'x'+q[1]+'\' a '+q[4]+' ('+rng+') na 2.ª metade do rolo, 5\' Z2 entre blocos; resto Z2'+(q[4]==='ritmo de prova'?' — é o ensaio do esforço de prova, sem acrescentar volume':'')]];
+  }
   let title = isBrick? 'Bike longo (parte 1 do brick)':'Longo de domingo';
-  let sets=[['Sessão','Contínuo em Z2 ('+W(0.56,0.75)+'), conversação confortável'], ...extra, ['Nutrição','Pratica a estratégia de géis/hidratos de bike da prova']];
+  let sets=[['Sessão','Contínuo em Z2 ('+W(0.56,0.75,wk)+'), conversação confortável'], ...extra, ['Nutrição','Pratica a estratégia de géis/hidratos de bike da prova'+(durMin>=120?' — 60–80 g de hidratos por hora a partir dos 60\'':'')]];
   if(isBrick) sets.push(['Últimos 20\'','Baixa ligeiramente a cadência/potência — prepara as pernas para saltar para a corrida logo a seguir']);
-  return {title, duration:durMin, intensity, sets, note: isBrick? 'Parte 1 de um brick — a corrida vem logo a seguir, sem grande pausa.':'80% fácil (Plews) — se a conversa fica difícil, abranda.', tag: isBrick?'Longo (brick) · Watson':'Longo · Plews 80/20'};
+  const base = q ? 'Sessão-chave de bike (a par da de quinta): o que conta são os blocos, o resto é Z2 fácil — se a conversa fica difícil fora dos blocos, abranda.' : '80% fácil (Plews) — se a conversa fica difícil, abranda.';
+  return {title, duration:durMin, intensity, sets, note: isBrick? 'Parte 1 de um brick — a corrida vem logo a seguir, sem grande pausa.'+(q?' '+base:''):base, tag: isBrick?'Longo (brick) · Watson':'Longo · Plews 80/20'};
 }
 
 function ftpTestWorkout(wk){
@@ -600,13 +656,14 @@ function ftpTestWorkout(wk){
   return {title: retest ? 'Reteste de FTP — MyWhoosh (20min Test)' : 'Teste de FTP — MyWhoosh (20min Test)', duration:75, intensity:'Teste máximo controlado',
     sets:[
       ['Aquec.','20\' rampa progressiva, 45% → 65% FTP (atual/estimada)'],
+      ...(retest ? [['FTP a pôr na app','≈ '+ftpWk(wk+1)+' W (FTP-alvo do próximo bloco) — os % dos primers calculam-se sobre este valor']] : []),
       ['Primers','3x1\' a 81% / 95% / 103% FTP, com 1\' a 50% FTP entre cada — ERG mode ligado, servem para ativar fibras rápidas, não para gastar pernas'],
       ['Bloco livre','5\' free ride, ritmo confortável'],
       ['Bloco fácil','10\' a 60% FTP'],
       ['TESTE — 20\'','Free ride — esforço máximo que consigas MANTER constante do início ao fim, sem quebrar. Distribui o esforço, não dispares nos primeiros 5\''],
       ['Retorno','10\' free ride bem fácil']
     ],
-    note:'Workout "MyWhoosh FTP Test" na app — usa-o diretamente (ERG mode trata da precisão dos primers e a atividade sincroniza automaticamente para o Garmin). FTP ≈ 95% da potência média dos 20\' de teste — mesmo princípio do protocolo clássico Hunter Allen/Coggan, só com um aquecimento mais longo e primers calibrados. Mete uma FTP estimada na app antes de começar (os % dos primers dependem dela). Faz no rolo, sem interrupções — é o número que vai dar sentido real a todos os %FTP já referidos no plano (sweet spot, VO2max, blocos a ritmo de prova). '+(retest ? 'Reteste de fim de bloco: compara com o FTP atual do plano ('+FTP+'W) e diz ao Claude o resultado — se mudar, atualiza-se o valor e todos os watts do bloco seguinte recalculam. Se de manhã a FC de repouso estiver alta ou o HRV fora de "Balanced", adia 2–3 dias em vez de testar cansado.' : 'Resultado (20/10/2026): 20\' a ~158W → FTP ≈ 151W; as zonas de potência do plano já usam este valor.'), tag: retest ? 'Reteste · fim de bloco' : 'Teste · baseline'};
+    note:'Workout "MyWhoosh FTP Test" na app — usa-o diretamente (ERG mode trata da precisão dos primers e a atividade sincroniza automaticamente para o Garmin). FTP ≈ 95% da potência média dos 20\' de teste — mesmo princípio do protocolo clássico Hunter Allen/Coggan, só com um aquecimento mais longo e primers calibrados. Mete uma FTP estimada na app antes de começar (os % dos primers dependem dela). Faz no rolo, sem interrupções — é o número que vai dar sentido real a todos os %FTP já referidos no plano (sweet spot, VO2max, blocos a ritmo de prova). '+(retest ? 'Reteste de fim de bloco: o plano contava com '+ftpWk(wk)+' W neste bloco e conta com '+ftpWk(wk+1)+' W no próximo (rumo à meta de '+FTP_GOAL+' W) — diz ao Claude o resultado: se vier abaixo, os watts do bloco seguinte recalculam e os alvos seguintes revêem-se. Se de manhã a FC de repouso estiver alta ou o HRV fora de "Balanced", adia 2–3 dias em vez de testar cansado.' : 'Resultado (20/10/2026): 20\' a ~158W → FTP ≈ 151W; as zonas de potência do plano já usam este valor.'), tag: retest ? 'Reteste · fim de bloco' : 'Teste · baseline'};
 }
 
 function brickRunWorkout(durMin){
@@ -702,7 +759,12 @@ function buildDayRaw(weekNum, dowKey){
   if(dowKey==='mon' || dowKey==='fri'){
     const isSwimDay = swimDays.includes(dowKey);
     const slot = dowKey==='mon' ? 'easy' : 'short'; // Build 1/2: só a natação de quarta é de qualidade; segunda = aeróbia, sexta = técnica curta
-    if(isSwimDay){ const s=swimWorkout(phase, weekNum, slot); s.disc='swim'; return combine([s], dowKey); }
+    if(isSwimDay){
+      const s=swimWorkout(phase, weekNum, slot); s.disc='swim';
+      // Segunda-feira: a partir da semana 3, a natação leva em dupla uma pedalada de rolo fácil (3.ª sessão de bike). Fora das semanas de descarga/teste.
+      if(dowKey==='mon' && weekNum>=3 && weekNum<=19 && !row.deload && !TEST_WEEKS.includes(weekNum)) return combine([s, spinWorkout(phase, weekNum)], 'mon');
+      return combine([s], dowKey);
+    }
     const rd = restDayObj(); rd.disc='rest';
     return combine([rd], dowKey);
   }
@@ -733,7 +795,7 @@ function buildDayRaw(weekNum, dowKey){
       return combine([{title:'🏁 DIA DA PROVA — Ironman 70.3 Vilamoura', duration:0, intensity:'Vai correr bem', sets:[
         ['Natação','1.9km — controla o início, não sigas o sprint de ninguém nos primeiros 300m'],
         ['T1','Respira, veste com calma — perder 30\" aqui vale a pena se ganhares clareza'],
-        ['Bike','90km — esforço controlado (~'+W(0.75,0.82)+' com o FTP atual; ajusta ao FTP medido nos retestes), guarda pernas para os últimos 20km'],
+        ['Bike','90km (≈ 1 090 m de ganho) — esforço controlado, NP ~'+W(0.75,0.82,FTP_GOAL)+' com FTP '+FTP_GOAL+' W (ajusta ao FTP medido nos retestes). Sobe as 4 rampas principais (km 30–32, 42–43, 63–64, 75–76) a ≤ 100% do FTP e recupera nas descidas; guarda pernas para os últimos 20km'],
         ['T2','Muda de calçado, ajusta boné/óculos'],
         ['Corrida','21.1km — alvo '+PACE.mp+'; começa mais lento do que "parece certo" (primeiros 3 km a ~4:45–4:50); se a FC passar dos ~170 nos primeiros 5 km, abranda. A maioria das quebras no 70.3 acontecem no km 12–16 por saída demasiado rápida'],
         ['Objetivo de tempo','5h00–6h00 total — gere o esforço para lá chegar inteiro, não para bater recorde pessoal']

@@ -304,7 +304,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 21/10 às 14:26. Dados Garmin até 21/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 21/10 às 15:15. Dados Garmin até 21/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -366,7 +366,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
 </div>
 
-<script>window.__SNAP={"rec":{"data":"2026-10-21","idx":80,"hrv":70,"fcr":51},"sleep":{"data":"2026-10-21","sono":7.53,"score":84},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5}],"asof":"2026-10-21","garminAt":"2026-10-21T13:26:15Z"};</script>
+<script>window.__SNAP={"rec":{"data":"2026-10-21","idx":80,"hrv":70,"fcr":51},"sleep":{"data":"2026-10-21","sono":7.53,"score":84},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5}],"asof":"2026-10-21","garminAt":"2026-10-21T14:15:22Z"};</script>
 <script>
 (function(){
 /* ============ DATE / RACE CONSTANTS ============ */
@@ -1118,12 +1118,16 @@ document.getElementById('nextWeek').onclick=()=>{ if(currentWeek<25){ currentWee
 const DG={act:{},hea:{},meta:{},db:null};
 const num=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
 /* Hora (Lisboa) da última corrida da recolha automática (repositório garmin_dados, estado.json): «21/10 às 14:26 · há 3 h» */
-function garminStamp(iso){
+function garminTime(iso){
   const d=iso?new Date(iso):null; if(!d||isNaN(d)) return '';
   const p=Object.fromEntries(new Intl.DateTimeFormat('pt-PT',{timeZone:'Europe/Lisbon',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d).map(x=>[x.type,x.value]));
-  const m=Math.max(0,Math.round((Date.now()-d.getTime())/60000));
+  return p.day+'/'+p.month+' às '+p.hour+':'+p.minute;
+}
+function garminStamp(iso){
+  const t=garminTime(iso); if(!t) return '';
+  const m=Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));
   const age=m<2?'agora mesmo':m<60?'há '+m+' min':m<48*60?'há '+Math.round(m/60)+' h':'há '+Math.round(m/1440)+' dias';
-  return p.day+'/'+p.month+' às '+p.hour+':'+p.minute+' · '+age;
+  return t+' · '+age;
 }
 /* ============ GRÁFICOS (motor próprio: barras, linhas, empilhado, anéis) ============ */
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1259,6 +1263,14 @@ populateWeekSelect();
 renderTimeline();
 renderCalendar();
 renderAll();
+/* hora da última recolha (ultima.json, público: só a hora) — a recolha automática atualiza-o a cada corrida */
+(async()=>{ try{
+  const r=await fetch('ultima.json',{cache:'no-cache'}); if(!r.ok) return;
+  const j=await r.json(); if(!j||!j.atualizado_em||(SNAP.garminAt&&j.atualizado_em<=SNAP.garminAt)) return;
+  SNAP.garminAt=j.atualizado_em; renderAll();
+  const t=document.querySelector('.stravabox .txt'), g=garminTime(j.atualizado_em);
+  if(t&&g) t.innerHTML=t.innerHTML.replace(/Última recolha automática do Garmin: \d\d\/\d\d às \d\d:\d\d/,'Última recolha automática do Garmin: '+g);
+}catch(e){} })();
 
 })();
 </script>
@@ -1291,21 +1303,23 @@ renderAll();
     return new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
   }
   /* dados do Garmin publicados pela recolha automática (garmin_dados). Qualquer falha = usa só os dados embebidos. */
+  var LIVE_WHY = '';
   async function liveData(priv) {
     try {
       var r = await fetch('dados.bin', { cache: 'no-cache' });
-      if (!r.ok) return null;
-      var o = JSON.parse(await openBin(new Uint8Array(await r.arrayBuffer()), priv));
-      if (!o || o.v !== 1) return null;
+      if (!r.ok) { LIVE_WHY = 'dados.bin não encontrado (HTTP ' + r.status + ')'; return null; }
+      var o;
+      try { o = JSON.parse(await openBin(new Uint8Array(await r.arrayBuffer()), priv)); } catch (e) { LIVE_WHY = 'não consegui abrir o dados.bin'; return null; }
+      if (!o || o.v !== 1) { LIVE_WHY = 'formato do dados.bin desconhecido'; return null; }
       return JSON.stringify(o).replace(/</g, '\\u003c').split(String.fromCharCode(0x2028)).join('\\u2028').split(String.fromCharCode(0x2029)).join('\\u2029');
-    } catch (e) { return null; }
+    } catch (e) { LIVE_WHY = 'sem ligação ao dados.bin'; return null; }
   }
   async function loadApp(priv) {
     var r = await fetch('payload.bin', { cache: 'no-cache' });
     if (!r.ok) throw new Error('payload');
     var pair = await Promise.all([openBin(new Uint8Array(await r.arrayBuffer()), priv), liveData(priv)]);
     var html = pair[0], live = pair[1], anchor = '<script>window.__PWA=';
-    if (live && html.indexOf(anchor) >= 0) html = html.replace(anchor, function () { return '<script>window.__LIVE=' + live + ';<' + '/script>' + anchor; });
+    if (html.indexOf(anchor) >= 0) html = html.replace(anchor, function () { return '<script>' + (live ? 'window.__LIVE=' + live + ';' : '') + 'window.__LIVE_WHY=' + JSON.stringify(LIVE_WHY) + ';<' + '/script>' + anchor; });
     document.open(); document.write(html); document.close();
   }
   async function privFromPass(pass) {

@@ -155,6 +155,12 @@ select#weekSelect{width:100%; margin-top:8px; padding:8px; border-radius:8px; bo
 .dayhead.open .chev{transform:rotate(90deg);}
 .checkbox{width:22px; height:22px; border-radius:6px; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem; color:#fff;}
 .checkbox.done{background:var(--accent); border-color:var(--accent);}
+.ckgroup{display:flex; gap:5px; flex-shrink:0;}
+.checkbox.sm{width:26px; height:26px; font-size:.78rem; background:var(--bg-soft); border-color:var(--ck, var(--border)); color:var(--text-dim);}
+.checkbox.sm.done{background:var(--ck, var(--accent)); border-color:var(--ck, var(--accent)); color:#fff;}
+.checkbox.part{border-color:var(--accent); color:var(--accent); font-weight:800;}
+.icheck{margin-left:auto; flex-shrink:0; border:1.5px solid var(--border); background:var(--bg-soft); color:var(--text-dim); border-radius:999px; padding:3px 10px; font:700 .72rem var(--font); cursor:pointer;}
+.icheck.done{background:var(--accent); border-color:var(--accent); color:#fff;}
 .daybody{display:none; padding:0 14px 14px 29px; border-top:1px solid var(--border); margin-top:0;}
 .daybody.open{display:block;}
 .setrow{display:flex; gap:8px; padding:7px 0; border-bottom:1px dashed var(--border); font-size:.85rem;}
@@ -260,6 +266,8 @@ footer{text-align:center; font-size:.72rem; color:var(--text-dim); margin-top:30
 .wchip .b{display:block; height:4px; border-radius:2px; margin:6px 8px 5px;}
 .wchip .m{display:block; font-size:.7rem; font-weight:700;}
 .wchip.done::after{content:"✓"; position:absolute; top:2px; right:4px; font-size:.65rem; color:var(--good); font-weight:800;}
+.wchip.part::after{content:attr(data-p); position:absolute; top:2px; right:3px; font-size:.55rem; color:var(--accent); font-weight:800;}
+.hitem .hck{margin-left:auto; flex-shrink:0;}
 .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)); gap:10px; margin-bottom:14px;}
 .tile{background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow:var(--shadow); min-width:0;}
 .tile .l{font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dim);}
@@ -436,7 +444,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
 </div>
 
-<script>window.__SNAP={"rec":{"data":"2026-10-22","idx":77,"hrv":66,"fcr":51},"sleep":{"data":"2026-10-22","sono":8.37,"score":86},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5},{"data":"2026-10-22","tipo":"strength_training","min":31},{"data":"2026-10-22","tipo":"running","min":42}],"asof":"2026-10-22","garminAt":"2026-10-22T17:55:25Z"};</script>
+<script>window.__SNAP={"rec":{"data":"2026-10-22","idx":77,"hrv":66,"fcr":51},"sleep":{"data":"2026-10-22","sono":8.37,"score":86},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5},{"data":"2026-10-22","tipo":"strength_training","min":31},{"data":"2026-10-22","tipo":"running","min":42}],"asof":"2026-10-22","garminAt":"2026-10-22T17:55:25Z"};window.__FE_BASE={"2026-10-12":[true],"2026-10-13":[true],"2026-10-14":[true],"2026-10-15":[true],"2026-10-16":[true],"2026-10-17":[true],"2026-10-18":[true],"2026-10-19":[true],"2026-10-20":[true],"2026-10-21":[true],"2026-10-22":[true,true]};</script>
 <script>
 (function(){
 /* ============ DATE / RACE CONSTANTS ============ */
@@ -1024,8 +1032,50 @@ let currentWeek = 1;
 }
 let openDay = null;
 
-function loadDone(){ try{ return JSON.parse(localStorage.getItem('plan70_done')||'{}'); }catch(e){ return {}; } }
-function saveDone(obj){ try{ localStorage.setItem('plan70_done', JSON.stringify(obj)); }catch(e){} }
+/* ---- marcações «feito» por sessão ----
+   Artefacto: coleção «feitos» na base de dados (1 documento por dia, id = data ISO) → o Claude consegue lê-las.
+   PWA: sem canal de escrita para o Claude → ficam no aparelho (localStorage + cópia em IndexedDB), por cima da
+   base cozida no build (__FE_BASE, vinda da base de dados). Chave local: «AAAA-MM-DD#índice». */
+const FE={db:{},live:false,loc:{},base:window.__FE_BASE||{},persisted:false};
+function feDate(wk,k){ return isoDate(addDays(PLAN_START,(wk-1)*7+DOW.indexOf(k))); }
+function feRealDb(){ return !!(DG.db && window.__PWA!=='full'); }
+function feLoadLocal(){ try{ FE.loc=JSON.parse(localStorage.getItem('plan70_fe')||'{}')||{}; }catch(e){ FE.loc={}; } }
+function feIdb(fn){ try{ const r=indexedDB.open('plano703',1); r.onupgradeneeded=()=>{ try{ r.result.createObjectStore('k'); }catch(e){} }; r.onsuccess=()=>{ try{ fn(r.result); }catch(e){} }; }catch(e){} }
+function feSaveLocal(){
+  const s=JSON.stringify(FE.loc);
+  try{ localStorage.setItem('plan70_fe',s); }catch(e){}
+  feIdb(d=>{ const t=d.transaction('k','readwrite'); t.objectStore('k').put(s,'fe'); t.oncomplete=()=>d.close(); });
+  if(!FE.persisted){ FE.persisted=true; try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){} }
+}
+function feIdbRestore(){ feIdb(d=>{ const q=d.transaction('k','readonly').objectStore('k').get('fe');
+  q.onsuccess=()=>{ d.close(); try{ const o=JSON.parse(q.result||'{}'); let ch=false;
+    Object.keys(o).forEach(key=>{ if(!(key in FE.loc)){ FE.loc[key]=o[key]; ch=true; } });
+    if(ch){ try{ localStorage.setItem('plan70_fe',JSON.stringify(FE.loc)); }catch(e){} feRefresh(); } }catch(e){} }; }); }
+function feLegacy(wk,k){ try{ return !!(JSON.parse(localStorage.getItem('plan70_done')||'{}')[wk+'-'+k]); }catch(e){ return false; } }
+function feGet(wk,k,i){
+  const dt=feDate(wk,k);
+  if(feRealDb() && FE.live) return !!(FE.db[dt] && FE.db[dt][i]);
+  const key=dt+'#'+i;
+  if(key in FE.loc) return !!FE.loc[key];
+  if(FE.base[dt] && FE.base[dt][i]!=null) return !!FE.base[dt][i];
+  return feLegacy(wk,k);
+}
+function feDay(wk,k){ const n=buildDay(wk,k).items.length; let c=0; for(let i=0;i<n;i++) if(feGet(wk,k,i)) c++; return {n:n,c:c,all:n>0&&c===n,part:c>0&&c<n}; }
+function feSet(wk,k,idx,v){
+  const dt=feDate(wk,k), day=buildDay(wk,k), n=day.items.length, ids=Array.isArray(idx)?idx:[idx], cur=[];
+  for(let i=0;i<n;i++) cur.push(feGet(wk,k,i));
+  ids.forEach(i=>{ cur[i]=!!v; FE.loc[dt+'#'+i]=!!v; });
+  feSaveLocal();
+  if(feRealDb()){
+    if(FE.live) FE.db[dt]=cur;
+    try{ const w=DG.db.collection('feitos').doc(dt).set({data:dt,wk:wk,k:k,feitos:cur,titulos:day.items.map(x=>x.title),atualizado_em:new Date().toISOString()}); if(w&&w.catch) w.catch(()=>{}); }catch(e){}
+  }
+}
+function feRefresh(){ try{ renderCalendar(); }catch(e){} try{ renderAll(); }catch(e){} }
+function feToggle(wk,k,i){ feSet(wk,k,i,!feGet(wk,k,i)); feRefresh(); }
+function feToggleAll(wk,k){ const d=feDay(wk,k), ids=[]; for(let i=0;i<d.n;i++) ids.push(i); feSet(wk,k,ids,!d.all); feRefresh(); }
+const FE_IC={swim:'🏊',bike:'🚴',run:'🏃',strength:'🏋️',brick:'🔁'};
+feLoadLocal(); feIdbRestore();
 function loadNotes(){ try{ return JSON.parse(localStorage.getItem('plan70_notes')||'{}'); }catch(e){ return {}; } }
 function saveNotes(obj){ try{ localStorage.setItem('plan70_notes', JSON.stringify(obj)); }catch(e){} }
 
@@ -1108,7 +1158,6 @@ function renderCalendar(){
     '<div class="wsum"><div class="v" style="color:var(--strength)">'+Math.round(hStr)+'\'</div><div class="l">Força</div></div>';
 
   document.getElementById('discLegend').innerHTML = ['swim','bike','run','strength','brick'].map(x=>'<span><span class="dot" style="background:var(--'+x+')"></span>'+DISC_LABEL[x]+'</span>').join('')+'<span>Dois treinos no dia: o separador mostra as duas cores</span>';
-  const done = loadDone();
   const notes = loadNotes();
   const dayList = document.getElementById('dayList');
   dayList.innerHTML='';
@@ -1125,6 +1174,7 @@ function renderCalendar(){
       if(it.duration===0 && !it.rest && !it.sets.some(s=>s[0]!=='Nota')){ /* zero-duration marker like race/rest placeholders still show sets */ }
       bodyHtml += '<div style="margin-top:'+(i>0?'14px':'0')+';">';
       bodyHtml += '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span class="discBadge" style="background:var(--'+disc+'-soft, var(--bg-soft)); color:var(--'+disc+')">'+DISC_LABEL[disc]+'</span>'+(it.duration?'<span style="font-size:.75rem; color:var(--text-dim);">'+it.duration+' min · '+it.intensity+'</span>':'');
+      if(day.items.length>1){ const di=feGet(currentWeek,k,i); bodyHtml += '<button class="icheck'+(di?' done':'')+'" data-wk="'+currentWeek+'" data-k="'+k+'" data-i="'+i+'" aria-pressed="'+di+'">'+(di?'✓ Feito':'Marcar feito')+'</button>'; }
       bodyHtml += '</div>';
       if(it.shoe) bodyHtml += '<div class="setrow"><b>👟 Sapatilhas</b><span><span style="color:var(--text); font-weight:700;">'+it.shoe.name+'</span> — '+it.shoe.why+'</span></div>';
       it.sets.forEach(s=>{ bodyHtml += '<div class="setrow"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'; });
@@ -1137,13 +1187,16 @@ function renderCalendar(){
 
     const stripeColor = discBar(day, k, 'to bottom');
     const stripeTitle = discList(day, k).map(x=>DISC_LABEL[x]).join(' + ');
-    const isDone = !!done[dayKey];
-    const isOpenNow = openDay===dayKey;
+    const fd = feDay(currentWeek,k), isOpenNow = openDay===dayKey;
+    const ckHtml = day.items.length>1
+      ? '<div class="ckgroup">'+day.items.map((it,i)=>{ const dsc=disciplineOf(it,k), di=feGet(currentWeek,k,i);
+          return '<div class="checkbox sm'+(di?' done':'')+'" style="--ck:var(--'+dsc+')" data-wk="'+currentWeek+'" data-k="'+k+'" data-i="'+i+'" role="checkbox" aria-checked="'+di+'" aria-label="'+DISC_LABEL[dsc]+': '+it.title.replace(/"/g,'')+'" title="'+it.title.replace(/"/g,'')+'">'+(di?'✓':FE_IC[dsc])+'</div>'; }).join('')+'</div>'
+      : '<div class="checkbox'+(fd.all?' done':'')+'" data-wk="'+currentWeek+'" data-k="'+k+'" data-i="0" role="checkbox" aria-checked="'+fd.all+'">'+(fd.all?'✓':'')+'</div>';
 
     card.innerHTML =
       '<div class="dayhead'+(isOpenNow?' open':'')+'" data-key="'+dayKey+'">'+
         '<div class="stripe" style="background:'+stripeColor+'" title="'+stripeTitle+'"></div>'+
-        '<div class="checkbox'+(isDone?' done':'')+'" data-check="'+dayKey+'">'+(isDone?'✓':'')+'</div>'+
+        ckHtml+
         '<div class="info"><div class="dname">'+DOWLABEL[k]+' · '+fmt(dateObj)+'</div><div class="title">'+headTitleParts.join(' + ')+'</div><div class="meta">'+(day.totalDur? day.totalDur+' min total':'')+(shoeLine(day)? (day.totalDur?' · ':'')+shoeLine(day):'')+'</div></div>'+
         '<div class="chev">▸</div>'+
       '</div>'+
@@ -1154,20 +1207,16 @@ function renderCalendar(){
   // wire interactions
   dayList.querySelectorAll('.dayhead').forEach(el=>{
     el.addEventListener('click', (e)=>{
-      if(e.target.closest('.checkbox')) return;
+      if(e.target.closest('.checkbox,.ckgroup')) return;
       const key = el.getAttribute('data-key');
       openDay = (openDay===key) ? null : key;
       renderCalendar();
     });
   });
-  dayList.querySelectorAll('.checkbox').forEach(el=>{
+  dayList.querySelectorAll('.checkbox,.icheck').forEach(el=>{
     el.addEventListener('click',(e)=>{
       e.stopPropagation();
-      const key = el.getAttribute('data-check');
-      const d2 = loadDone();
-      d2[key] = !d2[key];
-      saveDone(d2);
-      renderCalendar();
+      feToggle(+el.dataset.wk, el.dataset.k, +el.dataset.i);
     });
   });
   dayList.querySelectorAll('.mynote').forEach(el=>{
@@ -1316,25 +1365,25 @@ function renderHoje(R){
   const el=document.getElementById('hojeCard'), p=planPos(0);
   if(!p){ const diff=Math.round((TODAY-PLAN_START)/86400000);
     el.innerHTML='<h2>Hoje</h2><p>'+(diff<0?'O plano começa em <b style="color:var(--text)">'+(-diff)+' dia'+(-diff===1?'':'s')+'</b> ('+fmtFull(PLAN_START)+').':'Plano concluído — boa prova!')+'</p>'; return; }
-  const day=buildDay(p.wk,p.k), key=p.wk+'-'+p.k, done=!!loadDone()[key], rec=R.length?R[R.length-1]:null, phase=phaseOf(p.wk);
-  const items=day.items.map(it=>{ const disc=disciplineOf(it,p.k);
-    return '<div class="hitem"><span class="discBadge" style="background:var(--'+disc+'-soft, var(--bg-soft)); color:var(--'+disc+')">'+DISC_LABEL[disc]+'</span><div class="ht"><b>'+it.title+'</b>'+(it.duration?'<span> · '+it.duration+' min · '+(it.intensity||'')+'</span>':'')+(it.shoe?'<div class="hs">👟 '+it.shoe.name+'</div>':'')+'</div></div>'; }).join('');
+  const day=buildDay(p.wk,p.k), fd=feDay(p.wk,p.k), done=fd.all, multi=day.items.length>1, rec=R.length?R[R.length-1]:null, phase=phaseOf(p.wk);
+  const items=day.items.map((it,i)=>{ const disc=disciplineOf(it,p.k), di=feGet(p.wk,p.k,i);
+    return '<div class="hitem"><span class="discBadge" style="background:var(--'+disc+'-soft, var(--bg-soft)); color:var(--'+disc+')">'+DISC_LABEL[disc]+'</span><div class="ht"><b>'+it.title+'</b>'+(it.duration?'<span> · '+it.duration+' min · '+(it.intensity||'')+'</span>':'')+(it.shoe?'<div class="hs">👟 '+it.shoe.name+'</div>':'')+'</div>'+(multi?'<button class="icheck hck'+(di?' done':'')+'" data-i="'+i+'" aria-pressed="'+di+'">'+(di?'✓ Feito':'Marcar feito')+'</button>':'')+'</div>'; }).join('');
   let adv=''; if(rec&&daysAgo(rec.data)<=1&&!day.items.every(it=>it.rest)){ const st=recState(rec.r.idx);
     adv='<div class="notebox"><b><span style="color:'+st.css+'">'+st.ic+'</span> '+st.lab+' ('+rec.r.idx+'%).</b> '+(st.k==='good'?'Faz a sessão como está no plano.':st.k==='warn'?'Faz o plano, mas se for sessão de qualidade e as pernas não responderem ao aquecimento, corta uma repetição.':'Troca o treino duro por um fácil (regra do Plews) e vê se a tendência melhora nos próximos 2–3 dias.')+'</div>'; }
   const todayAct=Object.values(DG.act).filter(a=>a.data===isoDate(TODAY)&&(isSwimAct(a)||isBikeAct(a)||isRunAct(a)||isStrAct(a)));
   const gm=todayAct.length?'<p class="tmrw">Já no Garmin hoje: <b style="color:var(--text)">'+todayAct.map(a=>(isSwimAct(a)?'🏊':isBikeAct(a)?'🚴':isStrAct(a)?'🏋️':'🏃')+' '+Math.round(a.min||0)+' min').join(' · ')+'</b></p>':'';
   const t=planPos(1); let tm=''; if(t){ const td=buildDay(t.wk,t.k); tm='<p class="tmrw">Amanhã · '+DOWLABEL[t.k]+': <b style="color:var(--text)">'+td.items.map(i=>i.title).join(' + ')+'</b>'+(td.totalDur?' · '+td.totalDur+' min':'')+'</p>'; }
-  el.innerHTML='<h2>Hoje · '+DOWLABEL[p.k]+' '+fmt(TODAY)+'</h2><p style="margin:0 0 4px;">Semana '+p.wk+' — '+phase.name+(done?' · <b style="color:var(--good)">✓ feito</b>':'')+'</p>'+items+adv+gm+tm+
-    '<div class="hrow"><button class="btn" id="hojeOpen">Ver detalhe no calendário</button><button class="btn" id="hojeDone">'+(done?'Desmarcar como feito':'Marcar como feito ✓')+'</button></div>';
+  el.innerHTML='<h2>Hoje · '+DOWLABEL[p.k]+' '+fmt(TODAY)+'</h2><p style="margin:0 0 4px;">Semana '+p.wk+' — '+phase.name+(done?' · <b style="color:var(--good)">✓ feito</b>':fd.part?' · <b style="color:var(--accent)">'+fd.c+'/'+fd.n+' feito</b>':'')+'</p>'+items+adv+gm+tm+
+    '<div class="hrow"><button class="btn" id="hojeOpen">Ver detalhe no calendário</button><button class="btn" id="hojeDone">'+(done?(multi?'Desmarcar tudo':'Desmarcar como feito'):(multi?'Marcar tudo como feito ✓':'Marcar como feito ✓'))+'</button></div>';
   document.getElementById('hojeOpen').onclick=()=>openInCalendar(p.wk,p.k);
-  document.getElementById('hojeDone').onclick=()=>{ const d=loadDone(); d[key]=!d[key]; saveDone(d); renderCalendar(); renderAll(); };
+  document.getElementById('hojeDone').onclick=()=>feToggleAll(p.wk,p.k);
+  el.querySelectorAll('.hck').forEach(b=>b.addEventListener('click',()=>feToggle(p.wk,p.k,+b.dataset.i)));
 }
 function renderWeekStrip(){
   const el=document.getElementById('weekStrip'), p=planPos(0);
   if(!p){ el.innerHTML=''; return; }
-  const done=loadDone();
-  el.innerHTML=DOW.map(k=>{ const day=buildDay(p.wk,k), disc=disciplineOf(day.items[0],k), key=p.wk+'-'+k;
-    return '<button class="wchip'+(k===p.k?' today':'')+(done[key]?' done':'')+'" data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:'+discBar(day,k,'to right')+'"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
+  el.innerHTML=DOW.map(k=>{ const day=buildDay(p.wk,k), disc=disciplineOf(day.items[0],k), fd=feDay(p.wk,k);
+    return '<button class="wchip'+(k===p.k?' today':'')+(fd.all?' done':fd.part?' part':'')+'"'+(fd.part?' data-p="'+fd.c+'/'+fd.n+'"':'')+' data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:'+discBar(day,k,'to right')+'"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
   el.querySelectorAll('.wchip').forEach(b=>b.addEventListener('click',()=>openInCalendar(+b.dataset.wk,b.dataset.k)));
 }
 /* ===== Mobilidade — motor de figuras (SVG inline, cinemática por ângulos) =====

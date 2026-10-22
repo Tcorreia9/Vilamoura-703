@@ -361,7 +361,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
     <button class="tab-btn active" data-view="overview">Visão geral</button>
     <button class="tab-btn" data-view="calendar">Calendário</button>
     <button class="tab-btn" data-view="mod" data-lock="1">🔒 Modalidades</button>
-    <button class="tab-btn" data-view="mob" data-lock="1">🔒 Mobilidade</button>
+    <button class="tab-btn" data-view="mob">Mobilidade</button>
     <button class="tab-btn" data-view="dados" data-lock="1">🔒 Dados &amp; evolução</button>
     <button class="tab-btn" data-view="method" data-lock="1">🔒 Metodologia</button>
   </div>
@@ -381,7 +381,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
 
     <div class="card lockcard">
       <h2>🔒 Tendências e resumo</h2>
-      <p>As tendências de recuperação, sono e carga, o resumo do que os dados mudam no treino e as abas Modalidades, Mobilidade, Dados &amp; evolução e Metodologia abrem com a palavra-passe.</p>
+      <p>As tendências de recuperação, sono e carga, o resumo do que os dados mudam no treino e as abas Modalidades, Dados &amp; evolução e Metodologia abrem com a palavra-passe.</p>
       <div class="hrow"><button class="btn pri" id="unlockBtn" type="button">Desbloquear</button></div>
     </div>
 
@@ -412,6 +412,25 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
 
     <div class="disclegend" id="discLegend"></div>
     <div class="daylist" id="dayList"></div>
+  </div>
+
+  <!-- MOBILIDADE -->
+  <div class="view" id="view-mob">
+    <div class="card">
+      <h2>Mobilidade diária</h2>
+      <p>Uma rotina curta para cada dia da semana, escolhida pelo treino desse dia. Cada uma dura cerca de <b style="color:var(--text)">10 a 14 minutos</b> — nunca passa os 15 (e o teto são 20). Nos dias apertados há uma <b style="color:var(--text)">versão rápida</b> só com o essencial (entre 4 e 7 min). Toca no número de um exercício para o marcares como feito.</p>
+    </div>
+    <div id="mobBody"></div>
+    <div class="card">
+      <h2>Regras para tirares proveito</h2>
+      <ul class="mobrules">
+        <li><b>Tensão suave, nunca dor.</b> Procura 3 a 5 em 10 de desconforto. Respira devagar e expira ao aprofundar.</li>
+        <li><b>Antes de treinar, só movimentos dinâmicos</b> (balanços, ponte, tornozelo). Os alongamentos longos ficam para depois: manter muito tempo um alongamento antes de correr ou pedalar tira potência.</li>
+        <li><b>Dor aguda, formigueiro ou bloqueio numa articulação:</b> pára e salta esse exercício. Se voltar a acontecer, fala com um fisioterapeuta.</li>
+        <li><b>Dia de prova:</b> só o aquecimento da prova. Depois, para descarregar, «Pernas na parede» e «Joelhos ao peito».</li>
+        <li><b>Constância vale mais do que duração:</b> 12 minutos por dia rendem mais do que 40 minutos uma vez por semana. Em semanas de descarga ou antes de provas, faz a versão rápida.</li>
+      </ul>
+    </div>
   </div>
 
   <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
@@ -1318,6 +1337,262 @@ function renderWeekStrip(){
     return '<button class="wchip'+(k===p.k?' today':'')+(done[key]?' done':'')+'" data-wk="'+p.wk+'" data-k="'+k+'" aria-label="'+DOWLABEL[k]+': '+day.items.map(i=>i.title).join(' + ').replace(/"/g,'')+'"><span class="d">'+DOWLABEL[k].slice(0,3)+'</span><span class="b" style="background:'+discBar(day,k,'to right')+'"></span><span class="m">'+(day.totalDur?day.totalDur+'\'':'—')+'</span></button>'; }).join('');
   el.querySelectorAll('.wchip').forEach(b=>b.addEventListener('click',()=>openInCalendar(+b.dataset.wk,b.dataset.k)));
 }
+/* ===== Mobilidade — motor de figuras (SVG inline, cinemática por ângulos) =====
+   Ângulos em graus no ecrã: 0 = direita, 90 = baixo, 180 = esquerda, -90 = cima. */
+const MF={neck:3.5,head:5,ua:13,fa:12,th:19,sh:18,ft:7,T:23};
+function mfP(p,a,l){ const r=a*Math.PI/180; return [p[0]+Math.cos(r)*l, p[1]+Math.sin(r)*l]; }
+function mfR(n){ return Math.round(n*10)/10; }
+function mfPts(a){ return a.map(p=>mfR(p[0])+','+mfR(p[1])).join(' '); }
+/* cinemática inversa de 2 segmentos: devolve o cotovelo/joelho para o ponto-alvo (limita ao alcance) */
+function mfIK(S,T,l1,l2,bend){
+  let dx=T[0]-S[0], dy=T[1]-S[1], d=Math.hypot(dx,dy)||1e-6;
+  const m=l1+l2-0.01; if(d>m){ dx*=m/d; dy*=m/d; d=m; T=[S[0]+dx,S[1]+dy]; }
+  const a=Math.atan2(dy,dx), c=Math.max(-1,Math.min(1,(l1*l1+d*d-l2*l2)/(2*l1*d)));
+  const b=a+(bend||1)*Math.acos(c);
+  return {e:[S[0]+Math.cos(b)*l1,S[1]+Math.sin(b)*l1], w:T};
+}
+function mfArm(sh,a){ if(!a) return null; if(a.pts) return [sh].concat(a.pts);
+  if(a.to){ const k=mfIK(sh,a.to,MF.ua,MF.fa,a.bend); return [sh,k.e,k.w]; }
+  const e=mfP(sh,a[0],MF.ua); return [sh,e,mfP(e,a[1],MF.fa)]; }
+function mfLeg(hip,l){ if(!l) return null;
+  if(l.to){ const k=mfIK(hip,l.to,MF.th,MF.sh,l.bend); return [hip,k.e,k.w, mfP(k.w,l.ft==null?0:l.ft,MF.ft)]; }
+  const k=mfP(hip,l[0],MF.th), a=mfP(k,l[1],MF.sh); return [hip,k,a,mfP(a,l[2]==null?0:l[2],MF.ft)]; }
+function mfArrow(x1,y1,x2,y2,bend){
+  const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1, d=Math.hypot(dx,dy)||1;
+  const cx=mx-dy/d*(bend||0), cy=my+dx/d*(bend||0);
+  const tx=x2-cx, ty=y2-cy, tl=Math.hypot(tx,ty)||1, ux=tx/tl, uy=ty/tl, s=3.4;
+  const bx=x2-ux*s, by=y2-uy*s, px=-uy*s*.62, py=ux*s*.62;
+  return '<path class="mf-ar" d="M'+mfR(x1)+' '+mfR(y1)+' Q'+mfR(cx)+' '+mfR(cy)+' '+mfR(bx)+' '+mfR(by)+'"/>'
+    +'<path class="mf-ah" d="M'+mfR(x2)+' '+mfR(y2)+' L'+mfR(bx+px)+' '+mfR(by+py)+' L'+mfR(bx-px)+' '+mfR(by-py)+'Z"/>';
+}
+function mfSide(o){
+  const hip=o.hip, T=Array.isArray(o.tor)?o.tor:[o.tor,o.tor], h=MF.T/2;
+  const mid=mfP(hip,T[0],h), sh=mfP(mid,T[1],h), hd=o.hd!=null?o.hd:T[1];
+  const hc=mfP(sh,hd,MF.neck+MF.head); if(o.hx) hc[0]+=o.hx; if(o.hy) hc[1]+=o.hy;
+  const aN=mfArm(sh,o.an), aF=mfArm(sh,o.af), lN=mfLeg(hip,o.ln), lF=mfLeg(hip,o.lf);
+  const J={hip:hip,mid:mid,sh:sh,hc:hc};
+  if(aN){J.eN=aN[1];J.wN=aN[2];} if(aF){J.eF=aF[1];J.wF=aF[2];}
+  if(lN){J.kN=lN[1];J.aN=lN[2];J.cN=[(lN[1][0]+lN[2][0])/2,(lN[1][1]+lN[2][1])/2];J.tN=[(lN[0][0]+lN[1][0])/2,(lN[0][1]+lN[1][1])/2];}
+  if(lF){J.kF=lF[1];J.aF=lF[2];J.cF=[(lF[1][0]+lF[2][0])/2,(lF[1][1]+lF[2][1])/2];J.tF=[(lF[0][0]+lF[1][0])/2,(lF[0][1]+lF[1][1])/2];}
+  return {J:J, far:[aF,lF].filter(Boolean), tor:[hip,mid,sh,mfP(sh,hd,MF.neck)], near:[lN,aN].filter(Boolean), hc:hc};
+}
+function mfFront(o){
+  const hip=o.hip, tor=o.tor==null?-90:o.tor, base=mfP(hip,tor,MF.T-2), neck=mfP(hip,tor,MF.T);
+  const sL=mfP(base,tor-90,7), sR=mfP(base,tor+90,7), hL=mfP(hip,tor-90,4), hR=mfP(hip,tor+90,4);
+  const hd=o.hd!=null?o.hd:tor, hc=mfP(neck,hd,MF.neck+MF.head); if(o.hx) hc[0]+=o.hx; if(o.hy) hc[1]+=o.hy;
+  const leg=(p,l)=>{ if(!l) return null; if(l.pts) return [p].concat(l.pts); if(l.to){ const k=mfIK(p,l.to,MF.th,MF.sh,l.bend); return [p,k.e,k.w]; }
+    const k=mfP(p,l[0],MF.th); return [p,k,mfP(k,l[1],MF.sh)]; };
+  const J={hip:hip,sL:sL,sR:sR,hc:hc,neck:neck};
+  const aL=mfArm(sL,o.aL), aR=mfArm(sR,o.aR), lL=leg(hL,o.lL), lR=leg(hR,o.lR);
+  if(aL){J.eL=aL[1];J.wL=aL[2];} if(aR){J.eR=aR[1];J.wR=aR[2];}
+  if(lL){J.kL=lL[1];J.fL=lL[2];} if(lR){J.kR=lR[1];J.fR=lR[2];}
+  return {J:J, lines:[[hip,base],[sL,sR],[hL,hR]].concat([aL,aR,lL,lR].filter(Boolean)), hc:hc};
+}
+/* geometria de uma pose → {g, pts, J}; o chão/parede são desenhados depois de conhecido o enquadramento */
+function mfGeom(p){
+  let g='', pts=[]; const ln=(a,c)=>{ a.forEach(q=>pts.push(q)); return '<polyline class="'+c+'" points="'+mfPts(a)+'"/>'; };
+  let J={}, hc=null;
+  if(p.t==='raw'){ g+=p.raw; }
+  else if(p.t==='front'){ const f=mfFront(p); J=f.J; hc=f.hc; g+=f.lines.map((l,i)=>ln(l,i<3?'mf-s mf-t':'mf-s')).join(''); }
+  else { const f=mfSide(p); J=f.J; hc=f.hc; g+=f.far.map(l=>ln(l,'mf-s mf-far')).join('')+ln(f.tor,'mf-s mf-t')+f.near.map(l=>ln(l,'mf-s')).join(''); }
+  if(hc){ g+='<circle class="mf-hd" cx="'+mfR(hc[0])+'" cy="'+mfR(hc[1])+'" r="'+MF.head+'"/>'; pts.push([hc[0]-MF.head,hc[1]-MF.head],[hc[0]+MF.head,hc[1]+MF.head]); }
+  (p.hl||[]).forEach(h=>{ const q=Array.isArray(h)?h:J[h]; if(q){ const r=(Array.isArray(h)&&h[2])||6.5; g+='<circle class="mf-hl" cx="'+mfR(q[0])+'" cy="'+mfR(q[1])+'" r="'+r+'"/>'; pts.push([q[0]-r,q[1]-r],[q[0]+r,q[1]+r]); } });
+  if(p.fg) g+=p.fg;
+  if(p.fgFn) g+=p.fgFn(J);
+  (p.ar||[]).forEach(a=>{ g+=mfArrow(a[0],a[1],a[2],a[3],a[4]); pts.push([a[0],a[1]],[a[2],a[3]]); });
+  (p.box||[]).forEach(q=>pts.push(q));
+  if(p.wall!=null){ pts.push([p.wall,p.wallTop||8]); if(p.floor!=null) pts.push([p.wall,p.floor]); }
+  return {g:g,pts:pts};
+}
+/* várias poses do mesmo exercício → SVGs com o mesmo enquadramento (4:3, ampliado ao conteúdo) */
+function mfFrames(frs,label){
+  const G=frs.map(f=>mfGeom(f.p)); let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  G.forEach((o,i)=>{ const p=frs[i].p; o.pts.forEach(q=>{ x0=Math.min(x0,q[0]); x1=Math.max(x1,q[0]); y0=Math.min(y0,q[1]); y1=Math.max(y1,q[1]); });
+    if(p.floor!=null){ y1=Math.max(y1,p.floor+2); } });
+  const pad=8; x0-=pad; x1+=pad; y0-=pad; y1+=pad;
+  let w=Math.max(x1-x0,(y1-y0)*4/3,64), h=w*3/4; const cx=(x0+x1)/2, cy=(y0+y1)/2;
+  const vx=cx-w/2, vy=cy-h/2, k=Math.max(.45,Math.min(1.2,w/120));
+  return frs.map((f,i)=>{ const p=f.p, o=G[i]; let pre='';
+    if(p.floor!=null) pre+='<line class="mf-fl" x1="'+mfR(vx)+'" y1="'+p.floor+'" x2="'+mfR(vx+w)+'" y2="'+p.floor+'"/>';
+    if(p.wall!=null) pre+='<line class="mf-wall" x1="'+p.wall+'" y1="'+(p.wallTop||8)+'" x2="'+p.wall+'" y2="'+(p.floor||80)+'"/>';
+    if(p.bg) pre+=p.bg;
+    return '<svg viewBox="'+mfR(vx)+' '+mfR(vy)+' '+mfR(w)+' '+mfR(h)+'" style="--k:'+mfR(k)+'" role="img" aria-label="'+((label?label+' — ':'')+(f.c||''))+'" xmlns="http://www.w3.org/2000/svg">'+pre+o.g+'</svg>'; });
+}
+function mfSvg(p,label){ return mfFrames([{p:p,c:label}])[0]; }
+
+/* ===== Mobilidade — exercícios (poses + texto) ===== */
+const MOB_EX={
+gato:{n:'Gato-camelo', alvo:'Coluna torácica e lombar', dose:'10 repetições lentas', sec:60,
+  passos:['Em quatro apoios: mãos sob os ombros e joelhos sob as ancas.','Expira e arredonda as costas, queixo ao peito (gato) — 3 a 4 s.','Inspira e deixa o peito descer, olhar em frente (camelo) — 3 a 4 s.'],
+  sente:'A coluna a «abrir» vértebra a vértebra, sem dor.', evita:'Mover só o pescoço ou os ombros; fazer depressa.',
+  fr:(()=>{ const b={floor:76,hip:[38,55],ln:[90,178,180],af:[90,90],an:[90,90]};
+    return [{c:'Gato', p:Object.assign({},b,{tor:[-30,25],hd:45,hl:['mid'],ar:[[50,36,50,28,0]]})},
+            {c:'Camelo', p:Object.assign({},b,{tor:[25,-30],hd:-35,hl:['mid'],ar:[[50,40,50,48,0]]})}]; })()},
+rot:{n:'Rotação torácica em quatro apoios', alvo:'Coluna torácica, ombros', dose:'8 repetições por lado', sec:90,
+  passos:['Em quatro apoios, uma mão atrás da cabeça, cotovelo a apontar para baixo.','Expira e roda o tronco abrindo o cotovelo para o teto, olhando para ele.','Inspira e volta, a tentar tocar com o cotovelo no cotovelo do braço de apoio.'],
+  sente:'Rotação nas costas altas (entre as omoplatas), não na zona lombar.', evita:'Deixar o apoio fugir ou rodar a partir da lombar.',
+  fr:(()=>{ const b={floor:76,hip:[38,55],ln:[90,178,180],af:[90,90],tor:[-3,-3]};
+    return [{c:'Início', p:Object.assign({},b,{an:[100,-35],hd:-10})},
+            {c:'Abre e roda', p:Object.assign({},b,{an:[-85,15],hd:-55,tor:[-3,-14],hl:['sh'],ar:[[52,66,54,44,-6]]})}]; })()},
+dorsal:{n:'Dorsal na parede (corpo em L)', alvo:'Dorsais, ombros, torácica', dose:'40 segundos', sec:60,
+  passos:['De pé, a um passo da parede, mãos na parede à altura dos ombros.','Recua as ancas e baixa o peito até o tronco ficar paralelo ao chão, braços esticados.','Empurra as mãos contra a parede e as ancas para trás; respira para as costelas.'],
+  sente:'Alongamento ao longo das costas e debaixo das axilas.', evita:'Arquear a lombar; deixar o pescoço cair — mantém a cabeça entre os braços.',
+  fr:[{c:'Mantém', p:{floor:82,wall:84,wallTop:20,hip:[34,42],tor:0,hd:12,lf:{to:[32,79],ft:0},ln:{to:[34,79],ft:0},an:[0,0],hl:['sh'],ar:[[20,44,11,44,0],[52,52,52,60,0]]}}]},
+peitoral:{n:'Peitoral no caixilho da porta', alvo:'Peitoral, parte da frente do ombro', dose:'30 segundos por lado (ou os dois lados juntos)', sec:80,
+  passos:['De pé no vão da porta, antebraços no caixilho, cotovelos à altura dos ombros.','Dá um passo pequeno em frente com uma perna e deixa o peito «passar» pela porta.','Costelas para baixo, sem arquear a lombar; respira devagar.'],
+  sente:'Tensão na frente do peito e do ombro.', evita:'Arquear a lombar; fazer força se sentires formigueiro na mão.',
+  fr:[{c:'Mantém', p:{t:'front',floor:78,hip:[60,41],aL:[180,-90],aR:[0,-90],lL:[97,90],lR:[83,90],box:[[40,6],[80,78]],
+     bg:'<line class="mf-wall" x1="40" y1="6" x2="40" y2="78"/><line class="mf-wall" x1="80" y1="6" x2="80" y2="78"/>',
+     hl:[[54,25,6],[66,25,6]], fg:'<circle class="mf-ar" cx="60" cy="27" r="4"/><circle class="mf-ah" cx="60" cy="27" r="1.4"/>'}}]},
+wall:{n:'Deslizes na parede (W → Y)', alvo:'Omoplatas, ombros, torácica', dose:'10 repetições lentas', sec:60,
+  passos:['Costas, nuca e sacro encostados à parede, braços em «W», antebraços na parede.','Desliza os braços para cima até ao «Y», sem descolar as costas nem as costelas.','Volta ao «W» a controlar. Se perderes o contacto da parede, reduz a amplitude.'],
+  sente:'Trabalho entre as omoplatas e abertura dos ombros.', evita:'Arquear a lombar; encolher os ombros ao subir.',
+  fr:(()=>{ const b={t:'front',floor:82,hip:[60,45],lL:[97,90],lR:[83,90],box:[[30,2],[90,82]],bg:'<rect class="mf-wallbg" x="30" y="2" width="60" height="80" rx="3"/>'};
+    return [{c:'W', p:Object.assign({},b,{aL:[160,-100],aR:[20,-80],hl:[[53,28,6],[67,28,6]],ar:[[34,22,34,10,0],[86,22,86,10,0]]})},
+            {c:'Y', p:Object.assign({},b,{aL:[-125,-115],aR:[-55,-65],hl:[[53,28,6],[67,28,6]]})}]; })()},
+pescoco:{n:'Inclinação lateral do pescoço', alvo:'Trapézio superior, lado do pescoço', dose:'30 segundos por lado', sec:80,
+  passos:['Sentado ou de pé, ombros descontraídos. Inclina a orelha para o ombro.','Com a mão do mesmo lado, faz um peso suave na cabeça (não puxes).','A outra mão desce em direção ao chão para aumentar o alongamento.'],
+  sente:'Alongamento no lado oposto do pescoço, até ao ombro.', evita:'Rodar a cabeça, subir o ombro ou puxar com força.',
+  fr:[{c:'Mantém', p:{t:'front',floor:82,hip:[60,45],hd:-115,aR:[-45,-165],aL:[95,95],lL:[97,90],lR:[83,90],hl:[[66,25,5.5]],ar:[[48,32,48,46,0],[69,9,55,8,-3]]}}]},
+retracao:{n:'Recuo do queixo (retração cervical)', alvo:'Flexores profundos do pescoço', dose:'10 repetições, 3 s de pausa', sec:45,
+  passos:['De pé ou sentado, olhar em frente, ombros baixos.','Recua a cabeça na horizontal, como quem faz «duplo queixo» — sem baixar nem levantar o queixo.','Mantém 3 s e solta. A cabeça desliza para trás, não inclina.'],
+  sente:'Alongamento na base da nuca e ativação à frente do pescoço.', evita:'Inclinar a cabeça para trás ou para baixo.',
+  fr:(()=>{ const b={hip:[60,45],tor:-90,an:[70,100],af:[80,100]};
+    return [{c:'Cabeça avançada', p:Object.assign({},b,{hd:-62})},
+            {c:'Recua', p:Object.assign({},b,{hd:-90,hx:-2,hl:[[60,19,5]],ar:[[75,15,66,15,0]]})}]; })()},
+flexAnca:{n:'Flexores da anca em afundo', alvo:'Psoas e quadríceps (frente da anca)', dose:'45 segundos por lado', sec:110,
+  passos:['Joelho de trás no chão (almofada se precisares), pé da frente bem à frente.','Cinta para cima, rabo contraído: inclina a bacia para trás e avança a anca poucos centímetros.','Braço do lado do joelho de trás sobe acima da cabeça para aumentar o alongamento.'],
+  sente:'Tensão na frente da anca de trás, subindo até à virilha.', evita:'Arquear a lombar; deixar o joelho da frente passar os dedos do pé.',
+  fr:[{c:'Início', p:{floor:76,hip:[54,55],tor:-82,hd:-82,lf:[90,176,180],ln:{to:[74,73],bend:-1,ft:0},an:{to:[66,52],bend:-1}}},
+      {c:'Avança a anca', p:{floor:76,hip:[58,55],tor:-92,hd:-92,lf:[90,176,180],ln:{to:[75,73],bend:-1,ft:0},an:[-95,-95],hl:[[57,55,7]],ar:[[44,49,53,49,0]]}}]},
+fig4:{n:'Figura 4 sentado (glúteo)', alvo:'Glúteos e piriforme', dose:'40 segundos por lado', sec:110,
+  passos:['Sentado na ponta de uma cadeira, coluna direita. Põe o tornozelo direito sobre o joelho esquerdo.','Empurra suavemente o joelho direito para baixo e inclina o tronco para a frente, de coluna reta.','Mantém, respira, e troca de lado.'],
+  sente:'Alongamento fundo no glúteo do lado da perna cruzada.', evita:'Curvar as costas; cruzar com o pé em flexão exagerada (dobra o pé para proteger o joelho).',
+  fr:[{c:'Mantém', p:{t:'front',floor:80,hip:[60,55],lL:{pts:[[52,62],[52,80]]},lR:{pts:[[82,63],[53,60.5]]},aL:{to:[52,61],bend:1},aR:{to:[76,62],bend:-1},box:[[40,59],[86,80]],
+      bg:'<line class="mf-wall" x1="42" y1="60" x2="84" y2="60"/><line class="mf-wall" x1="46" y1="60" x2="46" y2="80"/><line class="mf-wall" x1="80" y1="60" x2="80" y2="80"/>',
+      hl:[[68,56,6]]}}]},
+ponte:{n:'Ponte de glúteos', alvo:'Glúteos, extensão da anca', dose:'12 repetições, pausa de 2 s em cima', sec:60,
+  passos:['Deitado de costas, joelhos dobrados, pés no chão à largura das ancas.','Expira, aperta os glúteos e sobe a bacia até ficares numa linha entre ombros, ancas e joelhos.','Pausa de 2 s em cima, desce devagar, vértebra a vértebra.'],
+  sente:'Glúteos a trabalhar; sem esforço na lombar nem nos isquiotibiais.', evita:'Arquear a lombar em cima; empurrar com os dedos dos pés.',
+  fr:[{c:'Início', p:{floor:76,hip:[62,72],tor:180,hd:180,ln:[-60,80,0],an:[0,0]}},
+      {c:'Em cima', p:{floor:76,hip:[60.9,63.5],tor:155.5,hd:170,ln:[-24.5,75,0],an:[0,0],hl:['hip'],ar:[[66,52,66,44,0]]}}]},
+tornozelo:{n:'Mobilidade do tornozelo na parede', alvo:'Tornozelo (dorsiflexão), gémeos', dose:'10 repetições por lado', sec:90,
+  passos:['Pé da frente a ~10 cm da parede, calcanhar sempre no chão.','Leva o joelho em direção à parede, na linha do segundo dedo do pé.','Toca com o joelho na parede e volta; se for fácil, afasta o pé um pouco.'],
+  sente:'Tensão na frente do tornozelo e no gémeo.', evita:'Levantar o calcanhar; deixar o joelho cair para dentro.',
+  fr:[{c:'Joelho à parede', p:{floor:82,wall:92,wallTop:10,hip:[72,52],tor:-80,hd:-80,ln:[33,106,0],lf:{to:[50,79],ft:0},an:{to:[92,38],bend:1},hl:['aN'],ar:[[78,58,86,58,0]]}}]},
+gemeos:{n:'Gémeos na parede (perna esticada)', alvo:'Gémeos', dose:'30 segundos por lado', sec:80,
+  passos:['Mãos na parede; perna de trás esticada, calcanhar no chão, pé direito para a frente.','Leva a anca em direção à parede mantendo o corpo numa linha.','Mantém sem saltar; respira.'],
+  sente:'Alongamento na barriga da perna de trás.', evita:'Levantar o calcanhar; rodar o pé para fora.',
+  fr:[{c:'Mantém', p:{floor:82,wall:90,wallTop:10,hip:[60,48],tor:-54.6,hd:-54.6,ln:{to:[38,79],ft:0},lf:{to:[70,79],bend:-1,ft:0},an:{to:[90,31],bend:1},hl:['cN'],ar:[[34,70,34,77,0]]}}]},
+soleo:{n:'Sóleo na parede (joelho dobrado)', alvo:'Sóleo (parte baixa da barriga da perna)', dose:'30 segundos por lado', sec:80,
+  passos:['Da posição dos gémeos, dobra o joelho de trás sem levantar o calcanhar.','Leva o joelho para a frente e para baixo, em direção à parede.','Mantém; sentes o alongamento mais baixo, perto do tendão de Aquiles.'],
+  sente:'Tensão baixa na perna, perto do tendão de Aquiles.', evita:'Levantar o calcanhar; deixar o joelho cair para dentro.',
+  fr:[{c:'Mantém', p:{floor:82,wall:90,wallTop:10,hip:[57,53],tor:-62,hd:-62,ln:{to:[40,79],bend:1,ft:0},lf:{to:[68,79],bend:-1,ft:0},an:{to:[90,34],bend:1},hl:['cN'],ar:[[34,70,34,77,0]]}}]},
+agach:{n:'Agachamento profundo com pausa', alvo:'Anca, tornozelo, adutores', dose:'1 minuto (5 respirações lentas)', sec:60,
+  passos:['Pés um pouco mais largos que as ancas, pontas ligeiramente abertas.','Desce o mais fundo que conseguires com os calcanhares no chão.','Mãos em prece, cotovelos a empurrar os joelhos para fora; peito alto.'],
+  sente:'Abertura na anca e nos tornozelos; peso nos calcanhares.', evita:'Calcanhares a levantar (apoia-os num pano enrolado se for preciso); costas a arredondar.',
+  fr:[{c:'Mantém', p:{floor:82,hip:[47,68],tor:-88,hd:-88,ln:{to:[56,79],bend:-1,ft:0},an:{to:[62,52],bend:-1},hl:['hip'],ar:[[48,80,48,73,0]]}}]},
+swing:{n:'Balanços de perna (frente e trás)', alvo:'Anca (flexores e extensores), isquiotibiais', dose:'10 balanços por perna', sec:90,
+  passos:['Apoia uma mão numa parede, perna de apoio ligeiramente dobrada.','Balança a perna solta para a frente e para trás, solta e com controlo, a subir de amplitude.','Depois repete 10 balanços laterais, de lado para dentro e para fora.'],
+  sente:'Anca a «aquecer» e a soltar; sem puxar no fim da amplitude.', evita:'Deixar o tronco balançar junto; forçar a amplitude.',
+  fr:(()=>{ const b={floor:82,hip:[60,42],tor:-90,hd:-90,lf:{to:[60,79],ft:0},an:[50,20]};
+    return [{c:'Frente', p:Object.assign({},b,{ln:[40,40,-60],ar:[[78,60,86,50,-5]]})},
+            {c:'Trás', p:Object.assign({},b,{ln:[125,125,90],ar:[[38,64,32,52,5]]})}]; })()},
+isquios:{n:'Isquiotibiais deitado com toalha', alvo:'Parte de trás da coxa', dose:'40 segundos por lado', sec:100,
+  passos:['Deitado de costas, uma perna no chão. Passa uma toalha (ou cinto) pelo meio do pé da outra.','Sobe a perna o mais esticada que conseguires e puxa suavemente a toalha para ti.','Pé em flexão (dedos para a cara); a perna do chão fica relaxada e esticada.'],
+  sente:'Alongamento atrás da coxa, sem dor no joelho.', evita:'Dobrar o joelho para «ganhar» amplitude; levantar a bacia do chão.',
+  fr:[{c:'Mantém', p:{floor:78,hip:[60,74],tor:185,hd:175,lf:[0,0,-85],ln:[-80,-80,-170],an:[-55,-50],hl:['tN'],
+     fgFn:J=>{ const w=J.wN, t=[J.aN[0]+7*Math.cos(-170*Math.PI/180), J.aN[1]+7*Math.sin(-170*Math.PI/180)];
+       return '<line class="mf-towel" x1="'+mfR(w[0])+'" y1="'+mfR(w[1])+'" x2="'+mfR(t[0])+'" y2="'+mfR(t[1])+'"/>'; }}}]},
+quad:{n:'Quadríceps deitado de barriga para baixo', alvo:'Frente da coxa', dose:'30 segundos por lado', sec:80,
+  passos:['Deitado de barriga para baixo, apoia-te num antebraço. Dobra um joelho e agarra o tornozelo.','Leva o calcanhar em direção ao glúteo, com os joelhos juntos e a bacia a empurrar o chão.','Se não chegares ao tornozelo, usa uma toalha à volta do pé.'],
+  sente:'Alongamento na frente da coxa.', evita:'Arquear a lombar; abrir o joelho para fora.',
+  fr:[{c:'Mantém', p:{floor:76,hip:[48,71],tor:-18,hd:-14,ln:[178,-35,0],an:{to:[44,61.5],bend:-1},af:[90,0],hl:['tN'],ar:[[34,52,38,58,0]]}}]},
+borboleta:{n:'Borboleta (adutores)', alvo:'Adutores (interior da coxa)', dose:'45 segundos', sec:60,
+  passos:['Sentado, sola dos pés juntas, joelhos abertos; calcanhares a ~30 cm da anca.','Coluna alta; inclina o tronco ligeiramente para a frente a partir da anca.','Deixa os joelhos descer com o peso das pernas; não os empurres.'],
+  sente:'Tensão no interior das coxas.', evita:'Curvar as costas; pressionar os joelhos com força.',
+  fr:[{c:'Mantém', p:{t:'front',floor:76,hip:[60,68],lL:{pts:[[42,73],[57,75]]},lR:{pts:[[78,73],[63,75]]},aL:{to:[46,70],bend:1},aR:{to:[74,70],bend:-1},hl:[[44,72,6],[76,72,6]]}}]},
+joelhos:{n:'Joelhos ao peito', alvo:'Lombar, glúteos', dose:'40 segundos', sec:50,
+  passos:['Deitado de costas, abraça os dois joelhos ao peito.','Mantém a lombar apoiada e respira devagar.','Se quiseres, balança suavemente de um lado para o outro.'],
+  sente:'Alívio na zona lombar e nos glúteos.', evita:'Levantar a cabeça e os ombros do chão.',
+  fr:[{c:'Mantém', p:{floor:76,hip:[60,72],tor:180,hd:180,ln:[-150,15,0],lf:[-146,20,0],an:{to:[52,64],bend:-1},hl:[[58,71,6]]}}]},
+torcao:{n:'Torção lombar deitado', alvo:'Coluna lombar, rotadores', dose:'35 segundos por lado', sec:90,
+  passos:['Deitado de costas, braços em cruz, joelhos dobrados.','Deixa os dois joelhos caírem para um lado e vira a cabeça para o lado oposto.','Ombros sempre no chão; respira e solta; troca de lado.'],
+  sente:'Rotação suave na lombar e nas costelas.', evita:'Forçar os joelhos para baixo; levantar o ombro do chão.',
+  fr:[{c:'Visto de cima', p:{t:'raw',box:[[6,6],[114,84]],raw:'<rect class="mf-wallbg" x="6" y="6" width="108" height="78" rx="6"/>'
+    +'<circle class="mf-hd" cx="24" cy="45" r="5"/><polyline class="mf-s mf-t" points="29,45 60,45"/><polyline class="mf-s" points="31,34 31,56"/><polyline class="mf-s" points="31,34 31,16"/><polyline class="mf-s" points="31,56 31,74"/>'
+    +'<polyline class="mf-s mf-t" points="60,40 60,50"/><polyline class="mf-s" points="60,50 70,66 52,72"/><polyline class="mf-s mf-far" points="60,40 68,63 52,68"/>'
+    +'<circle class="mf-hl" cx="56" cy="45" r="7"/>'
+    +mfArrow(80,48,80,66,6)+mfArrow(22,36,22,24,-4)}}]},
+esfinge:{n:'Extensão em esfinge', alvo:'Lombar, abdominais, frente da anca', dose:'2 × 25 segundos', sec:50,
+  passos:['Deitado de barriga para baixo, antebraços no chão com os cotovelos sob os ombros.','Empurra o chão com os antebraços e deixa o peito subir, com a bacia no chão.','Pescoço longo, olhar ao chão; respira para o abdómen.'],
+  sente:'Alongamento na barriga e abertura suave na lombar, sem pinçar.', evita:'Dor aguda na lombar; encolher os ombros. Desce se «picar».',
+  fr:[{c:'Mantém', p:{floor:76,hip:[46,70],tor:-22,hd:-12,ln:[180,180,95],an:[90,0],hl:['mid'],ar:[[62,48,62,40,0]]}}]},
+pernas:{n:'Pernas na parede', alvo:'Descarga das pernas, retorno venoso', dose:'2 minutos', sec:120,
+  passos:['Deita-te de costas com o rabo perto da parede e sobe as pernas na vertical.','Braços relaxados ao lado do corpo, ombros no chão.','Respira devagar pelo nariz; fecha os olhos se quiseres.'],
+  sente:'Pernas leves; descontração geral.', evita:'Forçar as pernas para esticarem ao máximo; se formigar, dobra os joelhos.',
+  fr:[{c:'Mantém', p:{floor:80,wall:94,wallTop:10,hip:[86,76],tor:180,hd:180,ln:[-90,-90,0],an:[0,0],hl:['cN']}}]},
+resp:{n:'Respiração diafragmática', alvo:'Relaxamento, diafragma, costelas', dose:'8 respirações lentas', sec:90,
+  passos:['Deitado de costas, joelhos dobrados; uma mão no peito, outra na barriga.','Inspira pelo nariz 4 s a encher a barriga (a mão da barriga sobe).','Expira devagar pela boca 6 s; a barriga desce.'],
+  sente:'A barriga sobe mais do que o peito; ritmo calmo.', evita:'Elevar os ombros; respirar só pelo peito.',
+  fr:[{c:'Inspira ↑ / expira ↓', p:{floor:76,hip:[64,72],tor:180,hd:180,ln:[-60,80,0],an:[-8,4],hl:[[52,68,5]],ar:[[44,62,44,54,0],[60,54,60,62,0]]}}]}
+};
+
+/* ===== Mobilidade — rotinas por dia ===== */
+/* [exercício, essencial(1/0), 'a' = antes do treino | 'd' = depois] */
+const MOB_DAYS={
+ mon:{foco:'Ombros, dorsais e anca', quando:'Depois da natação ou à noite.', porque:'Dia de natação (+ rolo): soltar ombros, torácica e anca ajuda a braçada e a posição na bike.',
+   ex:[['gato',1],['rot',1],['dorsal',0],['peitoral',1],['wall',0],['pescoco',0],['retracao',0],['flexAnca',1]]},
+ tue:{foco:'Anca, tornozelos e glúteos', quando:'Os 4 primeiros antes da corrida/força (são dinâmicos); os restantes depois.', porque:'Corrida de qualidade + força de pernas: anca e tornozelos livres, glúteos «acordados» e pernas relaxadas depois.',
+   ex:[['swing',1,'a'],['tornozelo',1,'a'],['agach',0,'a'],['ponte',1,'a'],['flexAnca',1,'d'],['fig4',0,'d'],['gemeos',0,'d'],['soleo',0,'d']]},
+ wed:{foco:'Torácica, ombros e pescoço', quando:'Depois da natação ou à noite.', porque:'Natação de qualidade: ombros, torácica e pescoço (respirar para os lados) a trabalhar bem; isquiotibiais para a bike de quinta.',
+   ex:[['gato',0],['rot',1],['wall',1],['peitoral',1],['dorsal',0],['retracao',0],['pescoco',0],['isquios',0]]},
+ thu:{foco:'Costas, anca e glúteos', quando:'Depois da bike e da força (ou à noite).', porque:'Bike com tronco inclinado + força de tronco/ombro: abrir a frente da anca, aliviar a lombar e soltar o peito.',
+   ex:[['gato',1],['esfinge',1],['flexAnca',1],['quad',0],['fig4',0],['torcao',0],['peitoral',0],['rot',0]]},
+ fri:{foco:'Reset do corpo todo', quando:'À noite, antes de dormir — sem pressa.', porque:'Dia de descanso: soltar sem acrescentar carga, respirar e descomprimir antes do longo de sábado.',
+   ex:[['resp',0],['joelhos',0],['torcao',0],['borboleta',0],['pernas',1],['dorsal',0],['gato',1],['agach',1]]},
+ sat:{foco:'Pernas e pés depois do longo', quando:'Os balanços (1.º) antes de correr; o resto depois do longo, com o corpo ainda quente.', porque:'Longo de corrida: repor comprimento nos gémeos, isquiotibiais, quadríceps e anca, e descarregar as pernas.',
+   ex:[['swing',0,'a'],['gemeos',1,'d'],['soleo',0,'d'],['isquios',0,'d'],['quad',0,'d'],['fig4',1,'d'],['flexAnca',1,'d'],['borboleta',0,'d'],['pernas',1,'d']]},
+ sun:{foco:'Anca, lombar e pescoço depois da bike', quando:'Depois do longo de bike.', porque:'Muitas horas na posição aero: abrir anca e peito, estender a lombar, soltar pescoço e trapézios.',
+   ex:[['flexAnca',1],['esfinge',1],['gato',0],['retracao',0],['pescoco',1],['peitoral',0],['quad',0],['fig4',0],['isquios',0],['rot',0]]}
+};
+const MOB_DOWS=['mon','tue','wed','thu','fri','sat','sun'], MOB_SHORT={mon:'Seg',tue:'Ter',wed:'Qua',thu:'Qui',fri:'Sex',sat:'Sáb',sun:'Dom'};
+const MOB_LIMIT=15, MOB_MAX=20;
+function mobMins(list){ return Math.ceil(list.reduce((s,e)=>s+MOB_EX[e[0]].sec,0)/60); }
+let mobSel=null, mobQuick=false;
+function mobDoneLoad(){ try{ return JSON.parse(localStorage.getItem('mobDone')||'{}'); }catch(e){ return {}; } }
+function mobDoneSave(o){ try{ localStorage.setItem('mobDone',JSON.stringify(o)); }catch(e){} }
+function mobPlanTxt(k){
+  try{ const p=planPos(0); if(!p) return ''; const d=buildDay(p.wk,k); if(!d||!d.items) return '';
+    const t=d.items.map(i=>i.title).filter(Boolean).join(' + '); return t?'<div class="mobplan">Treino planeado ('+DOWLABEL[k].toLowerCase()+', semana '+p.wk+'): <b>'+t+'</b></div>':''; }catch(e){ return ''; }
+}
+function renderMob(){
+  const root=document.getElementById('mobBody'); if(!root) return;
+  if(!mobSel){ const w=TODAY.getDay(); mobSel=MOB_DOWS[(w+6)%7]; }
+  const todayK=MOB_DOWS[(TODAY.getDay()+6)%7];
+  const day=MOB_DAYS[mobSel], all=day.ex, list=mobQuick?all.filter(e=>e[1]):all, mins=mobMins(list);
+  const chips=MOB_DOWS.map(k=>'<button class="mobchip'+(k===mobSel?' on':'')+(k===todayK?' hoje':'')+'" data-k="'+k+'" aria-pressed="'+(k===mobSel)+'"><span>'+MOB_SHORT[k]+'</span><i>'+mobMins(MOB_DAYS[k].ex)+'′</i></button>').join('');
+  const okLim=mins<=MOB_LIMIT;
+  const done=(mobDoneLoad()[isoDate(TODAY)+'|'+mobSel]||[]);
+  const ex=list.map((e,i)=>{ const x=MOB_EX[e[0]], svgs=mfFrames(x.fr,x.n);
+    const figs=x.fr.map((f,j)=>'<figure class="mf"><div class="mfsvg">'+svgs[j]+'</div>'+(x.fr.length>1||f.c?'<figcaption>'+f.c+'</figcaption>':'')+'</figure>').join('');
+    const tag=e[2]==='a'?'<span class="mobtag a">antes do treino</span>':e[2]==='d'?'<span class="mobtag d">depois do treino</span>':'';
+    return '<article class="mobex'+(done.indexOf(e[0])>=0?' done':'')+'" data-id="'+e[0]+'"><header><button class="mobnum" aria-label="Marcar como feito">'+(done.indexOf(e[0])>=0?'✓':(i+1))+'</button>'
+      +'<div class="mobtt"><h3>'+x.n+'</h3><div class="mobsub">'+x.alvo+(e[1]?' · <b>essencial</b>':'')+'</div></div><span class="mobdose">'+x.dose+'</span></header>'
+      +tag+'<div class="mobfr n'+x.fr.length+'">'+figs+'</div>'
+      +'<ol class="mobsteps">'+x.passos.map(p=>'<li>'+p+'</li>').join('')+'</ol>'
+      +'<div class="mobnote"><div><b>Deves sentir:</b> '+x.sente+'</div><div><b>Evita:</b> '+x.evita+'</div></div></article>'; }).join('');
+  root.innerHTML='<div class="card mobhdr"><div class="mobchips" role="group" aria-label="Dia da semana">'+chips+'</div>'
+    +'<h2>'+DOWLABEL[mobSel]+' — '+day.foco+(mobSel===todayK?' <span class="badge accent">hoje</span>':'')+'</h2>'
+    +'<div class="mobmeta"><span class="mobtime '+(okLim?'ok':'warn')+'">≈ '+mins+' min</span><span>'+list.length+' exercícios</span><span>'+(okLim?'dentro dos '+MOB_LIMIT+' min':'abaixo do máximo de '+MOB_MAX+' min')+'</span>'
+    +'<label class="mobq"><input type="checkbox" id="mobQuick"'+(mobQuick?' checked':'')+'> Versão rápida (só o essencial)</label></div>'
+    +'<p class="mobwhy">'+day.porque+'</p><p class="mobwhen"><b>Quando:</b> '+day.quando+'</p>'+mobPlanTxt(mobSel)+'</div>'+ex;
+  root.querySelectorAll('.mobchip').forEach(b=>b.addEventListener('click',()=>{ mobSel=b.dataset.k; renderMob(); }));
+  const q=document.getElementById('mobQuick'); if(q) q.addEventListener('change',()=>{ mobQuick=q.checked; renderMob(); });
+  root.querySelectorAll('.mobex .mobnum').forEach(b=>b.addEventListener('click',()=>{ const id=b.closest('.mobex').dataset.id, k=isoDate(TODAY)+'|'+mobSel, o=mobDoneLoad(), a=o[k]||[], i=a.indexOf(id);
+    if(i>=0) a.splice(i,1); else a.push(id); o[k]=a; mobDoneSave(o); renderMob(); }));
+}
+renderMob();
 /* ============ MODO PÚBLICO: só Calendário + anéis/hoje/semana ============ */
 const SNAP=window.__SNAP||{};
 (SNAP.acts||[]).forEach((a,i)=>{ DG.act['s'+i]=a; });
@@ -1345,7 +1620,7 @@ renderAll();
 <div class="ulock" id="ulock" hidden role="dialog" aria-modal="true" aria-labelledby="ulT">
   <form class="ulbox" id="ulForm" autocomplete="on">
     <h2 id="ulT">🔒 Desbloquear</h2>
-    <p>Tendências, Modalidades, Mobilidade, Dados &amp; evolução e Metodologia. Depois de desbloqueado, este dispositivo lembra-se.</p>
+    <p>Tendências, Modalidades, Dados &amp; evolução e Metodologia. Depois de desbloqueado, este dispositivo lembra-se.</p>
     <input class="ghost" type="text" name="username" autocomplete="username" value="plano703" tabindex="-1" aria-hidden="true">
     <input type="password" id="ulPass" name="password" autocomplete="current-password" placeholder="Palavra-passe" autocapitalize="off" autocorrect="off" spellcheck="false">
     <div class="ulmsg" id="ulMsg" role="alert"></div>

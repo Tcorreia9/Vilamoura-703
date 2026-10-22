@@ -67,6 +67,56 @@ p{line-height:1.5; color:var(--text-dim); margin:6px 0;}
 .tab-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
 .view{display:none;}
 .view.active{display:block;}
+.mf svg{display:block;width:100%;height:auto}
+.mf-s{fill:none;stroke:var(--text);stroke-width:calc(3.2px*var(--k,1));stroke-linecap:round;stroke-linejoin:round}
+.mf-t{stroke-width:calc(4px*var(--k,1))}
+.mf-far{opacity:.38}
+.mf-hd{fill:var(--bg-card);stroke:var(--text);stroke-width:calc(2.6px*var(--k,1))}
+.mf-hl{fill:var(--accent);fill-opacity:.3;stroke:var(--accent);stroke-width:calc(1.2px*var(--k,1))}
+.mf-ar{fill:none;stroke:var(--accent2);stroke-width:calc(1.8px*var(--k,1));stroke-linecap:round}
+.mf-ah{fill:var(--accent2)}
+.mf-fl{stroke:var(--text-dim);stroke-width:calc(1.6px*var(--k,1));opacity:.55}
+.mf-wall{stroke:var(--text-dim);stroke-width:calc(2.6px*var(--k,1));opacity:.7;stroke-linecap:round}
+.mf-wallbg{fill:var(--bg-soft);stroke:none}
+.mf-towel{stroke:var(--accent2);stroke-width:calc(2px*var(--k,1));stroke-linecap:round}
+
+/* Mobilidade */
+.mobchips{display:flex; gap:6px; overflow-x:auto; padding-bottom:2px;}
+.mobchip{flex:1 1 0; min-width:0; border:1px solid var(--border); background:var(--bg-card); color:var(--text-dim); border-radius:10px; padding:6px 4px; cursor:pointer; font-size:.78rem; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:1px; font-family:var(--font);}
+.mobchip i{font-style:normal; font-size:.64rem; font-weight:600; opacity:.85;}
+.mobchip.on{background:var(--accent); color:#fff; border-color:var(--accent);}
+.mobchip.hoje:not(.on){border-color:var(--accent); color:var(--accent);}
+.mobhdr h2{margin:12px 0 8px;}
+.mobmeta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; font-size:.8rem; color:var(--text-dim);}
+.mobtime{font-weight:700; padding:2px 10px; border-radius:20px; background:var(--accent-soft); color:var(--accent);}
+.mobtime.warn{background:var(--brick-soft); color:var(--brick);}
+.mobq{display:inline-flex; align-items:center; gap:6px; cursor:pointer; margin-left:auto;}
+.mobwhy,.mobwhen{font-size:.85rem; margin:8px 0 0;}
+.mobwhen b,.mobplan b{color:var(--text);}
+.mobplan{margin-top:8px; font-size:.8rem; color:var(--text-dim); background:var(--bg-soft); border-radius:8px; padding:8px 10px;}
+.mobex{background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px; box-shadow:var(--shadow);}
+.mobex header{display:flex; gap:10px; align-items:flex-start;}
+.mobnum{flex-shrink:0; width:30px; height:30px; border-radius:50%; border:2px solid var(--accent); background:transparent; color:var(--accent); font-weight:700; cursor:pointer; font-family:var(--font); font-size:.85rem; padding:0;}
+.mobex.done .mobnum{background:var(--accent); color:#fff;}
+.mobex.done .mobtt h3{text-decoration:line-through; text-decoration-color:var(--text-dim);}
+.mobtt{flex:1; min-width:0;}
+.mobtt h3{font-size:1rem; margin:0;}
+.mobsub{font-size:.74rem; color:var(--text-dim); margin-top:2px;}
+.mobsub b{color:var(--accent);}
+.mobdose{flex-shrink:0; font-size:.72rem; font-weight:700; background:var(--bg-soft); border-radius:8px; padding:4px 8px; max-width:40%; text-align:right; line-height:1.3;}
+.mobtag{display:inline-block; margin:8px 0 0 40px; font-size:.64rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 8px; border-radius:6px;}
+.mobtag.a{background:var(--run-soft); color:var(--run);} .mobtag.d{background:var(--taper-soft); color:var(--taper);}
+.mobfr{display:flex; gap:8px; margin:10px 0;}
+.mobfr .mf{flex:1 1 0; min-width:0; margin:0; border:1px solid var(--border); border-radius:10px; background:var(--bg-card); overflow:hidden;}
+.mobfr.n1 .mf{max-width:340px; margin:0 auto;}
+.mobfr figcaption{font-size:.68rem; font-weight:600; text-align:center; color:var(--text-dim); padding:0 4px 5px;}
+.mobsteps{margin:6px 0 0; padding-left:20px; font-size:.85rem; line-height:1.55; color:var(--text);}
+.mobsteps li{margin-bottom:2px;}
+.mobnote{margin-top:8px; font-size:.8rem; color:var(--text-dim); background:var(--bg-soft); border-radius:8px; padding:8px 10px; display:grid; gap:4px; line-height:1.45;}
+.mobnote b{color:var(--text);}
+.mobrules{margin:6px 0 0; padding-left:18px; font-size:.85rem; color:var(--text-dim); line-height:1.6;}
+.mobrules b{color:var(--text);}
+@media(min-width:720px){ .mobfr.n2 .mf{max-width:300px;} .mobfr.n2{justify-content:center;} }
 
 /* Timeline */
 .timeline{display:flex; overflow-x:auto; gap:3px; padding:4px 0 10px;}
@@ -311,6 +361,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
     <button class="tab-btn active" data-view="overview">Visão geral</button>
     <button class="tab-btn" data-view="calendar">Calendário</button>
     <button class="tab-btn" data-view="mod" data-lock="1">🔒 Modalidades</button>
+    <button class="tab-btn" data-view="mob" data-lock="1">🔒 Mobilidade</button>
     <button class="tab-btn" data-view="dados" data-lock="1">🔒 Dados &amp; evolução</button>
     <button class="tab-btn" data-view="method" data-lock="1">🔒 Metodologia</button>
   </div>
@@ -330,7 +381,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
 
     <div class="card lockcard">
       <h2>🔒 Tendências e resumo</h2>
-      <p>As tendências de recuperação, sono e carga, o resumo do que os dados mudam no treino e as abas Modalidades, Dados &amp; evolução e Metodologia abrem com a palavra-passe.</p>
+      <p>As tendências de recuperação, sono e carga, o resumo do que os dados mudam no treino e as abas Modalidades, Mobilidade, Dados &amp; evolução e Metodologia abrem com a palavra-passe.</p>
       <div class="hrow"><button class="btn pri" id="unlockBtn" type="button">Desbloquear</button></div>
     </div>
 
@@ -1294,7 +1345,7 @@ renderAll();
 <div class="ulock" id="ulock" hidden role="dialog" aria-modal="true" aria-labelledby="ulT">
   <form class="ulbox" id="ulForm" autocomplete="on">
     <h2 id="ulT">🔒 Desbloquear</h2>
-    <p>Tendências, Modalidades, Dados &amp; evolução e Metodologia. Depois de desbloqueado, este dispositivo lembra-se.</p>
+    <p>Tendências, Modalidades, Mobilidade, Dados &amp; evolução e Metodologia. Depois de desbloqueado, este dispositivo lembra-se.</p>
     <input class="ghost" type="text" name="username" autocomplete="username" value="plano703" tabindex="-1" aria-hidden="true">
     <input type="password" id="ulPass" name="password" autocomplete="current-password" placeholder="Palavra-passe" autocapitalize="off" autocorrect="off" spellcheck="false">
     <div class="ulmsg" id="ulMsg" role="alert"></div>

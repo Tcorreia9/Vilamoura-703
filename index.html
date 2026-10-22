@@ -268,6 +268,19 @@ footer{text-align:center; font-size:.72rem; color:var(--text-dim); margin-top:30
 .wchip.done::after{content:"✓"; position:absolute; top:2px; right:4px; font-size:.65rem; color:var(--good); font-weight:800;}
 .wchip.part::after{content:attr(data-p); position:absolute; top:2px; right:3px; font-size:.55rem; color:var(--accent); font-weight:800;}
 .hitem .hck{margin-left:auto; flex-shrink:0;}
+.fesync{font-size:.72rem; color:var(--text-dim); margin-top:10px; line-height:1.45;}
+.fesync:empty{display:none;}
+.fesync a{color:var(--text); text-decoration:underline; cursor:pointer;}
+.fetok{position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; padding:16px;}
+.fetokbox{background:var(--bg-card); color:var(--text); border:1px solid var(--border); border-radius:14px; max-width:460px; width:100%; max-height:92vh; overflow:auto; padding:16px 16px 14px; font-size:.82rem; line-height:1.5;}
+.fetokbox h3{margin:0 0 6px; font-size:1rem;}
+.fetokbox p{margin:0 0 6px; color:var(--text-dim);}
+.fetokbox ol{margin:8px 0 10px; padding-left:20px; color:var(--text-dim);}
+.fetokbox a{color:var(--accent);}
+.fetokbox input{width:100%; box-sizing:border-box; padding:10px 11px; border-radius:9px; border:1px solid var(--border); background:var(--bg-soft); color:var(--text); font:.85rem var(--font);}
+.fetokmsg{min-height:1.2em; margin-top:6px; font-size:.78rem; color:var(--text-dim);}
+.ferow{display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; margin-top:10px;}
+.fetokbox .btn.pri{background:var(--accent); border-color:var(--accent); color:#fff;}
 .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)); gap:10px; margin-bottom:14px;}
 .tile{background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow:var(--shadow); min-width:0;}
 .tile .l{font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-dim);}
@@ -441,7 +454,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
     </div>
   </div>
 
-  <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
+  <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.<span class="fesync" style="display:block"></span></footer>
 </div>
 
 <script>window.__SNAP={"rec":{"data":"2026-10-22","idx":77,"hrv":66,"fcr":51},"sleep":{"data":"2026-10-22","sono":8.37,"score":86},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5},{"data":"2026-10-22","tipo":"strength_training","min":31},{"data":"2026-10-22","tipo":"running","min":42}],"asof":"2026-10-22","garminAt":"2026-10-22T17:55:25Z"};window.__FE_BASE={"2026-10-12":[true],"2026-10-13":[true],"2026-10-14":[true],"2026-10-15":[true],"2026-10-16":[true],"2026-10-17":[true],"2026-10-18":[true],"2026-10-19":[true],"2026-10-20":[true],"2026-10-21":[true],"2026-10-22":[true,true]};</script>
@@ -1033,49 +1046,134 @@ let currentWeek = 1;
 let openDay = null;
 
 /* ---- marcações «feito» por sessão ----
-   Artefacto: coleção «feitos» na base de dados (1 documento por dia, id = data ISO) → o Claude consegue lê-las.
-   PWA: sem canal de escrita para o Claude → ficam no aparelho (localStorage + cópia em IndexedDB), por cima da
-   base cozida no build (__FE_BASE, vinda da base de dados). Chave local: «AAAA-MM-DD#índice». */
-const FE={db:{},live:false,loc:{},base:window.__FE_BASE||{},persisted:false};
+   Artefacto: coleção «feitos» da base de dados (1 documento por dia, id = data ISO) → o Claude lê-a daí.
+   PWA: ficam no aparelho (localStorage + cópia em IndexedDB), por cima da base cozida no build (__FE_BASE) e, havendo
+   token neste aparelho, sincronizam com o GitHub (feitos.json, ramo «feitos» do repositório privado garmin_dados) → o Claude lê-as daí.
+   Chave local: «AAAA-MM-DD#índice da sessão» → [feito, ms da marcação]; em conflito ganha a marcação mais recente. */
+const FE={db:{},live:false,loc:{},base:window.__FE_BASE||{},persisted:false,sync:{busy:false,again:false,last:0,err:'',timer:0}};
+const FE_REPO='Tcorreia9/garmin_dados', FE_BRANCH='feitos', FE_FILE='feitos.json', FE_PWA=!!(window.__SNAP||window.__PWA);
 function feDate(wk,k){ return isoDate(addDays(PLAN_START,(wk-1)*7+DOW.indexOf(k))); }
 function feRealDb(){ return !!(DG.db && window.__PWA!=='full'); }
-function feLoadLocal(){ try{ FE.loc=JSON.parse(localStorage.getItem('plan70_fe')||'{}')||{}; }catch(e){ FE.loc={}; } }
+function feVal(x){ return Array.isArray(x)?!!x[0]:!!x; }
+function feTs(x){ return Array.isArray(x)?(+x[1]||0):0; }
+function feNorm(o){ const r={}; Object.keys(o||{}).forEach(k=>{ const x=o[k]; r[k]=Array.isArray(x)?[!!x[0],+x[1]||0]:[!!x,0]; }); return r; }
+function feLoadLocal(){ try{ FE.loc=feNorm(JSON.parse(localStorage.getItem('plan70_fe')||'{}')); }catch(e){ FE.loc={}; } }
 function feIdb(fn){ try{ const r=indexedDB.open('plano703',1); r.onupgradeneeded=()=>{ try{ r.result.createObjectStore('k'); }catch(e){} }; r.onsuccess=()=>{ try{ fn(r.result); }catch(e){} }; }catch(e){} }
+function feIdbPut(key,val){ feIdb(d=>{ const t=d.transaction('k','readwrite'); t.objectStore('k').put(val,key); t.oncomplete=()=>d.close(); }); }
+function feIdbGet(key,cb){ feIdb(d=>{ const q=d.transaction('k','readonly').objectStore('k').get(key); q.onsuccess=()=>{ d.close(); try{ cb(q.result); }catch(e){} }; }); }
 function feSaveLocal(){
   const s=JSON.stringify(FE.loc);
   try{ localStorage.setItem('plan70_fe',s); }catch(e){}
-  feIdb(d=>{ const t=d.transaction('k','readwrite'); t.objectStore('k').put(s,'fe'); t.oncomplete=()=>d.close(); });
+  feIdbPut('fe',s);
   if(!FE.persisted){ FE.persisted=true; try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){} }
 }
-function feIdbRestore(){ feIdb(d=>{ const q=d.transaction('k','readonly').objectStore('k').get('fe');
-  q.onsuccess=()=>{ d.close(); try{ const o=JSON.parse(q.result||'{}'); let ch=false;
-    Object.keys(o).forEach(key=>{ if(!(key in FE.loc)){ FE.loc[key]=o[key]; ch=true; } });
-    if(ch){ try{ localStorage.setItem('plan70_fe',JSON.stringify(FE.loc)); }catch(e){} feRefresh(); } }catch(e){} }; }); }
+function feTok(){ try{ return localStorage.getItem('plan70_gh')||''; }catch(e){ return ''; } }
+function feSetTok(t){ try{ if(t) localStorage.setItem('plan70_gh',t); else localStorage.removeItem('plan70_gh'); }catch(e){} feIdbPut('ghtok',t||''); }
+function feIdbRestore(){
+  feIdbGet('fe',v=>{ const o=feNorm(JSON.parse(v||'{}')); let ch=false;
+    Object.keys(o).forEach(k=>{ if(!(k in FE.loc)||feTs(o[k])>feTs(FE.loc[k])){ FE.loc[k]=o[k]; ch=true; } });
+    if(ch){ try{ localStorage.setItem('plan70_fe',JSON.stringify(FE.loc)); }catch(e){} feRefresh(); } });
+  if(FE_PWA) feIdbGet('ghtok',v=>{ if(v&&!feTok()){ try{ localStorage.setItem('plan70_gh',v); }catch(e){} feSyncSoon(); feStat(); } });
+}
 function feLegacy(wk,k){ try{ return !!(JSON.parse(localStorage.getItem('plan70_done')||'{}')[wk+'-'+k]); }catch(e){ return false; } }
 function feGet(wk,k,i){
   const dt=feDate(wk,k);
   if(feRealDb() && FE.live) return !!(FE.db[dt] && FE.db[dt][i]);
   const key=dt+'#'+i;
-  if(key in FE.loc) return !!FE.loc[key];
+  if(key in FE.loc) return feVal(FE.loc[key]);
   if(FE.base[dt] && FE.base[dt][i]!=null) return !!FE.base[dt][i];
   return feLegacy(wk,k);
 }
 function feDay(wk,k){ const n=buildDay(wk,k).items.length; let c=0; for(let i=0;i<n;i++) if(feGet(wk,k,i)) c++; return {n:n,c:c,all:n>0&&c===n,part:c>0&&c<n}; }
 function feSet(wk,k,idx,v){
-  const dt=feDate(wk,k), day=buildDay(wk,k), n=day.items.length, ids=Array.isArray(idx)?idx:[idx], cur=[];
+  const dt=feDate(wk,k), day=buildDay(wk,k), n=day.items.length, ids=Array.isArray(idx)?idx:[idx], cur=[], now=Date.now();
   for(let i=0;i<n;i++) cur.push(feGet(wk,k,i));
-  ids.forEach(i=>{ cur[i]=!!v; FE.loc[dt+'#'+i]=!!v; });
+  ids.forEach(i=>{ cur[i]=!!v; FE.loc[dt+'#'+i]=[!!v,now]; });
   feSaveLocal();
   if(feRealDb()){
     if(FE.live) FE.db[dt]=cur;
-    try{ const w=DG.db.collection('feitos').doc(dt).set({data:dt,wk:wk,k:k,feitos:cur,titulos:day.items.map(x=>x.title),atualizado_em:new Date().toISOString()}); if(w&&w.catch) w.catch(()=>{}); }catch(e){}
-  }
+    try{ const w=DG.db.collection('feitos').doc(dt).set({data:dt,wk:wk,k:k,feitos:cur,titulos:day.items.map(x=>x.title),atualizado_em:new Date(now).toISOString()}); if(w&&w.catch) w.catch(()=>{}); }catch(e){}
+  } else feSyncSoon();
 }
 function feRefresh(){ try{ renderCalendar(); }catch(e){} try{ renderAll(); }catch(e){} }
 function feToggle(wk,k,i){ feSet(wk,k,i,!feGet(wk,k,i)); feRefresh(); }
 function feToggleAll(wk,k){ const d=feDay(wk,k), ids=[]; for(let i=0;i<d.n;i++) ids.push(i); feSet(wk,k,ids,!d.all); feRefresh(); }
 const FE_IC={swim:'🏊',bike:'🚴',run:'🏃',strength:'🏋️',brick:'🔁'};
+/* ---- sincronização com o GitHub (só PWA, só com token) ---- */
+function feB64e(s){ let r=''; new TextEncoder().encode(s).forEach(c=>{ r+=String.fromCharCode(c); }); return btoa(r); }
+function feB64d(s){ return new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g,'')),c=>c.charCodeAt(0))); }
+function feGh(method,body){
+  const u='https://api.github.com/repos/'+FE_REPO+'/contents/'+FE_FILE+(method==='GET'?'?ref='+FE_BRANCH:'');
+  return fetch(u,{method:method,cache:'no-store',headers:Object.assign({'Authorization':'Bearer '+feTok(),'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined});
+}
+function feSyncSoon(){ if(!FE_PWA||!feTok()) return; clearTimeout(FE.sync.timer); FE.sync.timer=setTimeout(feSync,900); }
+async function feSync(){
+  const S=FE.sync; if(!FE_PWA||feRealDb()||!feTok()) return;
+  if(S.busy){ S.again=true; return; }
+  S.busy=true; S.err=''; feStat();
+  try{
+    let ok=false;
+    for(let n=0;n<3&&!ok;n++){
+      const r=await feGh('GET'); let remote={}, sha=null;
+      if(r.status===200){ const j=await r.json(); sha=j.sha; try{ remote=feNorm((JSON.parse(feB64d(j.content))||{}).i); }catch(e){ remote={}; } }
+      else if(r.status===401) throw new Error('token inválido ou expirado');
+      else if(r.status===403) throw new Error('token sem permissão');
+      else if(r.status===404) throw new Error('ficheiro não encontrado (ou token sem acesso ao garmin_dados)');
+      else throw new Error('GitHub '+r.status);
+      let pull=false, push=false; const merged=Object.assign({},remote);
+      Object.keys(remote).forEach(k=>{ const l=FE.loc[k]; if(!l||feTs(remote[k])>feTs(l)){ FE.loc[k]=remote[k]; pull=true; } });
+      Object.keys(FE.loc).forEach(k=>{ const l=FE.loc[k], rv=remote[k]; if(feTs(l)>0&&(!rv||feTs(l)>feTs(rv))){ merged[k]=l; push=true; } });
+      if(pull){ feSaveLocal(); feRefresh(); }
+      if(!push){ ok=true; break; }
+      const sorted={}; Object.keys(merged).sort().forEach(k=>{ sorted[k]=merged[k]; });
+      const w=await feGh('PUT',{message:'feitos '+new Date().toISOString().slice(0,16),content:feB64e(JSON.stringify({v:1,t:Date.now(),i:sorted})),branch:FE_BRANCH,sha:sha});
+      if(w.status===200||w.status===201) ok=true;
+      else if(w.status===409||w.status===422) continue;
+      else if(w.status===401||w.status===403) throw new Error('token sem permissão de escrita (Contents: Read and write)');
+      else throw new Error('GitHub '+w.status);
+    }
+    if(ok) S.last=Date.now(); else S.err='conflito de escrita, tento de novo';
+  }catch(e){ S.err=e instanceof TypeError?'sem ligação':String((e&&e.message)||'erro').replace(/[<>&"]/g,''); }
+  S.busy=false; feStat();
+  if(S.again){ S.again=false; feSyncSoon(); }
+}
+function feStatText(){
+  const S=FE.sync; if(!FE_PWA) return '';
+  if(!feTok()) return 'Marcações só neste aparelho · <a href="#" class="felink">ligar ao GitHub</a> para o Claude as ler';
+  if(S.busy) return 'A sincronizar marcações…';
+  if(S.err) return '⚠ Marcações por sincronizar ('+S.err+') · <a href="#" class="felink">token</a>';
+  return S.last?'✓ Marcações sincronizadas com o GitHub às '+new Date(S.last).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})+' · <a href="#" class="felink">token</a>':'A ligar ao GitHub…';
+}
+function feStat(){ document.querySelectorAll('.fesync').forEach(el=>{ el.innerHTML=feStatText(); el.querySelectorAll('.felink').forEach(a=>{ a.onclick=e=>{ e.preventDefault(); feOpenTok(); }; }); }); }
+function feOpenTok(){
+  if(document.getElementById('feTok')) return;
+  const o=document.createElement('div'); o.id='feTok'; o.className='fetok';
+  o.innerHTML='<form class="fetokbox" autocomplete="off"><h3>Ligar as marcações ao GitHub</h3>'+
+    '<p>Cada «feito» que marcares aqui passa a ser gravado num ficheiro privado e o Claude consegue lê-lo. O token fica <b>só neste aparelho</b>.</p>'+
+    '<ol><li>No GitHub: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings → Fine-grained tokens → Generate new token</a>.</li>'+
+    '<li><b>Repository access</b>: «Only select repositories» → <b>garmin_dados</b>.</li>'+
+    '<li><b>Permissions → Repository → Contents</b>: «Read and write». Nenhuma outra.</li>'+
+    '<li>Gera, copia o token (<code>github_pat_…</code>) e cola abaixo.</li></ol>'+
+    '<input type="password" id="feTokIn" placeholder="github_pat_…" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Token do GitHub">'+
+    '<div class="fetokmsg" id="feTokMsg" role="status"></div>'+
+    '<div class="ferow"><button type="button" class="btn" id="feTokX">Fechar</button>'+(feTok()?'<button type="button" class="btn" id="feTokDel">Remover token</button>':'')+'<button type="submit" class="btn pri" id="feTokGo">Guardar e testar</button></div></form>';
+  document.body.appendChild(o);
+  const msg=t=>{ document.getElementById('feTokMsg').textContent=t; }, close=()=>{ o.remove(); feStat(); };
+  o.addEventListener('click',e=>{ if(e.target===o) close(); });
+  document.getElementById('feTokX').onclick=close;
+  const del=document.getElementById('feTokDel'); if(del) del.onclick=()=>{ feSetTok(''); FE.sync.err=''; FE.sync.last=0; close(); };
+  o.querySelector('form').addEventListener('submit',async ev=>{
+    ev.preventDefault(); const v=document.getElementById('feTokIn').value.trim();
+    if(!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(v)){ msg('Isto não parece um token do GitHub (começa por github_pat_).'); return; }
+    feSetTok(v); msg('A testar…'); FE.sync.err=''; FE.sync.busy=false; await feSync();
+    if(FE.sync.err) msg('Não deu: '+FE.sync.err); else { msg('Ligado ✓'); setTimeout(close,800); }
+  });
+  setTimeout(()=>{ const i=document.getElementById('feTokIn'); if(i) i.focus(); },30);
+}
 feLoadLocal(); feIdbRestore();
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) feSyncSoon(); });
+window.addEventListener('online',feSyncSoon);
+feSyncSoon();
 function loadNotes(){ try{ return JSON.parse(localStorage.getItem('plan70_notes')||'{}'); }catch(e){ return {}; } }
 function saveNotes(obj){ try{ localStorage.setItem('plan70_notes', JSON.stringify(obj)); }catch(e){} }
 
@@ -1374,10 +1472,11 @@ function renderHoje(R){
   const gm=todayAct.length?'<p class="tmrw">Já no Garmin hoje: <b style="color:var(--text)">'+todayAct.map(a=>(isSwimAct(a)?'🏊':isBikeAct(a)?'🚴':isStrAct(a)?'🏋️':'🏃')+' '+Math.round(a.min||0)+' min').join(' · ')+'</b></p>':'';
   const t=planPos(1); let tm=''; if(t){ const td=buildDay(t.wk,t.k); tm='<p class="tmrw">Amanhã · '+DOWLABEL[t.k]+': <b style="color:var(--text)">'+td.items.map(i=>i.title).join(' + ')+'</b>'+(td.totalDur?' · '+td.totalDur+' min':'')+'</p>'; }
   el.innerHTML='<h2>Hoje · '+DOWLABEL[p.k]+' '+fmt(TODAY)+'</h2><p style="margin:0 0 4px;">Semana '+p.wk+' — '+phase.name+(done?' · <b style="color:var(--good)">✓ feito</b>':fd.part?' · <b style="color:var(--accent)">'+fd.c+'/'+fd.n+' feito</b>':'')+'</p>'+items+adv+gm+tm+
-    '<div class="hrow"><button class="btn" id="hojeOpen">Ver detalhe no calendário</button><button class="btn" id="hojeDone">'+(done?(multi?'Desmarcar tudo':'Desmarcar como feito'):(multi?'Marcar tudo como feito ✓':'Marcar como feito ✓'))+'</button></div>';
+    '<div class="hrow"><button class="btn" id="hojeOpen">Ver detalhe no calendário</button><button class="btn" id="hojeDone">'+(done?(multi?'Desmarcar tudo':'Desmarcar como feito'):(multi?'Marcar tudo como feito ✓':'Marcar como feito ✓'))+'</button></div><div class="fesync"></div>';
   document.getElementById('hojeOpen').onclick=()=>openInCalendar(p.wk,p.k);
   document.getElementById('hojeDone').onclick=()=>feToggleAll(p.wk,p.k);
   el.querySelectorAll('.hck').forEach(b=>b.addEventListener('click',()=>feToggle(p.wk,p.k,+b.dataset.i)));
+  feStat();
 }
 function renderWeekStrip(){
   const el=document.getElementById('weekStrip'), p=planPos(0);

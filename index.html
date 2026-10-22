@@ -304,7 +304,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 22/10 às 10:17. Dados Garmin até 22/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 22/10 às 18:55. Dados Garmin até 22/10. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -366,7 +366,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.</footer>
 </div>
 
-<script>window.__SNAP={"rec":{"data":"2026-10-22","idx":77,"hrv":66,"fcr":51},"sleep":{"data":"2026-10-22","sono":8.37,"score":86},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5},{"data":"2026-10-22","tipo":"strength_training","min":31}],"asof":"2026-10-22","garminAt":"2026-10-22T09:17:21Z"};</script>
+<script>window.__SNAP={"rec":{"data":"2026-10-22","idx":77,"hrv":66,"fcr":51},"sleep":{"data":"2026-10-22","sono":8.37,"score":86},"acts":[{"data":"2026-10-19","tipo":"lap_swimming","min":28.1},{"data":"2026-10-20","tipo":"virtual_ride","min":75.5},{"data":"2026-10-21","tipo":"lap_swimming","min":47.5},{"data":"2026-10-22","tipo":"strength_training","min":31},{"data":"2026-10-22","tipo":"running","min":42}],"asof":"2026-10-22","garminAt":"2026-10-22T17:55:25Z"};</script>
 <script>
 (function(){
 /* ============ DATE / RACE CONSTANTS ============ */
@@ -461,7 +461,9 @@ function W(lo,hi,wk){ const f = wk==null ? FTP : (wk>=50 ? wk : ftpWk(wk)); retu
 
 // Ritmos de corrida calibrados com os dados do Garmin (out 2026): maratona de Lisboa 3:13:00 (4:33/km, FC 169), meia de Castro Marim 1:33:14 (4:25/km, FC 176), melhor meia 1:28:07 (4:10/km, 2025),
 // corridas fáceis de Set–Out a 5:32–5:56/km com FC 146–152 (a 5:00–5:20/km a FC média foi 159–167). Forma atual ≈ 3:13 maratona / ~1:33 meia. Recalibrar após qualquer prova/teste novo.
-const PACE = {rec:'5:45–6:15/km', easy:'5:25–5:50/km', long:'5:20–5:45/km', mod:'4:50–5:05/km', mp:'4:30–4:45/km', thr:'4:15–4:25/km', vo2:'4:05–4:12/km', str:'4:00–4:10/km', rome:'5:15–5:30/km'};
+// Moderado do fartlek: 4:50–5:05 só na semana 2 (já corrida, 22/10: fez 4:34–4:43 com FC 165 média). Da semana 3 em diante sobe para 4:40–4:55 e a recuperação passa de 2' para 1'30 (pedido do Tiago).
+const PACE_MOD_W2 = '4:50–5:05/km';
+const PACE = {rec:'5:45–6:15/km', easy:'5:25–5:50/km', long:'5:20–5:45/km', mod:'4:40–4:55/km', mp:'4:30–4:45/km', thr:'4:15–4:25/km', vo2:'4:05–4:12/km', str:'4:00–4:10/km', rome:'5:15–5:30/km'};
 
 function swimEasyWorkout(short){
   if(short) return {title:'Técnica curta + soltar', duration:35, intensity:'Z1',
@@ -518,9 +520,21 @@ function runQualityWorkout(phase, wk){
     note:'Segundo dia depois da maratona: serve só para soltar. Se houver dor muscular marcada ou qualquer dor articular, cancela e faz só a caminhada. Zero qualidade esta semana.', tag:'Recuperação'};
   if(phase.id==='recovery0') return {title:'Corrida muito fácil', duration:30, intensity:'Z1 (mais lento que 5:20/km)',
     sets:[['Sessão única','30\' contínuo muito fácil, terreno plano']], note:'Só para manter o hábito — zero qualidade esta semana.', tag:'Recuperação'};
-  if(phase.id==='base') return {title:'Fartlek aeróbio + strides', duration:45, intensity:'Z2 ('+PACE.easy+') + strides',
-    sets:[['Aquec.','10\' Z2 ('+PACE.easy+')'],['Principal','20\' fartlek livre: alterna 2\' moderado ('+PACE.mod+') / 2\' fácil ('+PACE.easy+')'],['Finisher','6x20" strides soltos (~'+PACE.str+'), recup. total'],['Retorno','5\' fácil']],
+  if(phase.id==='base' && wk<=2) return {title:'Fartlek aeróbio + strides', duration:45, intensity:'Z2 ('+PACE.easy+') + strides',
+    sets:[['Aquec.','10\' Z2 ('+PACE.easy+')'],['Principal','20\' fartlek livre: alterna 2\' moderado ('+PACE_MOD_W2+') / 2\' fácil ('+PACE.easy+')'],['Finisher','6x20" strides soltos (~'+PACE.str+'), recup. total'],['Retorno','5\' fácil']],
     note:'Ainda sem trabalho duro estruturado — a fase de Técnica pede eficiência, não velocidade.', tag:'Base · Lorang'};
+  if(phase.id==='base'){
+    // Da semana 3: mais denso (moderados mais rápidos, recuperação de 1'30). Descarga (semana 7): mesmo ritmo, menos repetições.
+    const reps = dl ? 4 : 6, main = reps*3.5;   // 2' moderado + 1'30 fácil = 3'30 por repetição
+    return {title:'Fartlek aeróbio + strides', duration:25+main, intensity:'Z2 + moderados Z2–Z3 ('+PACE.mod+') + strides',
+      sets:[['Aquec.','10\' Z2 ('+PACE.easy+')'],
+            ['Principal',reps+'x [2\' moderado ('+PACE.mod+') + 1\'30 fácil ('+PACE.easy+')] = '+main+'\' de fartlek'],
+            ['Regra da FC','Moderados com FC 160–168; no fim de cada 1\'30 fácil a FC deve estar abaixo de 160. Se não estiver, vai para o lado lento (4:55) nos moderados seguintes.'],
+            ['Finisher','6x20" strides soltos (~'+PACE.str+'), recup. total'],['Retorno','5\' fácil']],
+      note:'Fartlek mais denso que na semana 2 (moderados mais rápidos, recuperação de 1\'30 em vez de 2\'): a corrida é o teu campo mais forte e não se descura na Base. Continua a ser trabalho aeróbio — o limiar estruturado só entra na semana 8.'
+        + (dl ? ' Semana de descarga: mantém-se o ritmo e cortam-se as repetições (4 em vez de 6) — é assim que se alivia sem perder o estímulo.' : ''),
+      tag:'Base · Lorang'};
+  }
   if(phase.id==='build1' && dl) return wk%2
     ? {title:'Intervalos VO2max — descarga', duration:60, intensity:'5x800m rápido',
        sets:[['Aquec.','15\' Z2 + 4 strides'],['Séries','5x800m a ~'+PACE.vo2+' (800 m em ~3:16–3:22), 2\' trote recup.'],['Retorno','15\' Z1']],
@@ -794,7 +808,8 @@ function buildDayRaw(weekNum, dowKey){
     const hardTrackInterval = phase.id==='build1' && (weekNum%2===1); // mesma condição do runQualityWorkout que gera "Intervalos VO2max" (8x800m)
     st.note += hardTrackInterval
       ? ' Podes inverter a ordem — força de manhã, série de pista à tarde (por causa do horário) — sem problema: um intervalo de 6h+ entre as duas é suficiente para recuperar. Só mantém esta sessão mais leve/técnica (sem ires ao falhanço) para não levares pernas cansadas para o intervalo de VO2max.'
-      : ' Também podes inverter a ordem — força de manhã, corrida à tarde — sem problema; esta sessão de corrida é mais tolerante a alguma fadiga residual do que um dia de intervalos verdadeiros.';
+      : ' Também podes inverter a ordem — força de manhã, corrida à tarde — sem problema; esta sessão de corrida é mais tolerante a alguma fadiga residual do que um dia de intervalos verdadeiros.'
+        + (phase.id==='base' ? ' Com o fartlek mais denso, se fizeres a força antes aplica a regra da FC: se no fim dos 1\'30 fáceis a FC não descer de 160, vai para o lado lento dos moderados (4:55).' : '');
     return combine([r, st], 'tue');
   }
   if(dowKey==='thu'){

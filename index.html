@@ -807,7 +807,7 @@ function strengthWorkout(phase, wk, which){
   const sets = {
     hipertrofia:{
       A:[['Agach. goblet (KB24)','4x10'],['Peso morto romeno (DB15 x2, descida de 3")','4x10'],['Afundo búlgaro (DB15 x2)','3x10/perna'],['Prancha + anti-rotação','3x40\"']],
-      B:[['Remo unilateral (DB20)','4x10/lado'],['Press militar (DB12 x2, descida de 3")','3x10'],['Face pull / rotação externa (banda ou KB leve)','3x15'],['Dead bug','3x12/lado']]
+      B:[['Remo unilateral (DB20)','4x10/lado'],['Press militar (DB15 x2, descida de 3")','4x5–6 → meta 3x10'],['Face pull / rotação externa (banda ou KB leve)','3x15'],['Dead bug','3x12/lado']]
     },
     força:{
       A:[['Agach. goblet pesado (KB24)','5x6'],['Peso morto romeno a uma perna (DB20)','3x6/perna'],['Step-up carregado (DB15 x2)','4x8/perna'],['Prancha lateral','3x35\"/lado']],
@@ -815,11 +815,11 @@ function strengthWorkout(phase, wk, which){
     },
     'potência/manutenção':{
       A:[['Agach. salto (peso corporal)','3x6'],['Peso morto romeno (DB15 x2)','3x8'],['Afundo caminhada (DB15 x2)','3x10/perna'],['Prancha','2x40\"']],
-      B:[['Remo unilateral (DB15)','3x10/lado'],['Press militar (DB12)','3x10'],['KB swing','3x15'],['Dead bug','2x10/lado']]
+      B:[['Remo unilateral (DB15)','3x10/lado'],['Press militar (DB15 x2)','3x8'],['KB swing','3x15'],['Dead bug','2x10/lado']]
     },
     'manutenção mínima':{
       A:[['Agach. goblet leve (KB16)','2x10'],['Prancha','2x30\"']],
-      B:[['Press militar leve (DB12)','2x10'],['Face pull/rotação externa','2x12']]
+      B:[['Press militar (DB15 x2)','2x8'],['Face pull/rotação externa','2x12']]
     }
   };
   const label = block==='manutenção mínima' ? 'Manutenção — 15\'' : (which==='A'?'Força A — pernas/posterior':'Força B — tronco/ombro');
@@ -827,7 +827,7 @@ function strengthWorkout(phase, wk, which){
   let noteA = 'Cadeia posterior forte = melhor economia de corrida e proteção do joelho no ciclo de alto volume.';
   if(which==='A' && phase.id==='build1' && wk%2) noteA += ' Por causa do horário da pista, podes fazer esta sessão de manhã e a série de corrida à tarde — com 6h+ de intervalo entre as duas não há problema; só não as faças seguidas sem descanso.';
   return {title: label, duration:dur, intensity: block,
-    sets: sets[block][which], note: which==='B' ? 'Ombro/core reforçam a posição de nado e aero na bike — objetivo é reduzir lesão, não hipertrofia máxima aqui.' + ((block==='hipertrofia'||block==='força') ? ' Press militar: a carga só sobe quando fizeres todas as séries com 2 repetições de reserva (começa nos 12 kg; os 15 kg entram depois, e se ainda não estiverem lá quando chegarem as séries de 8, mantém os 12). Se a meio da série a técnica falhar ou o ombro protestar, desce a carga em vez de forçar.' : '') : noteA,
+    sets: sets[block][which], note: which==='B' ? 'Ombro/core reforçam a posição de nado e aero na bike — objetivo é reduzir lesão, não hipertrofia máxima aqui.' + ((block==='hipertrofia'||block==='força') ? ' Press militar: os teus halteres começam nos 15 kg, por isso a progressão faz-se em repetições e não em carga — começa em 4x5–6 (descanso 2\') e só passas às 3x10 quando fizeres todas as séries com 2 repetições de reserva; depois disso é que se sobe de carga. Se não chegares às 5 repetições limpas, faz as que conseguires e completa com flexões em pike (pés no chão) até somares cerca de 20 repetições. Se a técnica falhar ou o ombro protestar, para a série em vez de forçar.' : '') : noteA,
     tag:'Hipertrofia/força', isStrength:true};
 }
 

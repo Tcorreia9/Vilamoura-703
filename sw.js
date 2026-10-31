@@ -1,5 +1,5 @@
-/* Service worker: rede primeiro (revalida sempre), cache para offline. Build defd92c769 */
-const CACHE = 'plano703-defd92c769';
+/* Service worker: rede primeiro (revalida sempre), cache para offline. Build 8327d3009a */
+const CACHE = 'plano703-8327d3009a';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'keys.json', 'payload.bin', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil((async () => {

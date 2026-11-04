@@ -90,7 +90,10 @@ p{line-height:1.5; color:var(--text-dim); margin:6px 0;}
 .mobmeta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; font-size:.8rem; color:var(--text-dim);}
 .mobtime{font-weight:700; padding:2px 10px; border-radius:20px; background:var(--accent-soft); color:var(--accent);}
 .mobtime.warn{background:var(--brick-soft); color:var(--brick);}
-.mobq{display:inline-flex; align-items:center; gap:6px; cursor:pointer; margin-left:auto;}
+.mobmode{display:flex; gap:4px; margin:12px 0 0; background:var(--bg-soft); border-radius:12px; padding:4px;}
+.mobmode button{flex:1 1 0; min-width:0; min-height:44px; border:0; background:transparent; color:var(--text-dim); border-radius:9px; padding:6px; cursor:pointer; font-family:var(--font); font-size:.92rem; font-weight:700; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; line-height:1.2;}
+.mobmode button small{font-size:.68rem; font-weight:600; opacity:.9;}
+.mobmode button.on{background:var(--accent); color:#fff;}
 .mobwhy,.mobwhen{font-size:.85rem; margin:8px 0 0;}
 .mobwhen b,.mobplan b{color:var(--text);}
 .mobplan{margin-top:8px; font-size:.8rem; color:var(--text-dim); background:var(--bg-soft); border-radius:8px; padding:8px 10px;}
@@ -381,8 +384,8 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <div class="tabs">
     <button class="tab-btn active" data-view="overview">Visão geral</button>
     <button class="tab-btn" data-view="calendar">Calendário</button>
-    <button class="tab-btn" data-view="mod" data-lock="1">🔒 Modalidades</button>
     <button class="tab-btn" data-view="mob">Mobilidade</button>
+    <button class="tab-btn" data-view="mod" data-lock="1">🔒 Modalidades</button>
     <button class="tab-btn" data-view="dados" data-lock="1">🔒 Dados &amp; evolução</button>
     <button class="tab-btn" data-view="method" data-lock="1">🔒 Metodologia</button>
   </div>
@@ -439,7 +442,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <div class="view" id="view-mob">
     <div class="card">
       <h2>Mobilidade diária</h2>
-      <p>Uma rotina curta para cada dia da semana, escolhida pelo treino desse dia. Cada uma dura cerca de <b style="color:var(--text)">10 a 14 minutos</b> — nunca passa os 15 (e o teto são 20). Nos dias apertados há uma <b style="color:var(--text)">versão rápida</b> só com o essencial (entre 4 e 7 min). Toca no número de um exercício para o marcares como feito.</p>
+      <p>Uma rotina curta para cada dia da semana, escolhida pelo treino desse dia. Cada uma dura cerca de <b style="color:var(--text)">10 a 14 minutos</b> — nunca passa os 15 (e o teto são 20). Nos dias apertados escolhe a <b style="color:var(--text)">versão rápida</b> (seletor «Completa | Rápida» por baixo dos dias), só com o essencial (entre 4 e 7 min). Toca no número de um exercício para o marcares como feito.</p>
     </div>
     <div id="mobBody"></div>
     <div class="card">
@@ -1708,6 +1711,8 @@ const MOB_DOWS=['mon','tue','wed','thu','fri','sat','sun'], MOB_SHORT={mon:'Seg'
 const MOB_LIMIT=15, MOB_MAX=20;
 function mobMins(list){ return Math.ceil(list.reduce((s,e)=>s+MOB_EX[e[0]].sec,0)/60); }
 let mobSel=null, mobQuick=false;
+try{ mobQuick=localStorage.getItem('mobQuick')==='1'; }catch(e){}
+function mobList(k){ const a=MOB_DAYS[k].ex; return mobQuick?a.filter(e=>e[1]):a; }
 function mobDoneLoad(){ try{ return JSON.parse(localStorage.getItem('mobDone')||'{}'); }catch(e){ return {}; } }
 function mobDoneSave(o){ try{ localStorage.setItem('mobDone',JSON.stringify(o)); }catch(e){} }
 function mobPlanTxt(k){
@@ -1718,8 +1723,10 @@ function renderMob(){
   const root=document.getElementById('mobBody'); if(!root) return;
   if(!mobSel){ const w=TODAY.getDay(); mobSel=MOB_DOWS[(w+6)%7]; }
   const todayK=MOB_DOWS[(TODAY.getDay()+6)%7];
-  const day=MOB_DAYS[mobSel], all=day.ex, list=mobQuick?all.filter(e=>e[1]):all, mins=mobMins(list);
-  const chips=MOB_DOWS.map(k=>'<button class="mobchip'+(k===mobSel?' on':'')+(k===todayK?' hoje':'')+'" data-k="'+k+'" aria-pressed="'+(k===mobSel)+'"><span>'+MOB_SHORT[k]+'</span><i>'+mobMins(MOB_DAYS[k].ex)+'′</i></button>').join('');
+  const day=MOB_DAYS[mobSel], all=day.ex, quick=all.filter(e=>e[1]), list=mobQuick?quick:all, mins=mobMins(list);
+  const chips=MOB_DOWS.map(k=>'<button class="mobchip'+(k===mobSel?' on':'')+(k===todayK?' hoje':'')+'" data-k="'+k+'" aria-pressed="'+(k===mobSel)+'"><span>'+MOB_SHORT[k]+'</span><i>'+mobMins(mobList(k))+'′</i></button>').join('');
+  const modeBtn=(q,nome,arr)=>'<button type="button" data-q="'+(q?1:0)+'" class="'+(mobQuick===q?'on':'')+'" aria-pressed="'+(mobQuick===q)+'">'+nome+'<small>≈ '+mobMins(arr)+' min · '+arr.length+' exercícios</small></button>';
+  const mode='<div class="mobmode" role="group" aria-label="Versão da rotina">'+modeBtn(false,'Completa',all)+modeBtn(true,'Rápida',quick)+'</div>';
   const okLim=mins<=MOB_LIMIT;
   const done=(mobDoneLoad()[isoDate(TODAY)+'|'+mobSel]||[]);
   const ex=list.map((e,i)=>{ const x=MOB_EX[e[0]], svgs=mfFrames(x.fr,x.n);
@@ -1730,13 +1737,13 @@ function renderMob(){
       +tag+'<div class="mobfr n'+x.fr.length+'">'+figs+'</div>'
       +'<ol class="mobsteps">'+x.passos.map(p=>'<li>'+p+'</li>').join('')+'</ol>'
       +'<div class="mobnote"><div><b>Deves sentir:</b> '+x.sente+'</div><div><b>Evita:</b> '+x.evita+'</div></div></article>'; }).join('');
-  root.innerHTML='<div class="card mobhdr"><div class="mobchips" role="group" aria-label="Dia da semana">'+chips+'</div>'
+  root.innerHTML='<div class="card mobhdr"><div class="mobchips" role="group" aria-label="Dia da semana">'+chips+'</div>'+mode
     +'<h2>'+DOWLABEL[mobSel]+' — '+day.foco+(mobSel===todayK?' <span class="badge accent">hoje</span>':'')+'</h2>'
     +'<div class="mobmeta"><span class="mobtime '+(okLim?'ok':'warn')+'">≈ '+mins+' min</span><span>'+list.length+' exercícios</span><span>'+(okLim?'dentro dos '+MOB_LIMIT+' min':'abaixo do máximo de '+MOB_MAX+' min')+'</span>'
-    +'<label class="mobq"><input type="checkbox" id="mobQuick"'+(mobQuick?' checked':'')+'> Versão rápida (só o essencial)</label></div>'
+    +'</div>'
     +'<p class="mobwhy">'+day.porque+'</p><p class="mobwhen"><b>Quando:</b> '+day.quando+'</p>'+mobPlanTxt(mobSel)+'</div>'+ex;
   root.querySelectorAll('.mobchip').forEach(b=>b.addEventListener('click',()=>{ mobSel=b.dataset.k; renderMob(); }));
-  const q=document.getElementById('mobQuick'); if(q) q.addEventListener('change',()=>{ mobQuick=q.checked; renderMob(); });
+  root.querySelectorAll('.mobmode button').forEach(b=>b.addEventListener('click',()=>{ mobQuick=b.dataset.q==='1'; try{ localStorage.setItem('mobQuick',mobQuick?'1':'0'); }catch(e){} renderMob(); }));
   root.querySelectorAll('.mobex .mobnum').forEach(b=>b.addEventListener('click',()=>{ const id=b.closest('.mobex').dataset.id, k=isoDate(TODAY)+'|'+mobSel, o=mobDoneLoad(), a=o[k]||[], i=a.indexOf(id);
     if(i>=0) a.splice(i,1); else a.push(id); o[k]=a; mobDoneSave(o); renderMob(); }));
 }

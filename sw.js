@@ -1,5 +1,5 @@
-/* Service worker: rede primeiro (revalida sempre), cache para offline. Build 83da0e6e70 */
-const CACHE = 'plano703-83da0e6e70';
+/* Service worker: rede primeiro (revalida sempre), cache para offline. Build 025f20d7b4 */
+const CACHE = 'plano703-025f20d7b4';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'keys.json', 'payload.bin', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
@@ -27,7 +27,7 @@ self.addEventListener('fetch', e => {
     const c = await caches.open(CACHE);
     try {
       const net = await fetchTimeout(u.href, 5000);
-      if (net.ok) c.put(r.mode === 'navigate' ? new Request(u.href) : r, net.clone());
+      if (net.ok && !u.searchParams.has('t')) c.put(r.mode === 'navigate' ? new Request(u.href) : r, net.clone());
       return net;
     } catch (err) {
       const m = (await c.match(r, { ignoreSearch: true })) || (r.mode === 'navigate' ? await c.match('./') : null);

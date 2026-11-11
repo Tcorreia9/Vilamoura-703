@@ -168,7 +168,7 @@ select#weekSelect{width:100%; margin-top:8px; padding:8px; border-radius:8px; bo
 .daybody.open{display:block;}
 .setrow{display:flex; gap:8px; padding:7px 0; border-bottom:1px dashed var(--border); font-size:.85rem;}
 .setrow:last-of-type{border-bottom:none;}
-.setrow b{min-width:108px; flex-shrink:0; font-weight:700;}
+.setrow b{min-width:108px; max-width:58%; flex-shrink:0; font-weight:700;}
 .setrow span{color:var(--text-dim);}
 .notebox{background:var(--bg-soft); border-radius:8px; padding:9px 11px; margin-top:10px; font-size:.8rem; color:var(--text-dim); line-height:1.5;}
 .notebox b{color:var(--text);}
@@ -910,6 +910,12 @@ function buildDayRaw(weekNum, dowKey){
     const b = bikeQualityWorkout(phase, weekNum); b.disc='bike'; addAero(b, weekNum, 'thu');
     if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([b], 'thu');
     const st = strengthWorkout(phase, weekNum, 'B');
+    if(weekNum===5){
+      // Semana 5 (regresso depois de doença): uma única sessão de corpo inteiro em vez das Forças A e B.
+      st.title='Força geral — corpo inteiro'; st.duration=40;
+      st.sets=[['Agach. goblet (KB24)','3x10'],['Peso morto romeno (DB15 x2, descida de 3")','3x10'],['Remo unilateral (DB20)','3x10/lado'],['Press militar unilateral (KB12, descida de 3")','3x8/braço'],['Afundo búlgaro (DB15 x2)','2x8/perna'],['Face pull / rotação externa (banda)','2x15'],['Prancha + anti-rotação','2x40"']];
+      st.note='Semana de regresso depois de doença: uma única sessão de corpo inteiro em vez das Forças A e B (18 séries, cerca de dois terços do volume das duas). Faz os exercícios por esta ordem, com as cargas da semana passada, 60–75" de descanso entre séries e 2–3 repetições de reserva em todas. Faz depois da bike, de preferência com umas horas de intervalo. Se a bike acabar em Z2 por cansaço, faz 2 séries de cada exercício e tira o afundo búlgaro. Press militar: KB12 numa mão, alternando os braços; se o ombro protestar, para a série em vez de forçar. Rotação externa: só com banda.';
+    }
     return combine([b, st], 'thu');
   }
   if(dowKey==='sat'){

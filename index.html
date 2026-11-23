@@ -803,6 +803,7 @@ function brickRunWorkout(durMin){
 // Barra olímpica de 20 kg + bumpers (pares de 5, 7,5, 10, 15, 20 e 25 kg = 165 kg). O rack (com spotter arms) chega por volta da semana 10.
 const RACK_WK = 10;
 const BAR_NOTE_A = ' Barra: no peso morto, na 1.ª sessão sobe até um peso que faças 5 repetições com 3 de reserva (costas neutras, barra colada às pernas) e regista-o; depois sobe 10 kg (o par de 5 kg) por semana enquanto a técnica estiver limpa, e se a lombar arredondar volta ao peso anterior. No agachamento com barra, quando o rack chegar, começa com 40 kg (barra + par de 10) e segue a mesma regra. Nunca à falha: a força serve a corrida e a bike, não o contrário.';
+const RACK_NOTE = ' Sessão completa com o rack: faz primeiro os básicos com barra, com 2–3\' de descanso e 2–3 repetições de reserva; os pares marcados com ⇄ fazem-se alternados (supersérie), com 60–90\" entre exercícios, para caber no tempo. Progressão: quando fechares todas as séries de um básico com 3 de reserva, sobe 10 kg na semana seguinte (o par de 5 kg); no press, sobe primeiro as repetições. Em semana de prova ou depois de uma noite má, tira uma série a cada básico e mantém o peso. Barra de elevações: se o rack a tiver, troca o remo invertido por elevações (com elástico, se ainda não fizeres 6).';
 const BAR_NOTE_B = ' Press militar com barra: começa só com a barra (20 kg). O disco mais pequeno é de 5 kg, por isso o salto seguinte é para 30 kg: primeiro sobe as repetições com 20 kg (4x6 → 4x8 → 5x8) e só depois passa a 30 kg em 4x5. Um par de discos de 1,25 ou 2,5 kg tornava a progressão muito mais suave. Remo curvado: começa com 40 kg, tronco a ~45°, sem balanço. Se o ombro protestar no press, para a série e volta à KB12.';
 function strengthWorkout(phase, wk, which){
   // which: 'A' (Tue, lower/posterior) or 'B' (Thu, upper/core/shoulder)
@@ -830,13 +831,28 @@ function strengthWorkout(phase, wk, which){
       B:[['Press militar com barra, de pé','2x8'],['Face pull/rotação externa','2x12']]
     }
   };
-  const label = block==='manutenção mínima' ? 'Manutenção — 15\'' : (which==='A'?'Força A — pernas/posterior':'Força B — tronco/ombro');
-  const dur = block==='manutenção mínima' ? 15 : (block==='potência/manutenção'?25:(block==='força'?30:25));
+  // A partir do rack (semana RACK_WK): força completa com barra — básicos pesados primeiro, acessórios em superséries.
+  const RACK = wk>=RACK_WK;
+  if(RACK){
+    sets['força'] = {
+      A:[['Agachamento com barra (no rack)','4x5'],['Peso morto romeno com barra','3x6'],['Afundo búlgaro (DB15 x2) ⇄ Gémeos a uma perna num degrau (DB15)','3x8/perna ⇄ 3x12/perna'],['Prancha de Copenhaga ⇄ Prancha lateral','3x20\"/lado ⇄ 3x30\"/lado']],
+      B:[['Peso morto com barra (bumpers)','4x4'],['Press militar com barra, de pé','4x6'],['Remo curvado com barra ⇄ Remo invertido no rack (ou elevações)','4x8 ⇄ 3x8–10'],['Ponte de glúteo com barra (no chão) ⇄ Pallof c/ banda','3x10 ⇄ 3x12/lado']]
+    };
+    sets['potência/manutenção'] = {
+      A:[['Agachamento com barra — subida explosiva','3x4'],['Agach. salto (peso corporal) logo a seguir a cada série','3x5'],['Peso morto romeno com barra','3x6'],['Afundo búlgaro (DB15 x2) ⇄ Gémeos a uma perna (DB15)','2x8/perna ⇄ 3x12/perna'],['Prancha lateral','2x30\"/lado']],
+      B:[['Peso morto com barra','3x3'],['Press militar com barra, de pé','3x5'],['Remo curvado com barra ⇄ Remo invertido no rack','3x6 ⇄ 2x10'],['KB swing (KB24), explosivo ⇄ Dead bug','3x10 ⇄ 2x10/lado']]
+    };
+  }
+  const full = RACK && block!=='manutenção mínima';
+  const label = block==='manutenção mínima' ? 'Manutenção — 15\'' : (which==='A' ? (full?'Força A — agachamento/pernas':'Força A — pernas/posterior') : (full?'Força B — peso morto/tronco':'Força B — tronco/ombro'));
+  const dur = block==='manutenção mínima' ? 15 : (block==='potência/manutenção' ? (RACK?40:25) : (block==='força' ? (RACK?45:30) : 25));
   let noteA = 'Cadeia posterior forte = melhor economia de corrida e proteção do joelho no ciclo de alto volume.';
   if(which==='A' && phase.id==='build1' && wk%2) noteA += ' Por causa do horário da pista, podes fazer esta sessão de manhã e a série de corrida à tarde — com 6h+ de intervalo entre as duas não há problema; só não as faças seguidas sem descanso.';
-  return {title: label, duration:dur, intensity: block,
+  const out = {title: label, duration:dur, intensity: block,
     sets: sets[block][which], note: which==='B' ? 'Ombro/core reforçam a posição de nado e aero na bike — objetivo é reduzir lesão, não hipertrofia máxima aqui.' + (block==='hipertrofia' ? ' Press militar: como ainda não fechas as repetições com halteres de 15 kg, começa com a KB12 numa mão (alternando os braços) e fecha cada série com 2 repetições de reserva. Quando fizeres 3x10 por braço com técnica limpa, passa aos halteres de 15 kg (4x5–6 → 4x8, que é o que a fase de força pede). Se a técnica falhar ou o ombro protestar, para a série em vez de forçar. Rotação externa: com carga mínima (banda ou 1–2 kg) — a KB12 serve para remos, não para o manguito.' : BAR_NOTE_B) : noteA + ((block==='força'||block==='potência/manutenção') ? BAR_NOTE_A : ''),
     tag:'Hipertrofia/força', isStrength:true};
+  if(RACK && (block==='força'||block==='potência/manutenção')) out.note += RACK_NOTE;
+  return out;
 }
 
 function restDayObj(){ return {title:'Descanso', duration:0, intensity:'—', sets:[['Recomendação','Dia totalmente livre — sono, mobilidade ligeira se quiseres, sem treino estruturado.']], note:'', tag:'', rest:true}; }

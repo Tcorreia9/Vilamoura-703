@@ -1051,10 +1051,25 @@ function shoeFor(it, k, wk){
   }
   return null;
 }
+/* Bloco de respiração em todas as natações de piscina a partir da semana 7 (a respiração falhou na partida do super sprint de 8 nov).
+   Progressão: controlo da expiração → recuperar a respiração depois de uma partida forte → orientação (sighting) sem perder o ritmo. */
+function breathSet(wk){
+  if(wk>=24) return {min:5, row:['Respiração','4x25 expiração contínua (bolhas até virar a cabeça) + 2x50 «partida simulada» suave, 20" desc.']};
+  if(wk>=14) return {min:10, row:['Respiração e orientação','4x50 «partida simulada» (15 m forte, depois acalma a respiração em 3 braçadas até ao fim) + 4x50 a levantar a cabeça a cada 6–8 braçadas sem perder o ritmo da respiração, 20" desc.']};
+  if(wk>=10) return {min:8, row:['Respiração','4x25 expiração contínua (bolhas até virar a cabeça) + 4x50 «partida simulada»: 15 m forte e depois acalma a respiração em 3 braçadas até ao fim, 30" desc.']};
+  return {min:8, row:['Respiração','4x25 expiração contínua (bolhas até virar a cabeça) + 4x50 alternando respirar a cada 3 e a cada 2 braçadas, sempre a expirar tudo debaixo de água, 20" desc.']};
+}
+const BREATH_NOTE='Bloco de respiração: expirar tudo debaixo de água é o que impede a falta de ar — se não expiras, ao virar a cabeça tens de expirar e inspirar no mesmo instante e a respiração fica curta. A «partida simulada» treina recuperar o controlo depois de uma saída rápida, que foi onde a respiração falhou no super sprint.';
 function buildDay(weekNum, dowKey){
   const d = buildDayRaw(weekNum, dowKey);
   d.items.forEach(it=>{
     const sh = shoeFor(it, dowKey, weekNum); if(sh){ it.shoe = {name:SHOES[sh.key].name, why: sh.why || SHOES[sh.key].why, key:sh.key}; }
+    if(it.disc==='swim' && it.duration>0 && weekNum>=7 && !(weekNum===7 && dowKey==='mon') && !/águas abertas/i.test(it.title) && Array.isArray(it.sets)){
+      const br = breathSet(weekNum), at = (it.sets[0] && /^Aquec/.test(it.sets[0][0])) ? 1 : 0;
+      it.sets = it.sets.slice(0,at).concat([br.row], it.sets.slice(at));
+      it.duration += br.min;
+      it.note = (it.note? it.note+' ' : '') + BREATH_NOTE;
+    }
     if(it.disc==='swim'){ it.note = (it.note? it.note+' ' : '') + 'Se tiveres aula com o treinador nesta sessão, segue sempre a indicação dele em vez do treino aqui prescrito.'; }
   });
   return d;

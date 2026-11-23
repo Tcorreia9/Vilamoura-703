@@ -511,7 +511,7 @@ const WEEKTABLE = [
  {n:6, swim:['mon','wed','fri'], longRun:90, longBike:130, focus:'Pico de volume da base antes da descarga. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso. Quinta: sweet spot 3x20\' na bike; domingo: longo com 3x15\' de tempo.'},
  {n:7, swim:['mon','wed'], longRun:60, longBike:80, deload:true, focus:'Descarga — fecha o bloco Base/Técnica. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
  {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, race:'meia', focus:'Domingo 6 dez: meia maratona da Maratona do Algarve (Vilamoura); o longo de bike passa para sábado, em Z2 sem séries. Abre Build 1 — entram intervalos de VO2max/limiar controlado. Bike: quinta VO2max 5x4\' e domingo com 2x15\' de sweet spot, já com o FTP-alvo do bloco (165 W, a confirmar no reteste da semana 7). "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
- {n:9, swim:['mon','wed'], longRun:95, longBike:130, focus:'Progressão de intensidade controlada.'},
+ {n:9, swim:['mon','wed'], longRun:95, longBike:130, focus:'Progressão de intensidade controlada. Terça e quinta trocadas por causa da meia maratona de domingo 6 dez: bike de limiar + Força B à terça, 8x800 m + Força A à quinta.'},
  {n:10, swim:['mon','wed','fri'], longRun:100, longBike:145, focus:'Semana mais exigente do bloco antes do período natalício. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:11, swim:['mon','wed'], longRun:65, longBike:90, deload:true, focus:'Semana de Natal — volume reduzido por opção de vida, não por plano.'},
  {n:12, swim:['mon','wed','fri'], longRun:100, longBike:150, focus:'Retoma de intensidade pós-festas. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
@@ -896,6 +896,13 @@ function buildDayRaw(weekNum, dowKey){
     return combine([rd], dowKey);
   }
   if(dowKey==='tue'){
+    if(weekNum===9){
+      // Semana 9: troca com quinta por causa da meia maratona de domingo (6 dez) — bike sem impacto à terça, 8x800 m à quinta.
+      const b = bikeQualityWorkout(phase, weekNum); b.disc='bike'; addAero(b, weekNum, 'tue');
+      b.note = 'Trocado com a corrida de quinta: a meia maratona foi no domingo, por isso a terça fica para a bike, sem impacto, e os 8x800 m passam para quinta. Se as pernas ainda estiverem doridas da meia ou a FC não subir nos blocos, faz 60\' de Z2. ' + (b.note||'');
+      const st = strengthWorkout(phase, weekNum, 'B');
+      return combine([b, st], 'tue');
+    }
     const r = runQualityWorkout(phase, weekNum); r.disc='run';
     if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([r], 'tue');
     const st = strengthWorkout(phase, weekNum, 'A');
@@ -907,6 +914,13 @@ function buildDayRaw(weekNum, dowKey){
     return combine([r, st], 'tue');
   }
   if(dowKey==='thu'){
+    if(weekNum===9){
+      const r = runQualityWorkout(phase, weekNum); r.disc='run';
+      r.note = 'Passada de terça para quinta (4 dias depois da meia maratona). Se a FC de repouso estiver 5+ bpm acima do normal ou as pernas ainda pesarem, faz 6x800 m em vez de 8. ' + (r.note||'');
+      const st = strengthWorkout(phase, weekNum, 'A');
+      st.note += ' Esta semana a Força A vem à quinta, com a série de pista: faz a força depois da corrida ou com 6h+ de intervalo, sem ires à falha.';
+      return combine([r, st], 'thu');
+    }
     const b = bikeQualityWorkout(phase, weekNum); b.disc='bike'; addAero(b, weekNum, 'thu');
     if(phase.id==='romerace' || phase.id==='postrome' || row.deload) return combine([b], 'thu');
     const st = strengthWorkout(phase, weekNum, 'B');

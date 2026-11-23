@@ -510,7 +510,7 @@ const WEEKTABLE = [
  {n:5, swim:['mon','wed','fri'], longRun:55, longBike:85, swimFocus:true, focus:'Semana de foco em natação (Lance Watson) — 3 sessões, corrida/bike reduzidos.'},
  {n:6, swim:['mon','wed','fri'], longRun:90, longBike:130, focus:'Pico de volume da base antes da descarga. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso. Quinta: sweet spot 3x20\' na bike; domingo: longo com 3x15\' de tempo.'},
  {n:7, swim:['mon','wed'], longRun:60, longBike:80, deload:true, focus:'Descarga — fecha o bloco Base/Técnica. Terça: reteste de FTP (fim de bloco), com a corrida passada para quinta.'},
- {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, focus:'Abre Build 1 — entram intervalos de VO2max/limiar controlado. Bike: quinta VO2max 5x4\' e domingo com 2x15\' de sweet spot, já com o FTP-alvo do bloco (165 W, a confirmar no reteste da semana 7). "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
+ {n:8, swim:['mon','wed','fri'], longRun:85, longBike:115, race:'meia', focus:'Domingo 6 dez: meia maratona da Maratona do Algarve (Vilamoura); o longo de bike passa para sábado, em Z2 sem séries. Abre Build 1 — entram intervalos de VO2max/limiar controlado. Bike: quinta VO2max 5x4\' e domingo com 2x15\' de sweet spot, já com o FTP-alvo do bloco (165 W, a confirmar no reteste da semana 7). "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:9, swim:['mon','wed'], longRun:95, longBike:130, focus:'Progressão de intensidade controlada.'},
  {n:10, swim:['mon','wed','fri'], longRun:100, longBike:145, focus:'Semana mais exigente do bloco antes do período natalício. "Semana sim" — 3ª natação (sexta) ocupa o dia de descanso.'},
  {n:11, swim:['mon','wed'], longRun:65, longBike:90, deload:true, focus:'Semana de Natal — volume reduzido por opção de vida, não por plano.'},
@@ -935,6 +935,14 @@ function buildDayRaw(weekNum, dowKey){
         ['Objetivo de tempo','5h00–6h00 total — gere o esforço para lá chegar inteiro, não para bater recorde pessoal']
       ], note:'É o teu primeiro 70.3 — terminar forte vale mais do que qualquer minuto poupado no início.', tag:'Dia da prova', disc:'brick'}], 'sat');
     }
+    if(row.race==='meia'){
+      return combine([{title:'Longo de bike — véspera da meia', duration:90, intensity:'Z2 contínuo, sem séries', sets:[
+        ['Aquec.','10\' Z1'],
+        ['Principal','70\' Z2 contínuo ('+W(0.56,0.70,weekNum)+'), cadência 85–95 rpm — sem os 2x15\' de sweet spot do domingo habitual'],
+        ['Retorno','10\' Z1'],
+        ['Nutrição','Hidratos durante a sessão e ao jantar: é o reforço de hidratos para a meia de amanhã']
+      ], note:'O longo de bike passa para sábado por causa da meia maratona de domingo. Fica em 90\' de Z2 sem intensidade, para as pernas chegarem frescas à prova; se quiseres os 115\' do plano, acrescenta 25\' de Z2, nunca intensidade. Faz de manhã cedo, para ter o resto do dia para recuperar.', tag:'Longo · véspera de prova', disc:'bike'}], 'sat');
+    }
     const lr = longRunWorkout(phase, weekNum, row.longRun); lr.disc='run';
     if(OPEN_WATER_WEEKS.includes(weekNum)){
       return combine([openWaterWorkout(), lr], 'sat');
@@ -961,6 +969,18 @@ function buildDayRaw(weekNum, dowKey){
       ], note:'Correr Roma "a sério" comprometeria o bloco final de 70.3 — a decisão consciente é sacrificar tempo em Roma para chegar fresco a Vilamoura.', tag:'Prova · gerida', disc:'run'}], 'sun');
     }
     if(row.race==='vila'){ const rd=restDayObj(); rd.disc='rest'; return combine([rd],'sun'); }
+    if(row.race==='meia'){
+      return combine([{title:'🏁 Meia Maratona — Maratona do Algarve (Vilamoura)', duration:100, intensity:'Prova — 21,1 km', sets:[
+        ['Aquec.','10–15\' de trote fácil + 3–4 acelerações de 20" nos 30\' antes da partida'],
+        ['Km 1–5','4:35–4:40/km — mais lento do que vai apetecer; a FC tem de estabilizar abaixo de ~170'],
+        ['Km 5–15','4:30–4:35/km, com FC até ~172. Se a FC passar disto antes do km 12, abranda 5–10"/km'],
+        ['Km 15–21','Se as pernas deixarem, acelera progressivamente para 4:20–4:25/km'],
+        ['Tempo esperado','≈ 1:35–1:38 (melhor marca 1:33:14 em Castro Marim). O bloco Base teve metade do volume de corrida previsto, por isso não é dia de recorde'],
+        ['Meteorologia','Se o ponto de orvalho passar de ~16 °C, ritmos 5–10"/km mais lentos e guia-te pela sensação, não pela FC'],
+        ['Nutrição','Pequeno-almoço com hidratos 2h30–3h antes; 1 gel ao km 10–12; água nos abastecimentos'],
+        ['Sapatilhas','Vaporfly 4 (provas até 21 km)']
+      ], note:'Meia maratona da Maratona do Algarve, partida e chegada na Marina de Vilamoura (domingo 6 dez). Serve de teste de forma para Roma (14 mar) e recalibra os ritmos de corrida do plano. Na semana seguinte, nada de intensidade de corrida até quarta.', tag:'Prova de preparação', disc:'run'}], 'sun');
+    }
     if(row.brickRun){
       const bikeItem = longBikeWorkout(phase, weekNum, row.longBike, true); bikeItem.disc='bike'; addAero(bikeItem, weekNum, 'sun');
       const runItem = brickRunWorkout(row.brickRun); runItem.disc='brick';

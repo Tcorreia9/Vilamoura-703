@@ -568,6 +568,40 @@ function swimEasyWorkout(short){
     note:'Natação aeróbia, fácil de propósito: só uma natação por semana é de qualidade (a de quarta). Esta constrói volume de nado sem competir com as sessões duras de corrida e bike (Plews 80/20).', tag:'Aeróbio · Plews 80/20'};
 }
 
+/* Pedido do Tiago (23 nov 2026), a partir da semana 8 (não mexe em semanas feitas ou em curso):
+   - quarta é sempre a aula da Telma: fica só agendada, sem treino prescrito (mantém a duração para os totais da semana);
+   - natações de segunda/sexta levam o bloco de correção da respiração (cabeça a subir, pernas a afundar, braço da frente a cair,
+     expiração incompleta). Semanas 8–10: sessão de correção completa; daí em diante: manutenção curta no início da sessão. */
+const TELMA_FROM = 8, TECH_FIX_TO = 10;
+function telmaSwim(base){
+  return {title:'Natação — treino da Telma', duration:base.duration, intensity:'Conforme a treinadora',
+    sets:[['Sessão','Aula com a Telma — segue o treino que ela definir']],
+    note:'Sessão fixa com a Telma: fica apenas agendada no calendário, sem treino prescrito. Se houver espaço, aplica as pistas de respiração das natações de segunda/sexta (expirar sempre debaixo de água, orelha colada ao braço, braço da frente esticado até a cara voltar à água).',
+    tag:'Aula · Telma'};
+}
+function withBreathTech(base, wk, dowKey){
+  if(wk<=TECH_FIX_TO){
+    const mon = dowKey==='mon';
+    const sets=[['Aquec.','200 fácil'],
+      ['Expiração','6–8 deslizes em flecha a expirar o deslize todo + 4x25 pernada com prancha e cara na água: expira durante 4–6 pernadas com sopro final, levanta a cabeça só para inspirar, 20" desc.'],
+      ['Cabeça','6x25 pernada lateral com barbatanas: orelha colada ao braço da frente, 6 pernadas a expirar, roda só a cabeça e inspira com um óculo dentro de água; alterna lados, 20" desc.'],
+      ['Braço da frente','4x25 catch-up com prancha na mão da frente + 4x25 catch-up sem objeto (com barbatanas), 20" desc.'],
+      ['Integração','4x50 crol lento — 1.º 25 com barbatanas, 2.º sem; sopro final antes de rodar a cabeça, 20" desc.']];
+    if(mon) sets.push(['Aplicação','3x100 fácil contínuo a aplicar as 3 pistas, respiração de 2 em 2 ou de 3 em 3, 20" desc.']);
+    sets.push(['Retorno','100 fácil']);
+    return {title:'Técnica de respiração — correção', duration: mon?50:40, intensity:'Z1 — técnica, sem relógio', sets,
+      note:'Correção do que se viu na filmagem: cabeça a subir para respirar, pernas a afundar, braço da frente a cair e expiração incompleta. Ordem: expiração → cabeça → braço. Pistas: expira sempre debaixo de água (pela boca ou boca + nariz — não tem de ser só pelo nariz) e sopra o resto antes de a boca sair; orelha colada ao braço e um óculo dentro de água; o braço da frente só começa a puxar depois de a cara voltar à água. Sem pull buoy no nado completo nesta fase.'
+        + (wk===TECH_FIX_TO ? ' Fim do bloco de correção: filma de novo de lado e confirma (1) um óculo sempre dentro de água, (2) as ancas não descem na respiração, (3) o braço da frente fica esticado até a cara voltar. Conta também as braçadas por 25 m em ritmo lento e compara com antes.' : ''),
+      tag:'Técnica · respiração'};
+  }
+  const tech=['Respiração','4x25 pernada lateral com barbatanas (orelha no braço, um óculo dentro de água) + 4x25 catch-up com prancha na mão da frente, 15" desc.'];
+  const s=Object.assign({}, base, {sets: base.sets.slice()});
+  const di=s.sets.findIndex(x=>x[0]==='Drills');
+  if(di>=0) s.sets[di]=tech; else { s.sets.splice(1,0,tech); s.duration=(s.duration||0)+8; }
+  s.note=(s.note?s.note+' ':'')+'Manutenção da técnica de respiração: expira sempre debaixo de água, orelha colada ao braço, braço da frente esticado até a cara voltar à água.';
+  return s;
+}
+
 function swimWorkout(phase, wk, slot){
   if((phase.id==='build1'||phase.id==='build2'||phase.id==='peak703') && (slot==='easy'||slot==='short')) return swimEasyWorkout(slot==='short');
   if(phase.id==='recovery0') return {title:'Natação de recuperação', duration:35, intensity:'Z1 fácil',
@@ -880,14 +914,18 @@ function buildDayRaw(weekNum, dowKey){
   }
 
   if(dowKey==='wed'){
-    const s = swimWorkout(phase, weekNum); s.disc='swim';
+    let s = swimWorkout(phase, weekNum);
+    if(weekNum>=TELMA_FROM) s = telmaSwim(s);
+    s.disc='swim';
     return combine([s], 'wed');
   }
   if(dowKey==='mon' || dowKey==='fri'){
     const isSwimDay = swimDays.includes(dowKey);
     const slot = dowKey==='mon' ? 'easy' : 'short'; // Build 1/2: só a natação de quarta é de qualidade; segunda = aeróbia, sexta = técnica curta
     if(isSwimDay){
-      const s=swimWorkout(phase, weekNum, slot); s.disc='swim';
+      let s=swimWorkout(phase, weekNum, slot);
+      if(weekNum>=TELMA_FROM) s = withBreathTech(s, weekNum, dowKey);
+      s.disc='swim';
       // Segunda-feira: a partir da semana 3, a natação leva em dupla uma pedalada de rolo fácil (3.ª sessão de bike). Fora das semanas de descarga/teste.
       if(dowKey==='mon' && weekNum>=3 && weekNum<=19 && !row.deload && !TEST_WEEKS.includes(weekNum)) return combine([s, spinWorkout(phase, weekNum)], 'mon');
       return combine([s], dowKey);

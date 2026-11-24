@@ -760,6 +760,8 @@ function addAero(it, wk, kind){
   if(txt) it.sets.push(['Posição aero', txt]);
 }
 
+// Longos de bike no rolo até ao fim de janeiro (semana 17, que acaba a 31/01/2027); estrada a partir da semana 18 (1/02/2027).
+const LONG_ROLO_ATE = 17;
 function longBikeWorkout(phase, wk, durMin, isBrick){
   if(durMin===0) return {title:'Descanso de bike', duration:0, intensity:'—', sets:[['Nota','Sem bike longo esta semana.']], note:'', tag:''};
   let intensity='Z2 fácil';
@@ -768,8 +770,12 @@ function longBikeWorkout(phase, wk, durMin, isBrick){
   if(q){
     const rng = W(q[2],q[3],wk), what = q[0]+'x'+q[1]+'\' '+q[4];
     intensity = 'Z2 + '+what;
-    extra=[['Dentro do rolo', q[0]+'x'+q[1]+'\' a '+q[4]+' ('+rng+') na 2.ª metade do rolo, 5\' Z2 entre blocos; resto Z2'+(q[4]==='ritmo de prova'?' — é o ensaio do esforço de prova, sem acrescentar volume':'')]];
+    extra=[[wk>=8?'Blocos':'Dentro do rolo', q[0]+'x'+q[1]+'\' a '+q[4]+' ('+rng+') na 2.ª metade '+(wk>=8?'da sessão':'do rolo')+', 5\' Z2 entre blocos; resto Z2'+(q[4]==='ritmo de prova'?' — é o ensaio do esforço de prova, sem acrescentar volume':'')]];
   }
+  // Onde: rolo até ao fim de janeiro (semana 17), para cumprir os watts com precisão; estrada a partir de fevereiro (semana 18).
+  if(wk>=8) extra.unshift(['Onde', wk<=LONG_ROLO_ATE
+    ? 'Rolo (MyWhoosh, ERG) — até ao fim de janeiro os longos são todos no rolo, para cumprir os watts com precisão'
+    : 'Estrada — de preferência troços do percurso do Vilamoura. Os blocos fazem-se nas retas sem cruzamentos ou nas rampas; na rua os watts oscilam, por isso aceita ±10 W à volta do alvo e guia-te pela média de cada bloco e pela sensação (RPE). Se o trânsito ou o vento não deixarem fazer um bloco, segue em Z2 e não o compenses depois']);
   let title = isBrick? 'Bike longo (parte 1 do brick)':'Longo de domingo';
   let sets=[['Sessão','Contínuo em Z2 ('+W(0.56,0.75,wk)+'), conversação confortável'], ...extra, ['Nutrição','Pratica a estratégia de géis/hidratos de bike da prova'+(durMin>=120?' — 60–80 g de hidratos por hora a partir dos 60\'':'')]];
   if(isBrick) sets.push(['Últimos 20\'','Baixa ligeiramente a cadência/potência — prepara as pernas para saltar para a corrida logo a seguir']);

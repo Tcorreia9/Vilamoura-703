@@ -378,7 +378,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   </div>
 
   <div class="stravabox">
-    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 23/11 às 11:28. Dados Garmin até 23/11. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
+    <div class="txt"><b>Consulta</b>Última recolha automática do Garmin: 24/11 às 13:37. Dados Garmin até 24/11. 🔒 Tendências e as restantes abas desbloqueiam com palavra-passe.</div>
   </div>
 
   <div class="tabs">
@@ -460,7 +460,7 @@ details.tv summary{cursor:pointer; color:var(--text-dim); font-weight:600;}
   <footer>Plano gerado com base em metodologias publicamente documentadas de Dan Lorang, Dan Plews, Lance Watson e Kristian Blummenfelt/Olav Bu — adaptado ao teu volume disponível. Ajusta sempre pela tua sensação, sono e histórico de lesões.<span class="fesync" style="display:block"></span></footer>
 </div>
 
-<script>window.__SNAP={"rec":{"data":"2026-11-23","idx":95,"hrv":74,"fcr":50},"sleep":{"data":"2026-11-23","sono":7.17,"score":77},"acts":[{"data":"2026-11-23","tipo":"lap_swimming","min":31.9}],"asof":"2026-11-23","garminAt":"2026-11-23T11:28:36Z"};window.__FE_BASE={"2026-10-12":[true],"2026-10-13":[true],"2026-10-14":[true],"2026-10-15":[true],"2026-10-16":[true],"2026-10-17":[true],"2026-10-18":[true],"2026-10-19":[true],"2026-10-20":[true],"2026-10-21":[true],"2026-10-22":[true,true],"2026-10-23":[true],"2026-10-26":[true,true],"2026-10-27":[false,true],"2026-10-28":[true],"2026-10-29":[true,false],"2026-10-30":[true],"2026-10-31":[true],"2026-11-01":[true],"2026-11-02":[true,false],"2026-11-03":[true,true],"2026-11-04":[true],"2026-11-05":[true,true],"2026-11-06":[true],"2026-11-08":[true]};</script>
+<script>window.__SNAP={"rec":{"data":"2026-11-24","idx":97,"hrv":78,"fcr":50},"sleep":{"data":"2026-11-24","sono":8.15,"score":86},"acts":[{"data":"2026-11-23","tipo":"lap_swimming","min":31.9},{"data":"2026-11-24","tipo":"virtual_ride","min":75.1}],"asof":"2026-11-24","garminAt":"2026-11-24T13:37:45Z"};window.__FE_BASE={"2026-10-12":[true],"2026-10-13":[true],"2026-10-14":[true],"2026-10-15":[true],"2026-10-16":[true],"2026-10-17":[true],"2026-10-18":[true],"2026-10-19":[true],"2026-10-20":[true],"2026-10-21":[true],"2026-10-22":[true,true],"2026-10-23":[true],"2026-10-26":[true,true],"2026-10-27":[false,true],"2026-10-28":[true],"2026-10-29":[true,false],"2026-10-30":[true],"2026-10-31":[true],"2026-11-01":[true],"2026-11-02":[true,false],"2026-11-03":[true,true],"2026-11-04":[true],"2026-11-05":[true,true],"2026-11-06":[true],"2026-11-08":[true]};</script>
 <script>
 (function(){
 /* ============ DATE / RACE CONSTANTS ============ */
@@ -535,16 +535,16 @@ function weekDates(n){ const start=addDays(PLAN_START,(n-1)*7); return {start, e
 /* ============ WORKOUT GENERATORS ============ */
 function mins(m){ return m+"'"; }
 
-// Potência — FTP medido no teste MyWhoosh de 20/10/2026 (20' a ~158W → 95% ≈ 151W). Atualizar só este valor após cada novo teste: todos os watts do plano recalculam.
-const FTP = 151;
+// Potência — FTP medido no reteste MyWhoosh de 24/11/2026 (20' a 171 W → 95% ≈ 162 W; 1.º teste a 20/10/2026: 151 W). Atualizar só este valor após cada novo teste: todos os watts do plano recalculam.
+const FTP = 162;
 // Escada de FTP (meta: ≥ 200 W no dia da prova). O plano NÃO conta com o FTP atual: cada bloco prescreve watts pelo FTP-alvo desse bloco (alvo), e passa a usar o valor medido (meas) assim que o reteste do fim do bloco anterior estiver feito.
 // Após cada reteste: preencher meas do bloco seguinte e, se ficar abaixo do alvo, rever os alvos seguintes. Todos os watts das semanas futuras recalculam.
 const FTP_GOAL = 200;
 const FTP_BLOCKS = [
   {from:2,  target:151, meas:151},   // Base — medido no teste de 20/10/2026 (20' a ~158 W)
-  {from:8,  target:165, meas:null},  // Build 1 — confirmar no reteste da semana 7
-  {from:14, target:180, meas:null},  // Build 2 — confirmar no reteste da semana 13
-  {from:20, target:195, meas:null},  // Taper Roma e recuperação — confirmar no reteste da semana 19
+  {from:8,  target:165, meas:162},   // Build 1 — medido no reteste de 24/11/2026 (20' a 171 W), 3 W abaixo do alvo
+  {from:14, target:175, meas:null},  // Build 2 — confirmar no reteste da semana 13 (alvo revisto de 180 para 175 depois do reteste da semana 7)
+  {from:20, target:188, meas:null},  // Taper Roma e recuperação — confirmar no reteste da semana 19
   {from:24, target:200, meas:null}   // Pico e prova — meta: 200 W no Vilamoura
 ];
 function ftpWk(wk){ let b=FTP_BLOCKS[0]; FTP_BLOCKS.forEach(x=>{ if(wk>=x.from) b=x; }); return b.meas!=null ? b.meas : b.target; }
@@ -1031,7 +1031,7 @@ function buildDayRaw(weekNum, dowKey){
         ['Km 1–5','4:35–4:40/km — mais lento do que vai apetecer; a FC tem de estabilizar abaixo de ~170'],
         ['Km 5–15','4:30–4:35/km, com FC até ~172. Se a FC passar disto antes do km 12, abranda 5–10"/km'],
         ['Km 15–21','Se as pernas deixarem, acelera progressivamente para 4:20–4:25/km'],
-        ['Tempo esperado','≈ 1:35–1:38 (melhor marca 1:33:14 em Castro Marim). O bloco Base teve metade do volume de corrida previsto, por isso não é dia de recorde'],
+        ['Tempo esperado','≈ 1:35–1:38 (a mais recente foi 1:33:14 em Castro Marim, set 2026; a melhor marca é 1:28:07 em Loulé, abr 2025). O bloco Base teve metade do volume de corrida previsto, por isso não é dia de recorde'],
         ['Meteorologia','Se o ponto de orvalho passar de ~16 °C, ritmos 5–10"/km mais lentos e guia-te pela sensação, não pela FC'],
         ['Nutrição','Pequeno-almoço com hidratos 2h30–3h antes; 1 gel ao km 10–12; água nos abastecimentos'],
         ['Sapatilhas','Vaporfly 4 (provas até 21 km)']

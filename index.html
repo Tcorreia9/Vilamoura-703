@@ -1108,10 +1108,60 @@ function breathSet(wk){
   return {min:8, row:['Respiração','4x25 expiração contínua (bolhas até virar a cabeça) + 4x50 alternando respirar a cada 3 e a cada 2 braçadas, sempre a expirar tudo debaixo de água, 20" desc.']};
 }
 const BREATH_NOTE='Bloco de respiração: expirar tudo debaixo de água é o que impede a falta de ar — se não expiras, ao virar a cabeça tens de expirar e inspirar no mesmo instante e a respiração fica curta. A «partida simulada» treina recuperar o controlo depois de uma saída rápida, que foi onde a respiração falhou no super sprint.';
+/* Natação com a estrutura pedida pela treinadora (25/11/2026): às segundas e sextas, 200–300 m de um exercício de rotação/respiração,
+   100–200 m de pernada e o resto crol. Às quartas é a aula dela (a não ser que o Tiago peça um treino).
+   Acessórios: pull buoy, pullkick (prancha), barbatanas, snorkel — palas não, por agora.
+   COACH: nome da treinadora; a versão pública troca esta linha por uma neutra. */
+const COACH = {a:'o treinador', da:'do treinador', ela:'ele', nome:'treinador'};
+const TELMA_DRILLS = [
+  ['Pernada de lado 6-1-6: 6 pernadas de lado, 1 braçada para rodar para o outro lado; respira sempre de lado, sem levantar a cabeça','Barbatanas'],
+  ['Catch-up com respiração bilateral (a cada 3 braçadas), a expirar tudo debaixo de água','Pull buoy'],
+  ['Crol com snorkel: foco só na rotação de ombros e ancas, sem pensar na respiração','Snorkel + barbatanas'],
+  ['Braço único 3-3-3 (3 braçadas só com o direito, 3 só com o esquerdo, 3 completas), a respirar para o lado do braço que trabalha','Barbatanas'],
+  ['Crol a respirar a cada 3 e a cada 5 braçadas, alternando a cada 50 m — expira sempre até ao fim antes de virar a cabeça','Pull buoy']
+];
+function telmaSwim(wk, dowKey){
+  const fri = dowKey==='fri';
+  let drill=200, kick=100, crol, crolTxt, dur;
+  if(wk<=10){ crol = fri?400:600; crolTxt = fri?'4x100 fácil, 20" desc.':'6x100, 20" desc.'; }
+  else if(wk<=13){ kick = fri?100:150; crol = fri?400:700; crolTxt = fri?'4x100 fácil, 20" desc.':'4x100 (20" desc.) + 1x300 contínuo'; }
+  else if(wk<=19){ drill=300; kick = fri?100:200; crol = fri?500:800; crolTxt = fri?'5x100 fácil, 20" desc.':(wk>=18?'1x800 contínuo, ao ritmo que aguentas até ao fim':'2x400, 30" desc.'); }
+  else if(wk<=23){ crol = fri?300:500; crolTxt = fri?'3x100 fácil':'5x100 fácil, 20" desc.'; }
+  else { drill=300; crol=800; crolTxt='1x800 contínuo a ritmo de prova (sente o ritmo, sem forçar)'; }
+  const total = drill+kick+crol; dur = Math.round(total/100*4.2/5)*5;
+  const D = TELMA_DRILLS[(wk*2+(fri?1:0)) % TELMA_DRILLS.length];
+  const kickTxt = wk>=14 ? kick+' m alternando 50 m com prancha e 50 m de lado com barbatanas' : kick+' m com prancha, braços esticados; cara na água a expirar e levanta só para inspirar';
+  const kickAcc = wk>=14 ? 'Pullkick (prancha) + barbatanas' : 'Pullkick (prancha)';
+  const sets = [
+    ['Exercício — '+drill+' m', D[0]+' · Acessórios: '+D[1]],
+    ['Pernada — '+kick+' m', kickTxt+' · Acessórios: '+kickAcc],
+    ['Crol — '+crol+' m', crolTxt+' · Sem acessórios; o último 100 m pode ser com pull buoy para sentir a rotação']
+  ];
+  if(wk>=10 && wk<=13 && !fri) sets.push(['Respiração no crol','Em 2 dos 100 m: os primeiros 15 m fortes, depois acalma a respiração em 3 braçadas — é o que falhou na partida do super sprint']);
+  if(wk>=14 && wk<=19 && !fri) sets.push(['Orientação no crol','No crol contínuo, levanta a cabeça a cada 6–8 braçadas (sighting) sem perder o ritmo da respiração']);
+  return {title: (fri?'Técnica curta':'Técnica + crol')+' — '+total+' m', duration:dur, intensity:'Estrutura '+COACH.da, disc:'swim', sets,
+    note:'Estrutura '+COACH.da+': primeiro o exercício de rotação/respiração, depois a pernada e o resto crol, para levar a técnica ao nado completo. Palas não, por agora. Total '+total+' m.', tag:'Natação · '+COACH.nome, __telma:true};
+}
+function telmaFocus(wk){
+  if(wk<=13) return 'Técnica e resistência aeróbia — séries de 100–200 m com pouco descanso, perto do limiar controlado';
+  if(wk<=19) return 'Ritmo de prova de 70.3 e nado contínuo, a subir até 1 500–1 900 m seguidos';
+  if(wk<=23) return 'Manutenção fácil (taper e recuperação da maratona de Roma)';
+  if(wk===24) return 'Ritmo de prova em blocos curtos';
+  return 'Semana de prova: sessão curta e fácil';
+}
 function buildDay(weekNum, dowKey){
   const d = buildDayRaw(weekNum, dowKey);
+  d.items = d.items.map(it=>{
+    if(it.disc!=='swim' || !(it.duration>0) || /águas abertas/i.test(it.title)) return it;
+    if(dowKey==='wed' && (weekNum>7 || weekNum===7)) return {title:'Aula com '+COACH.a, duration:it.duration, intensity:'Treino '+COACH.da, disc:'swim',
+      sets:[['Sessão','Segue o treino '+COACH.da+'.'],['Foco da fase (para combinares com '+COACH.ela+')', telmaFocus(weekNum)],['Sem aula?','Pede-me o treino e ponho aqui a sessão.']],
+      note:'Às quartas o treino é o '+COACH.da+'.', tag:'Natação · '+COACH.nome, __telma:true};
+    if((dowKey==='mon'||dowKey==='fri') && weekNum>=8) return telmaSwim(weekNum, dowKey);
+    return it;
+  });
   d.items.forEach(it=>{
     const sh = shoeFor(it, dowKey, weekNum); if(sh){ it.shoe = {name:SHOES[sh.key].name, why: sh.why || SHOES[sh.key].why, key:sh.key}; }
+    if(it.__telma) return;
     if(it.disc==='swim' && it.duration>0 && weekNum>=7 && !(weekNum===7 && dowKey==='mon') && !/águas abertas/i.test(it.title) && Array.isArray(it.sets)){
       const br = breathSet(weekNum), at = (it.sets[0] && /^Aquec/.test(it.sets[0][0])) ? 1 : 0;
       it.sets = it.sets.slice(0,at).concat([br.row], it.sets.slice(at));
